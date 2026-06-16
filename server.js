@@ -31,6 +31,16 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "32kb" }));
 app.use(express.static(__dirname));
 
+// Add lazy-connect middleware
+app.use(async (req, res, next) => {
+  if (!req.path.startsWith("/api/") || !mongoUri) return next();
+  try {
+    await ensureDb();
+  } catch (err) {
+    console.error("DB connection error:", err);
+  }
+  next();
+});
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
 }
@@ -390,17 +400,6 @@ async function ensureDb() {
   await commentsCollection.createIndex({ spotId: 1 });
   await commentsCollection.createIndex({ userId: 1 });
 }
-
-// Add lazy-connect middleware
-app.use(async (req, res, next) => {
-  if (!req.path.startsWith("/api/") || !mongoUri) return next();
-  try {
-    await ensureDb();
-  } catch (err) {
-    console.error("DB connection error:", err);
-  }
-  next();
-});
 
 if (require.main === module || process.env.VERCEL !== "1") {
   async function start() {

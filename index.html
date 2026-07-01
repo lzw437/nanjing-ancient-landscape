@@ -27,6 +27,10 @@
       <nav class="module-tabs" aria-label="功能模块切换">
         <button id="mapModuleBtn" class="active" type="button">地图总览</button>
         <button id="infoModuleBtn" type="button">详细资料库</button>
+        <button id="routeModuleBtn" type="button">推荐路线</button>
+        <button id="chatModuleBtn" type="button">聊天室</button>
+        <button id="profileModuleBtn" type="button">个人中心</button>
+        <button id="adminModuleBtn" type="button" style="display:none;">管理后台</button>
       </nav>
 
       <section class="controls" aria-label="景点查询">
@@ -46,18 +50,125 @@
           <strong id="dynastyCount">0</strong>
           <span>历史阶段</span>
         </div>
-        <div>
-          <strong id="routeCount">0</strong>
-          <span>条推荐路线</span>
-        </div>
       </section>
 
-      <section class="summary">
+      <section class="summary" id="sidebarSummary">
         <div class="section-title">
           <h2>景点汇总</h2>
           <button id="resetView" type="button">全图</button>
         </div>
         <div class="spot-list" id="spotList"></div>
+      </section>
+
+      <section class="sidebar-route-content" id="sidebarRouteContent" style="display:none;">
+        <div class="route-scroll-area">
+          <div class="sidebar-route-section">
+            <h3>自定义路线</h3>
+            <p class="route-hint">点击景点右侧 <strong>+</strong> 添加到路线规划</p>
+            <div id="routeSpotList" class="route-spot-list"></div>
+          </div>
+          <hr class="route-divider">
+          <div class="sidebar-route-section">
+            <h3>系统推荐路线</h3>
+            <p class="route-hint">为你精选经典路线，点击路线可直接生成，点赞支持你喜欢的路线</p>
+            <div id="recommendedRoutes" class="recommended-routes-list"></div>
+          </div>
+        </div>
+        <div class="route-bottom-fixed">
+          <div class="sidebar-route-results">
+            <h3>路线结果</h3>
+            <div id="routeResults" class="route-results"></div>
+          </div>
+          <div class="sidebar-route-plan">
+            <div class="section-title">
+              <h3>已选景点</h3>
+              <button id="clearRoutePlan" type="button">清空</button>
+            </div>
+            <div id="routeSelectedList" class="route-selected-list"></div>
+            <button id="generateRoutes" type="button" class="route-generate-btn" disabled>生成推荐路线</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="sidebar-chat-content" id="sidebarChatContent" style="display:none;">
+        <div class="chat-header-row">
+          <div>
+            <h3>聊天室</h3>
+            <p class="route-hint">实时交流，分享你的旅行体验</p>
+          </div>
+          <button type="button" class="chat-theme-toggle" id="chatThemeToggle" title="切换气泡主题">🎨</button>
+          <button type="button" class="chat-theme-toggle" id="chatBgToggle" title="切换聊天背景">🖼</button>
+        </div>
+        <div class="chat-theme-panel" id="chatThemePanel" style="display:none;">
+          <div class="chat-theme-grid" id="chatThemeGrid"></div>
+        </div>
+        <div class="chat-theme-panel" id="chatBgPanel" style="display:none;">
+          <div class="chat-theme-grid" id="chatBgGrid"></div>
+        </div>
+        <div class="chat-messages-wrap">
+          <div id="chatMessages" class="chat-messages"><div class="profile-loading">加载中...</div></div>
+          <div class="chat-char chat-char-kitty" data-char="kitty" style="display:none;">
+            <div class="ck-body"></div><div class="ck-bow"></div><div class="ck-eye-l"></div><div class="ck-eye-r"></div><div class="ck-nose"></div><div class="ck-whisker-l1"></div><div class="ck-whisker-l2"></div><div class="ck-whisker-r1"></div><div class="ck-whisker-r2"></div>
+          </div>
+          <div class="chat-char chat-char-minion" data-char="minion" style="display:none;">
+            <div class="cm-body"></div><div class="cm-band"></div><div class="cm-goggle"></div><div class="cm-eye"></div><div class="cm-mouth"></div>
+          </div>
+          <div class="chat-char chat-char-totoro" data-char="totoro" style="display:none;">
+            <div class="ct-body"></div><div class="ct-ear-l"></div><div class="ct-ear-r"></div><div class="ct-belly"></div><div class="ct-eye-l"></div><div class="ct-eye-r"></div><div class="ct-nose"></div>
+          </div>
+          <div class="chat-char chat-char-panda" data-char="panda" style="display:none;">
+            <div class="cp-body"></div><div class="cp-ear-l"></div><div class="cp-ear-r"></div><div class="cp-eye-l"></div><div class="cp-eye-r"></div><div class="cp-nose"></div>
+          </div>
+          <div class="chat-char chat-char-frog" data-char="frog" style="display:none;">
+            <div class="cf-body"></div><div class="cf-eye-l"></div><div class="cf-eye-r"></div><div class="cf-mouth"></div>
+          </div>
+          <div class="chat-char chat-char-bunny" data-char="bunny" style="display:none;">
+            <div class="cb-body"></div><div class="cb-ear-l"></div><div class="cb-ear-r"></div><div class="cb-eye-l"></div><div class="cb-eye-r"></div><div class="cb-nose"></div><div class="cb-cheek-l"></div><div class="cb-cheek-r"></div>
+          </div>
+        </div>
+        <div class="chat-image-preview" id="chatImagePreview" style="display:none;">
+          <img id="chatPreviewImg" src="" alt="预览">
+          <button type="button" class="chat-image-remove" id="chatImageRemove">×</button>
+        </div>
+        <div class="chat-input-area">
+          <label class="chat-img-btn" title="发送图片">
+            <input type="file" id="chatImageInput" accept="image/*" hidden>
+            📷
+          </label>
+          <button type="button" class="chat-img-btn" id="chatEmojiBtn" title="表情包">😊</button>
+          <input id="chatInput" type="text" placeholder="输入消息..." maxlength="500">
+          <button id="chatSendBtn" type="button">发送</button>
+        </div>
+        <div class="chat-emoji-panel" id="chatEmojiPanel" style="display:none;">
+          <div class="emoji-tabs" id="emojiTabs"></div>
+          <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
+      </section>
+
+      <section class="sidebar-admin-content" id="sidebarAdminContent" style="display:none;">
+        <h3>管理后台</h3>
+        <div class="admin-tabs">
+          <button type="button" class="admin-tab-btn active" data-panel="adminUsers">用户管理</button>
+          <button type="button" class="admin-tab-btn" data-panel="adminComments">评论管理</button>
+          <button type="button" class="admin-tab-btn" data-panel="adminImages">图片管理</button>
+          <button type="button" class="admin-tab-btn" data-panel="adminRatings">评分管理</button>
+          <button type="button" class="admin-tab-btn" data-panel="adminChat">聊天管理</button>
+        </div>
+        <div id="adminUsers" class="admin-panel">
+          <div id="adminUserList" class="admin-list"><div class="profile-loading">加载中...</div></div>
+        </div>
+        <div id="adminComments" class="admin-panel" style="display:none;">
+          <div id="adminCommentList" class="admin-list"><div class="profile-loading">加载中...</div></div>
+        </div>
+        <div id="adminImages" class="admin-panel" style="display:none;">
+          <div id="adminImageList" class="admin-list"><div class="profile-loading">加载中...</div></div>
+        </div>
+        <div id="adminRatings" class="admin-panel" style="display:none;">
+          <div id="adminRatingList" class="admin-list"><div class="profile-loading">加载中...</div></div>
+        </div>
+        <div id="adminChat" class="admin-panel" style="display:none;">
+          <div id="adminChatList" class="admin-list"><div class="profile-loading">加载中...</div></div>
+        </div>
       </section>
 
       <footer class="source-note">
@@ -76,7 +187,6 @@
           <span><i class="dot culture"></i>文化古建</span>
           <span><i class="dot tomb"></i>陵寝遗址</span>
           <span><i class="dot modern"></i>近代史迹</span>
-          <span><i class="line"></i>推荐路线</span>
         </div>
       </section>
 
@@ -96,15 +206,55 @@
           </aside>
         </div>
       </section>
+
+      <section class="profile-module module-view" id="profileModule" aria-label="个人中心模块">
+        <div class="info-header">
+          <div>
+            <p>个人中心</p>
+            <h2 id="profileTitle">我的收藏</h2>
+          </div>
+          <button id="backToMapFromProfile" type="button">返回地图</button>
+        </div>
+        <div class="profile-content">
+          <div class="profile-stats">
+            <div class="stat-card">
+              <strong id="favCount">0</strong>
+              <span>收藏景点</span>
+            </div>
+            <div class="stat-card">
+              <strong id="commentCount">0</strong>
+              <span>发表评论</span>
+            </div>
+            <div class="stat-card">
+              <strong id="imageCount">0</strong>
+              <span>上传图片</span>
+            </div>
+          </div>
+          <div class="favorites-section">
+            <h3>我的收藏</h3>
+            <div id="favoritesList" class="favorites-list"><div class="profile-loading">加载中...</div></div>
+          </div>
+          <div class="profile-section">
+            <h3>我的评论</h3>
+            <div id="myCommentsList" class="my-comments-list"><div class="profile-loading">加载中...</div></div>
+          </div>
+          <div class="profile-section">
+            <h3>我的图片</h3>
+            <div id="myImagesList" class="my-images-list"><div class="profile-loading">加载中...</div></div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
-  <div class="auth-modal" id="authModal" aria-hidden="true">
+
+<div class="auth-modal" id="authModal" aria-hidden="true">
     <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <button class="auth-close" id="authCloseBtn" type="button" aria-label="关闭">×</button>
       <div class="auth-switch">
         <button id="loginTab" class="active" type="button">登录</button>
         <button id="registerTab" type="button">注册</button>
+        <button id="adminTab" type="button">管理员</button>
       </div>
       <form id="loginForm" class="auth-form active">
         <h2 id="authTitle">用户登录</h2>
@@ -134,8 +284,50 @@
         </label>
         <button type="submit">注册并登录</button>
       </form>
+      <form id="adminLoginForm" class="auth-form">
+        <h2>管理员登录</h2>
+        <label>
+          <span>邮箱或用户名</span>
+          <input name="account" type="text" required>
+        </label>
+        <label>
+          <span>密码</span>
+          <input name="password" type="password" required>
+        </label>
+        <button type="submit">管理员登录</button>
+      </form>
+      <form id="adminRegisterForm" class="auth-form">
+        <h2>管理员注册</h2>
+        <label>
+          <span>管理员密钥</span>
+          <input name="secretKey" type="password" placeholder="请输入管理员密钥" required>
+          <small style="color:#888;font-size:12px;">密钥：888888</small>
+        </label>
+        <label>
+          <span>用户名</span>
+          <input name="username" type="text" minlength="2" required>
+        </label>
+        <label>
+          <span>邮箱</span>
+          <input name="email" type="email" required>
+        </label>
+        <label>
+          <span>密码</span>
+          <input name="password" type="password" minlength="6" required>
+        </label>
+        <button type="submit">注册管理员</button>
+      </form>
+      <div id="adminSwitch" class="auth-admin-switch" style="display:none;">
+        <a href="javascript:void(0)" id="goAdminLogin">管理员登录</a>
+        <a href="javascript:void(0)" id="goAdminRegister">注册管理员账号</a>
+      </div>
       <p class="auth-message" id="authMessage"></p>
     </div>
+  </div>
+
+  <div class="chat-image-modal" id="chatImageModal">
+    <button type="button" class="chat-image-modal-close" id="chatImageModalClose">×</button>
+    <img id="chatImageModalImg" src="" alt="放大图片">
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

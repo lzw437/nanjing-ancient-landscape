@@ -79,7 +79,7 @@ const spots = [
     dynasty: "六朝至明代",
     lat: 32.0618,
     lng: 118.7976,
-    image: "https://upload.wikimedia.org/wikipedia/commons/6/60/Nanjing_City_Wall_Taicheng_Section.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/9/90/Nanjing_in_Ming_Dynasty.jpg",
     intro: "台城一带与六朝宫城记忆相关，现存城墙段属于明城墙体系，可观察南京从六朝都城到明代都城的空间延续。",
     detail: [
       "台城是南京历史地名中非常重要的一处，常与六朝建康宫城记忆联系在一起。现今可见的台城段城墙主要属于明代南京城墙体系，但它所在的空间位置让人能够联想到南京从六朝古都到明代都城的历史叠加。",
@@ -187,7 +187,7 @@ const spots = [
     dynasty: "明代构想，现代建成",
     lat: 32.0907,
     lng: 118.7426,
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Yuejiang_Tower_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Nanjing_Yuejiang_Lou.jpg",
     intro: "阅江楼位于狮子山，朱元璋曾撰《阅江楼记》，现建筑虽为现代建成，但承载明代南京滨江意象。",
     detail: [
       "阅江楼位于南京下关狮子山上，面向长江。明太祖朱元璋曾有建楼构想并撰写《阅江楼记》，虽然历史上长期未真正建成，但这一地点一直承载着明代都城面江而立的空间想象。",
@@ -277,7 +277,7 @@ const spots = [
     dynasty: "明代遗址",
     lat: 32.0006,
     lng: 118.7755,
-    image: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Porcelain_Tower_of_Nanjing_in_1844.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/The_Stele_of_Bao%27en_Temple_2011-03.JPG/3840px-The_Stele_of_Bao%27en_Temple_2011-03.JPG",
     intro: "大报恩寺遗址公园展示明代皇家寺院遗址和琉璃塔记忆，是南京佛教建筑、考古遗址与现代展示结合的景点。",
     detail: [
       "大报恩寺位于南京城南，明代曾建有著名的琉璃塔，是南京历史上极具国际知名度的佛教建筑。原塔已毁，现址通过遗址保护、考古展示和现代建筑再现大报恩寺的历史记忆。",
@@ -331,7 +331,7 @@ const spots = [
     dynasty: "明代",
     lat: 32.0719,
     lng: 118.7863,
-    image: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Xuanwu_Gate_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Inside_the_Xuanwu_Gate%2C_Nanjing.jpg",
     intro: "玄武门位于玄武湖西侧，是南京城墙北部重要城门之一，连接老城与玄武湖景观。",
     detail: [
       "玄武门位于南京老城北部、玄武湖西侧，是明城墙体系中的重要城门节点。它把城内道路、城墙防御和玄武湖景观联系在一起，是理解南京北部城市边界的重要位置。",
@@ -367,7 +367,7 @@ const spots = [
     dynasty: "唐宋至明清",
     lat: 31.9177,
     lng: 118.7429,
-    image: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Niushoushan_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Niusgoushan_Cultural_Park%2C_Nanjing%2C_China_-_09.jpg/3840px-Niusgoushan_Cultural_Park%2C_Nanjing%2C_China_-_09.jpg",
     intro: "弘觉寺塔位于牛首山，是南京南郊佛教文化和山地景观的重要遗存，体现寺塔与山体环境的结合。",
     detail: [
       "牛首山位于南京南部，自古就是南京南郊重要山地景观。弘觉寺塔作为山中重要历史遗存，体现了佛教建筑在山地环境中的布局特点。",
@@ -421,7 +421,7 @@ const spots = [
     dynasty: "明清",
     lat: 31.3285,
     lng: 118.8751,
-    image: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Gaochun_Old_Street.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Zhengyi_Street_in_Gaochun_2012-04.JPG/3840px-Zhengyi_Street_in_Gaochun_2012-04.JPG",
     intro: "高淳老街保留明清以来水乡商业街区格局，是南京南部区县传统街市和民居风貌的代表。",
     detail: [
       "高淳老街位于南京高淳区，是南京全域历史文化资源中非常重要的区县型街区。街道格局、传统店铺、民居和水乡环境共同展示了明清以来江南市镇生活。",
@@ -457,7 +457,7 @@ const spots = [
     dynasty: "近代",
     lat: 32.0469,
     lng: 118.8035,
-    image: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Meiyuan_Xincun_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/69/No30_MeiyuanXincun_Nanjing_1.jpg",
     intro: "梅园新村纪念馆位于长江路附近，是南京近现代政治史和革命史展示的重要场所。",
     detail: [
       "梅园新村位于南京长江路片区，周边近代史迹密集，与总统府等点位共同构成南京近代政治文化空间。这里以纪念馆形式展示近现代历史事件和人物活动。",
@@ -493,7 +493,7 @@ const spots = [
     dynasty: "明代",
     lat: 31.6545,
     lng: 119.0162,
-    image: "https://upload.wikimedia.org/wikipedia/commons/1/12/Nanjing_Tianshengqiao.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/0/03/%E5%A4%A9%E7%94%9F%E6%A1%A5_-_panoramio.jpg",
     intro: "天生桥与胭脂河位于溧水，是明代水运工程相关景观，体现南京全域水系交通和人工开凿工程。",
     detail: [
       "天生桥与胭脂河位于南京溧水区，是南京南部重要的历史水利和交通景观。胭脂河开凿与明代水运工程相关，天生桥则形成独特的地貌和工程景观。",
@@ -529,7 +529,7 @@ const spots = [
     dynasty: "六朝至明代",
     lat: 32.0502,
     lng: 118.7495,
-    image: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Stone_City_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/0/0d/The_Sui_Dynasty_Dynasty_map_of_Nanjing%2Cby_Chen_Yi.jpg",
     intro: "石头城是六朝建康城的重要防御工事，现存城墙段与明代城墙相连，体现南京城防历史的延续。",
     detail: [
       "石头城位于南京老城西部，是六朝时期建康城的重要防御工事。它依山而建，地势险要，在六朝都城防御体系中占据重要地位。",
@@ -547,7 +547,7 @@ const spots = [
     dynasty: "明清",
     lat: 32.0182,
     lng: 118.7958,
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Baijia_Lake_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6b/%E5%8D%97%E4%BA%AC%E7%99%BD%E9%B9%AD%E6%B4%B2%E5%85%AC%E5%9B%AD_-_panoramio.jpg",
     intro: "白鹭洲公园位于夫子庙附近，是明清时期江南园林的代表，体现水乡园林与城市街区的融合。",
     detail: [
       "白鹭洲公园位于南京城南，紧邻夫子庙和秦淮河。这里原是明代中山王徐达的私家花园，后逐渐演变为公共园林。",
@@ -565,7 +565,7 @@ const spots = [
     dynasty: "六朝至明清",
     lat: 32.0523,
     lng: 118.7462,
-    image: "https://upload.wikimedia.org/wikipedia/commons/5/57/Qingliangshan_Park_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/f/f0/%E6%B8%85%E5%87%89%E5%B1%B1.jpg",
     intro: "清凉山是南京西部重要山体，历史上建有清凉寺等建筑，是南京城市山水格局的重要组成部分。",
     detail: [
       "清凉山位于南京老城西部，是南京城市山水格局中的重要山体。六朝时期，这里就是建康城的重要地理标志。",
@@ -583,7 +583,7 @@ const spots = [
     dynasty: "明清",
     lat: 32.0538,
     lng: 118.7485,
-    image: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Wulongtan_Park_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/a1/%E4%B9%8C%E9%BE%99%E6%BD%AD%E5%85%AC%E5%9B%AD_%E4%B9%8C%E9%BE%99%E6%A1%A5.jpg",
     intro: "乌龙潭公园是南京西部古典园林，以潭水、亭榭和文人文化著称，体现江南园林的雅致风格。",
     detail: [
       "乌龙潭公园位于南京老城西部，是南京保存较好的古典园林之一。潭水清澈，环湖布置亭榭、曲桥，环境幽雅。",
@@ -601,7 +601,7 @@ const spots = [
     dynasty: "明清",
     lat: 32.0368,
     lng: 118.7889,
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Jingjue_Temple_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/%E5%87%80%E8%A7%89%E5%AF%BA_%E4%BA%8C%E6%AE%BF.jpg/3840px-%E5%87%80%E8%A7%89%E5%AF%BA_%E4%BA%8C%E6%AE%BF.jpg",
     intro: "净觉寺是南京重要清真寺，体现南京多元宗教文化和城市包容性。",
     detail: [
       "净觉寺位于南京老城南部，是南京最重要的清真寺之一。寺院建筑融合了中国传统建筑风格和伊斯兰文化特色。",
@@ -619,7 +619,7 @@ const spots = [
     dynasty: "南唐至明清",
     lat: 32.0654,
     lng: 118.5889,
-    image: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Huiji_Temple_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/81/%E6%83%A0%E6%B5%8E%E5%AF%BA%E9%93%B6%E6%9D%8F.jpeg",
     intro: "惠济寺位于浦口，是南京北部重要佛教寺院，以古银杏树和南唐遗存著称。",
     detail: [
       "惠济寺位于南京浦口区，是南京北部重要的佛教寺院。寺院历史可追溯至南唐时期，现存建筑多为明清风格。",
@@ -637,7 +637,7 @@ const spots = [
     dynasty: "明代",
     lat: 32.0856,
     lng: 118.7345,
-    image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Longjiang_Shipyard_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/a7/%E5%8D%97%E4%BA%AC%E9%83%91%E5%92%8C%E5%8D%97%E8%B7%AF%E5%AE%9D%E8%88%B9%E5%8E%82%E9%81%97%E5%9D%80%E5%85%AC%E5%9B%AD_-_panoramio.jpg",
     intro: "龙江宝船厂遗址是明代郑和下西洋船队建造地，体现南京在明代海上丝绸之路中的重要地位。",
     detail: [
       "龙江宝船厂遗址位于南京下关区，是明代郑和下西洋船队的重要建造地。这里见证了南京在明代海上丝绸之路中的重要地位。",
@@ -673,7 +673,7 @@ const spots = [
     dynasty: "明代",
     lat: 32.0789,
     lng: 118.7234,
-    image: "https://upload.wikimedia.org/wikipedia/commons/c/c4/Qiwengweng_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/2/22/%E4%B8%83%E6%A1%A5%E7%93%AE%E5%85%AC%E5%9B%AD_-_panoramio.jpg",
     intro: "七瓮瓮是明代水利工程遗存，体现南京古代水利技术和城市供水系统。",
     detail: [
       "七瓮瓮位于南京下关区，是明代水利工程的重要遗存。这里曾是城市供水系统的重要组成部分，体现了古代水利技术的智慧。",
@@ -709,7 +709,7 @@ const spots = [
     dynasty: "清代",
     lat: 32.0389,
     lng: 118.8123,
-    image: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Jiangning_Imperial_Silk_Manufacturing_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/da/Model_of_Jiangning_Weaving_Government_02_2013-05.JPG",
     intro: "江宁织造府是清代皇家织造机构所在地，与《红楼梦》文化密切相关，体现南京手工业文化。",
     detail: [
       "江宁织造府位于南京老城东部，是清代皇家织造机构的所在地。这里专门为皇室生产丝绸织物，是南京手工业文化的重要代表。",
@@ -799,7 +799,7 @@ const spots = [
     dynasty: "明清",
     lat: 32.0167,
     lng: 118.7864,
-    image: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Laomendong_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/b/b5/%E8%80%81%E9%97%A8%E4%B8%9C20200125_02.jpg",
     intro: "老门东是南京夫子庙南侧的历史街区，保留了大量明清时期的传统街巷和建筑格局，是南京老城生活的缩影。",
     detail: [
       "老门东位于中华门以东，历史上是南京城南繁华的商业和居住区。街区内保留了明清时期的街巷肌理，青砖黛瓦、石板路面展现了江南传统民居风貌。",
@@ -817,7 +817,7 @@ const spots = [
     dynasty: "明清",
     lat: 32.1462,
     lng: 118.8108,
-    image: "https://upload.wikimedia.org/wikipedia/commons/9/99/Yanzi_ji_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/69/%E7%87%95%E5%AD%90%E7%9F%B6_-_panoramio.jpg",
     intro: "燕子矶是长江三大名矶之一，位于南京城北郊的江边，自古以来即为名胜之地，以峭壁临江、形似燕子得名。",
     detail: [
       "燕子矶是长江沿岸著名的地质景观和历史名胜，矶石陡峭入江，形似展翅欲飞的燕子。历代文人墨客多来此游览题咏，乾隆皇帝曾多次登临并御笔题字。",
@@ -871,7 +871,7 @@ const spots = [
     dynasty: "宋代",
     lat: 31.8892,
     lng: 118.8615,
-    image: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Fangshan_Dinglin_Pagoda_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/7f/%E6%96%B9%E5%B1%B1%E5%AE%9A%E6%9E%97%E5%AF%BA%E5%A1%94.jpeg",
     intro: "方山定林寺塔位于南京江宁方山，是南宋时期的楼阁式砖塔，以倾斜闻名，被誉为'中国的比萨斜塔'。",
     detail: [
       "方山定林寺塔建于南宋时期，是一座七级八面的楼阁式砖塔。由于地基沉降，塔身向东北方向倾斜，斜度超过比萨斜塔，是中国著名的斜塔之一。",
@@ -907,7 +907,7 @@ const spots = [
     dynasty: "明代",
     lat: 31.9177,
     lng: 118.7182,
-    image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Zheng_He_Tomb_Nanjing.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/dc/Zheng_He%27s_tomb%2C_Nanjing.jpg",
     intro: "郑和墓位于南京牛首山南麓，是明代伟大航海家郑和的归葬之地，是南京海上丝绸之路文化的重要见证。",
     detail: [
       "郑和墓位于牛首山南麓周昉村，墓冢呈回字形，按照伊斯兰风格修建，反映了郑和的特殊身份背景。郑和七下西洋的伟大航海壮举使这里成为重要的历史文化纪念地。",
@@ -970,13 +970,16 @@ const wikiImageTitles = {
   "七瓮瓮": "七瓮瓮",
   "仙林寺": "仙林寺",
   "江宁织造府": "江宁织造府",
-  "玄武湖公园": "玄武湖"
+  "玄武湖公园": "玄武湖",
+  "永寿寺塔": "溧水永寿寺塔",
+  "仙林寺": "栖霞寺"
 };
 
 let currentType = "全部";
 let searchText = "";
 let selectedId = spots[0].id;
 let activeModule = "map";
+let userFavorites = [];
 
 const spotInteractions = JSON.parse(localStorage.getItem("spotInteractions") || "{}");
 
@@ -987,20 +990,48 @@ const map = L.map("map", {
 
 L.control.zoom({ position: "bottomright" }).addTo(map);
 
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+const baseLayers = {
+  "标准": L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }),
+  "卫星": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 18,
+    attribution: '&copy; Esri'
+  }),
+  "地形": L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+    maxZoom: 17,
+    attribution: '&copy; OpenTopoMap'
+  })
+};
 
-const routeLine = L.polyline(
-  spots.map((spot) => [spot.lat, spot.lng]),
-  {
-    color: "#a33b2f",
-    weight: 3,
-    opacity: 0.72,
-    dashArray: "8 10"
+let currentLayerName = "标准";
+baseLayers["标准"].addTo(map);
+
+const LayerSwitcher = L.Control.extend({
+  options: { position: "topleft" },
+  onAdd: function () {
+    const container = L.DomUtil.create("div", "layer-switcher");
+    const names = ["标准", "卫星", "地形"];
+    names.forEach(name => {
+      const btn = L.DomUtil.create("button", "", container);
+      btn.textContent = name;
+      btn.dataset.layer = name;
+      if (name === currentLayerName) btn.classList.add("active");
+      L.DomEvent.disableClickPropagation(btn);
+      btn.addEventListener("click", () => {
+        if (name === currentLayerName) return;
+        map.removeLayer(baseLayers[currentLayerName]);
+        baseLayers[name].addTo(map);
+        currentLayerName = name;
+        container.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+    return container;
   }
-).addTo(map);
+});
+new LayerSwitcher().addTo(map);
 
 const markerLayer = L.layerGroup().addTo(map);
 const markerById = new Map();
@@ -1011,16 +1042,40 @@ const spotList = document.querySelector("#spotList");
 const detailPanel = document.querySelector("#detailPanel");
 const spotCount = document.querySelector("#spotCount");
 const dynastyCount = document.querySelector("#dynastyCount");
-const routeCount = document.querySelector("#routeCount");
 const resetView = document.querySelector("#resetView");
 const mapModule = document.querySelector("#mapModule");
 const infoModule = document.querySelector("#infoModule");
 const mapModuleBtn = document.querySelector("#mapModuleBtn");
 const infoModuleBtn = document.querySelector("#infoModuleBtn");
+const profileModuleBtn = document.querySelector("#profileModuleBtn");
+const routeModuleBtn = document.querySelector("#routeModuleBtn");
+const chatModuleBtn = document.querySelector("#chatModuleBtn");
+const sidebarRouteContent = document.querySelector("#sidebarRouteContent");
+const sidebarChatContent = document.querySelector("#sidebarChatContent");
+const chatMessages = document.querySelector("#chatMessages");
+const chatInput = document.querySelector("#chatInput");
+const chatSendBtn = document.querySelector("#chatSendBtn");
+const chatImageInput = document.querySelector("#chatImageInput");
+const chatImagePreview = document.querySelector("#chatImagePreview");
+const chatPreviewImg = document.querySelector("#chatPreviewImg");
+const chatImageRemove = document.querySelector("#chatImageRemove");
+const sidebarSummary = document.querySelector("#sidebarSummary");
+let chatPendingImage = null;
+const sidebarControls = document.querySelector(".controls");
+const sidebarStats = document.querySelector(".stats");
+const routeSpotList = document.querySelector("#routeSpotList");
 const backToMap = document.querySelector("#backToMap");
+const backToMapFromProfile = document.querySelector("#backToMapFromProfile");
 const infoTitle = document.querySelector("#infoTitle");
 const infoArticle = document.querySelector("#infoArticle");
 const infoIndexList = document.querySelector("#infoIndexList");
+const profileModule = document.querySelector("#profileModule");
+const favoritesList = document.querySelector("#favoritesList");
+const myCommentsList = document.querySelector("#myCommentsList");
+const myImagesList = document.querySelector("#myImagesList");
+const favCount = document.querySelector("#favCount");
+const commentCount = document.querySelector("#commentCount");
+const imageCount = document.querySelector("#imageCount");
 const authStatus = document.querySelector("#authStatus");
 const authUser = document.querySelector("#authUser");
 const authOpenBtn = document.querySelector("#authOpenBtn");
@@ -1030,8 +1085,164 @@ const loginTab = document.querySelector("#loginTab");
 const registerTab = document.querySelector("#registerTab");
 const loginForm = document.querySelector("#loginForm");
 const registerForm = document.querySelector("#registerForm");
+const adminTab = document.querySelector("#adminTab");
+const adminLoginForm = document.querySelector("#adminLoginForm");
+const adminRegisterForm = document.querySelector("#adminRegisterForm");
+const adminSwitch = document.querySelector("#adminSwitch");
+const goAdminLogin = document.querySelector("#goAdminLogin");
+const goAdminRegister = document.querySelector("#goAdminRegister");
+const adminModuleBtn = document.querySelector("#adminModuleBtn");
+const sidebarAdminContent = document.querySelector("#sidebarAdminContent");
 const authMessage = document.querySelector("#authMessage");
 const apiBase = location.protocol === "file:" ? "http://localhost:3000/api" : "/api";
+
+function apiUrl(path) {
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${apiBase}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+function getAuthToken() {
+  return localStorage.getItem("landscapeToken") || localStorage.getItem("landscapeAdminToken") || "";
+}
+
+function getCurrentUser() {
+  const user = JSON.parse(localStorage.getItem("landscapeUser") || "null");
+  const admin = JSON.parse(localStorage.getItem("landscapeAdmin") || "null");
+  return user || admin;
+}
+
+function isLoggedIn() {
+  return !!(localStorage.getItem("landscapeToken") || localStorage.getItem("landscapeAdminToken"));
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(apiUrl(path), options);
+  const contentType = response.headers.get("content-type") || "";
+  const isJson = contentType.includes("application/json");
+  const data = isJson ? await response.json().catch(() => ({})) : null;
+
+  if (!isJson) {
+    const text = await response.text().catch(() => "");
+    const isHtml = text.trim().startsWith("<!DOCTYPE") || text.trim().startsWith("<html");
+    throw new Error(isHtml
+      ? "接口返回了网页，请确认已运行 node server.js，并从 http://localhost:3000 打开页面。"
+      : "接口没有返回 JSON 数据。");
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || "请求失败，请稍后重试。");
+  }
+
+  return data;
+}
+
+const detailProfiles = {
+  "ming-xiaoling": {
+    address: "南京市玄武区钟山风景名胜区内，明孝陵景区",
+    hours: "通常为白天开放，建议出行前以钟山风景区公告为准",
+    ticket: "多为钟山风景区联票或景点票制，学生/老人政策以现场公告为准",
+    transit: "可乘地铁 2 号线到苜蓿园站，再步行或换乘景区交通"
+  },
+  fuzimiao: {
+    address: "南京市秦淮区夫子庙秦淮风光带",
+    hours: "街区全天可达，文庙、贡院、游船等项目以各自开放时间为准",
+    ticket: "街区免费，内部展馆和游船等项目可能单独收费",
+    transit: "可乘地铁 3 号线到夫子庙站，步行进入核心街区"
+  },
+  "zhonghua-gate": {
+    address: "南京市秦淮区中华门城堡",
+    hours: "通常为日间开放，夜游和节假日安排以景区公告为准",
+    ticket: "城堡参观通常需购票，优惠政策以现场公告为准",
+    transit: "可乘地铁 1 号线到中华门站，步行或骑行前往"
+  },
+  jimingsi: {
+    address: "南京市玄武区鸡鸣寺路，近玄武湖与台城",
+    hours: "通常为日间开放，法会和节假日可能调整",
+    ticket: "寺院参观通常需购买香花券或门票",
+    transit: "可乘地铁 3/4 号线到鸡鸣寺站，步行可达"
+  },
+  "presidential-palace": {
+    address: "南京市玄武区长江路 292 号",
+    hours: "通常为日间开放，周一及特殊日期可能闭馆",
+    ticket: "通常需购票参观，优惠政策以馆方公告为准",
+    transit: "可乘地铁 2/3 号线到大行宫站，步行可达"
+  },
+  "sun-yat-sen-mausoleum": {
+    address: "南京市玄武区钟山风景名胜区中山陵景区",
+    hours: "通常为日间开放，陵寝区域可能实行预约或限流",
+    ticket: "主体陵寝多为预约参观，景区其他项目以公告为准",
+    transit: "可乘地铁 2 号线到下马坊或苜蓿园站，再换乘景区交通"
+  },
+  "nanjing-museum": {
+    address: "南京市玄武区中山东路 321 号",
+    hours: "通常为日间开放，周一及特殊日期可能闭馆",
+    ticket: "常设展多为预约免费参观，特展可能另行说明",
+    transit: "可乘地铁 2 号线到明故宫站，步行可达"
+  },
+  laomendong: {
+    address: "南京市秦淮区老门东历史文化街区",
+    hours: "街区全天可达，店铺和展馆按各自营业时间开放",
+    ticket: "街区免费，店铺消费和部分展馆另计",
+    transit: "可乘地铁 3 号线到武定门站，步行进入街区"
+  }
+};
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getDetailProfile(spot) {
+  const fallbackByType = {
+    "寺": { hours: "通常为日间开放，宗教活动或节假日可能调整", ticket: "可能收取门票或香花券，以现场公告为准" },
+    "园": { hours: "通常为白天开放，夜间活动以公告为准", ticket: "公园或园林可能免费或单独售票，以现场公告为准" },
+    "城": { hours: "通常为日间开放，城墙夜游以公告为准", ticket: "遗址或城墙段可能需购票，以现场公告为准" },
+    "馆": { hours: "通常为日间开放，周一和特殊日期可能闭馆", ticket: "多实行预约或购票参观，以馆方公告为准" }
+  };
+  const matchedType = Object.keys(fallbackByType).find((key) => spot.type.includes(key));
+  const fallback = fallbackByType[matchedType] || {
+    hours: "通常为白天开放，建议出行前查询景区当天公告",
+    ticket: "可能免费或收费，具体以景区现场和官方公告为准"
+  };
+
+  return {
+    address: `南京市，${spot.name} 周边（坐标 ${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)}）`,
+    hours: fallback.hours,
+    ticket: fallback.ticket,
+    transit: `建议优先使用地铁、公交或骑行到达；可在地图中定位 ${spot.name} 后规划路线。`,
+    ...(detailProfiles[spot.id] || {})
+  };
+}
+
+function renderCommentItems(spotId) {
+  const comments = getSpotComments(spotId);
+  const user = getCurrentUser();
+  if (!comments.length) {
+    return `
+      <div class="comments-empty">
+        <p>暂无评论，快来发表第一条评论吧。</p>
+      </div>
+    `;
+  }
+
+  return comments.map((comment) => {
+    const canDelete = user && (user.id || user.username) === comment.userId;
+    return `
+      <div class="comment-item">
+        <div class="comment-header">
+          <strong>${escapeHtml(comment.username)}</strong>
+          <span>${escapeHtml(comment.createdAt)}</span>
+          ${canDelete ? `<button type="button" class="comment-delete" data-comment="${escapeHtml(comment.id)}" data-spot="${escapeHtml(spotId)}">删除</button>` : ""}
+        </div>
+        <p>${escapeHtml(comment.content)}</p>
+      </div>
+    `;
+  }).join("");
+}
 
 function localPlaceholderUrl() {
   return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
@@ -1097,17 +1308,50 @@ function popupHtml(spot) {
 function switchModule(moduleName) {
   activeModule = moduleName;
   const showInfo = moduleName === "info";
-  mapModule.classList.toggle("active", !showInfo);
+  const showProfile = moduleName === "profile";
+  const showRoute = moduleName === "route";
+  const showChat = moduleName === "chat";
+  const showAdmin = moduleName === "admin";
+  const showMap = !showInfo && !showProfile;
+  mapModule.classList.toggle("active", showMap);
   infoModule.classList.toggle("active", showInfo);
-  mapModuleBtn.classList.toggle("active", !showInfo);
+  profileModule.classList.toggle("active", showProfile);
+  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin);
   infoModuleBtn.classList.toggle("active", showInfo);
+  profileModuleBtn.classList.toggle("active", showProfile);
+  routeModuleBtn.classList.toggle("active", showRoute);
+  chatModuleBtn.classList.toggle("active", showChat);
+  if (adminModuleBtn) adminModuleBtn.classList.toggle("active", showAdmin);
 
-  if (!showInfo) {
+  if (sidebarRouteContent) sidebarRouteContent.style.display = showRoute ? "" : "none";
+  if (sidebarChatContent) sidebarChatContent.style.display = showChat ? "" : "none";
+  if (sidebarAdminContent) sidebarAdminContent.style.display = showAdmin ? "" : "none";
+  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin) ? "none" : "";
+  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin) ? "none" : "";
+  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin) ? "none" : "";
+
+  if (showMap) {
     setTimeout(() => {
       map.invalidateSize();
       const spot = spots.find((item) => item.id === selectedId);
       if (spot) map.setView([spot.lat, spot.lng], Math.max(map.getZoom(), 12));
     }, 50);
+  } else if (showProfile) {
+    if (!profileLoaded) loadUserProfile();
+  }
+
+  if (showRoute) {
+    renderRouteSpotList();
+    renderRouteSelectedList();
+    loadRecommendedRoutes();
+  }
+
+  if (showChat) {
+    if (!chatMessagesLoaded) loadChatMessages();
+  }
+
+  if (showAdmin) {
+    if (!adminDataLoaded) loadAdminData();
   }
 }
 
@@ -1163,9 +1407,6 @@ function renderMarkers(filteredSpots) {
     markerLayer.addLayer(marker);
     markerById.set(spot.id, marker);
   });
-
-  const routePoints = filteredSpots.map((spot) => [spot.lat, spot.lng]);
-  routeLine.setLatLngs(routePoints);
 }
 
 function renderDetailPanel(spot) {
@@ -1178,7 +1419,10 @@ function renderDetailPanel(spot) {
   detailPanel.classList.remove("empty");
   const liked = isLiked(spot.id);
   const likesCount = getSpotLikes(spot.id).length;
-  
+  const favorited = isFavorited(spot.id);
+  const profile = getDetailProfile(spot);
+  const historyParagraphs = (spot.detail || []).slice(0, 3);
+
   detailPanel.innerHTML = `
     <img class="detail-image" src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
     <div class="detail-body">
@@ -1187,15 +1431,35 @@ function renderDetailPanel(spot) {
         <span class="tag">${spot.dynasty}</span>
       </div>
       <h2>${spot.name}</h2>
-      <p>${spot.intro}</p>
+      <p class="detail-lead">${spot.intro}</p>
       <div class="panel-actions">
         <button type="button" class="like-btn ${liked ? "liked" : ""}" data-spot="${spot.id}">
           <span class="like-icon">${liked ? "♥" : "♡"}</span>
           <span class="like-count">${likesCount}</span>
         </button>
+        <button type="button" class="favorite-btn ${favorited ? "favorited" : ""}" data-spot="${spot.id}" data-spot-name="${spot.name}">
+          <span class="favorite-icon">${favorited ? "★" : "☆"}</span>
+          <span>${favorited ? "已收藏" : "收藏"}</span>
+        </button>
         <button type="button" data-open-info="${spot.id}">进入详细资料库</button>
       </div>
-      <div class="detail-meta">
+      <div class="detail-meta expanded-detail-meta">
+        <div>
+          <span>地址</span>
+          <strong>${profile.address}</strong>
+        </div>
+        <div>
+          <span>开放时间</span>
+          <strong>${profile.hours}</strong>
+        </div>
+        <div>
+          <span>门票</span>
+          <strong>${profile.ticket}</strong>
+        </div>
+        <div>
+          <span>交通</span>
+          <strong>${profile.transit}</strong>
+        </div>
         <div>
           <span>坐标</span>
           <strong>${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)}</strong>
@@ -1213,18 +1477,58 @@ function renderDetailPanel(spot) {
           <strong>点位 + 线状路线</strong>
         </div>
       </div>
+
+      <section class="detail-section">
+        <h3>用户评分</h3>
+        <div class="rating-section" data-spot="${spot.id}">
+          <div class="rating-display">
+            <span class="rating-average">--</span>
+            <span class="rating-total">0 条评分</span>
+          </div>
+          <div class="star-rating" data-spot="${spot.id}">
+            ${[1,2,3,4,5].map(v => `<span class="star" data-value="${v}">★</span>`).join("")}
+          </div>
+          <button type="button" class="rating-clear-btn" data-spot="${spot.id}" style="display:none">取消评分</button>
+        </div>
+      </section>
+
+      <section class="detail-section">
+        <h3>历史背景</h3>
+        ${historyParagraphs.map((paragraph) => `<p>${paragraph}</p>`).join("")}
+      </section>
+
+      <section class="detail-section">
+        <h3>图片</h3>
+        <div class="detail-gallery">
+          <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+        </div>
+      </section>
+
+      <section class="detail-section detail-comments">
+        <div class="detail-section-heading">
+          <h3>用户评论</h3>
+          <span>${getSpotComments(spot.id).length} 条评论</span>
+        </div>
+        <div class="comment-input compact-comment-input">
+          <textarea placeholder="写下你对这个景点的看法..." rows="3" data-spot="${spot.id}"></textarea>
+          <button type="button" class="submit-comment" data-spot="${spot.id}">发表评论</button>
+        </div>
+        <div class="comments-list panel-comments-list">
+          ${renderCommentItems(spot.id)}
+        </div>
+      </section>
     </div>
   `;
 }
-
 function renderInfoArticle(spot) {
   if (!spot) return;
   infoTitle.textContent = spot.name;
   const liked = isLiked(spot.id);
   const likesCount = getSpotLikes(spot.id).length;
+  const favorited = isFavorited(spot.id);
   const comments = getSpotComments(spot.id);
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
-  
+  const user = getCurrentUser();
+
   infoArticle.innerHTML = `
     <img class="info-hero" src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
     <div class="info-body">
@@ -1254,22 +1558,39 @@ function renderInfoArticle(spot) {
           <strong>${spot.highlight}</strong>
         </div>
       </div>
-      
+
+      <div class="user-gallery-section" id="gallery-${spot.id}">
+        <h4>用户分享图片</h4>
+        <div class="gallery-grid" id="gallery-grid-${spot.id}">
+          <p class="loading-gallery">加载中...</p>
+        </div>
+      </div>
+
       <div class="interaction-section">
         <div class="interaction-header">
           <button type="button" class="like-btn ${liked ? "liked" : ""}" data-spot="${spot.id}">
             <span class="like-icon">${liked ? "♥" : "♡"}</span>
             <span class="like-count">${likesCount}</span>
           </button>
+          <button type="button" class="favorite-btn ${favorited ? "favorited" : ""}" data-spot="${spot.id}" data-spot-name="${spot.name}">
+            <span class="favorite-icon">${favorited ? "★" : "☆"}</span>
+            <span>${favorited ? "已收藏" : "收藏"}</span>
+          </button>
           <span class="comment-count">${comments.length} 条评论</span>
         </div>
-        
+
         <div class="comment-section">
           <div class="comment-input">
             <textarea placeholder="写下你的评论..." rows="3" data-spot="${spot.id}"></textarea>
-            <button type="button" class="submit-comment" data-spot="${spot.id}">发表评论</button>
+            <div class="comment-actions">
+              <label class="submit-comment" for="image-upload-${spot.id}">
+                📷 上传图片
+                <input type="file" id="image-upload-${spot.id}" class="image-upload-input" accept="image/*" data-spot="${spot.id}">
+              </label>
+              <button type="button" class="submit-comment" data-spot="${spot.id}">发表评论</button>
+            </div>
           </div>
-          
+
           <div class="comments-list" id="comments-${spot.id}">
             ${comments.length === 0 ? `
               <div class="comments-empty">
@@ -1291,6 +1612,20 @@ function renderInfoArticle(spot) {
           </div>
         </div>
       </div>
+
+      <section class="detail-section">
+        <h3>用户评分</h3>
+        <div class="rating-section" data-spot="${spot.id}">
+          <div class="rating-display">
+            <span class="rating-average">--</span>
+            <span class="rating-total">0 条评分</span>
+          </div>
+          <div class="star-rating" data-spot="${spot.id}">
+            ${[1,2,3,4,5].map(v => `<span class="star" data-value="${v}">★</span>`).join("")}
+          </div>
+          <button type="button" class="rating-clear-btn" data-spot="${spot.id}" style="display:none">取消评分</button>
+        </div>
+      </section>
     </div>
   `;
 }
@@ -1308,7 +1643,6 @@ function renderInfoIndex(filteredSpots) {
 function updateStats(filteredSpots) {
   spotCount.textContent = filteredSpots.length;
   dynastyCount.textContent = new Set(filteredSpots.map((spot) => spot.dynasty)).size;
-  routeCount.textContent = new Set(filteredSpots.map((spot) => spot.route)).size;
 }
 
 function fitToSpots(filteredSpots) {
@@ -1324,10 +1658,17 @@ function setAuthMessage(message, type = "") {
 
 function setAuthMode(mode) {
   const isLogin = mode === "login";
+  const isRegister = mode === "register";
+  const isAdmin = mode === "admin";
+  const isAdminRegister = mode === "adminRegister";
   loginTab.classList.toggle("active", isLogin);
-  registerTab.classList.toggle("active", !isLogin);
+  registerTab.classList.toggle("active", isRegister);
+  adminTab.classList.toggle("active", isAdmin || isAdminRegister);
   loginForm.classList.toggle("active", isLogin);
-  registerForm.classList.toggle("active", !isLogin);
+  registerForm.classList.toggle("active", isRegister);
+  adminLoginForm.classList.toggle("active", isAdmin);
+  adminRegisterForm.classList.toggle("active", isAdminRegister);
+  if (adminSwitch) adminSwitch.style.display = (isAdmin || isAdminRegister) ? "" : "none";
   setAuthMessage("");
 }
 
@@ -1343,7 +1684,12 @@ function closeAuthModal() {
 }
 
 function updateAuthView(user) {
-  if (user) {
+  const admin = JSON.parse(localStorage.getItem("landscapeAdmin") || "null");
+  if (admin) {
+    authStatus.textContent = "管理员";
+    authUser.textContent = admin.username || admin.email;
+    authOpenBtn.textContent = "切换账号";
+  } else if (user) {
     authStatus.textContent = "已登录";
     authUser.textContent = user.username || user.email;
     authOpenBtn.textContent = "切换账号";
@@ -1355,12 +1701,33 @@ function updateAuthView(user) {
 }
 
 function saveAuth(data) {
+  localStorage.removeItem("landscapeAdmin");
+  localStorage.removeItem("landscapeAdminToken");
   localStorage.setItem("landscapeUser", JSON.stringify(data.user));
   localStorage.setItem("landscapeToken", data.token);
+  if (adminModuleBtn) adminModuleBtn.style.display = "none";
   updateAuthView(data.user);
+  loadFavorites();
+}
+
+function saveAdminAuth(data) {
+  localStorage.removeItem("landscapeUser");
+  localStorage.removeItem("landscapeToken");
+  localStorage.setItem("landscapeAdmin", JSON.stringify(data.admin));
+  localStorage.setItem("landscapeAdminToken", data.token);
+  profileLoaded = false;
+  updateAuthView(null);
+  loadUserProfile();
+  if (adminModuleBtn) adminModuleBtn.style.display = "";
 }
 
 async function submitAuth(path, body) {
+  return apiRequest(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
   const response = await fetch(`${apiBase}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1385,6 +1752,10 @@ function render() {
   renderMarkers(filteredSpots);
   renderDetailPanel(selectedSpot);
   renderInfoArticle(selectedSpot);
+  if (selectedSpot) {
+    loadUserImages(selectedSpot.id);
+    loadRating(selectedSpot.id);
+  }
   renderInfoIndex(filteredSpots);
   updateStats(filteredSpots);
 }
@@ -1444,6 +1815,94 @@ detailPanel.addEventListener("click", (event) => {
   selectSpot(button.dataset.openInfo, { module: "info" });
 });
 
+// 景点评分功能
+async function loadRating(spotId) {
+  const section = document.querySelector(`.rating-section[data-spot="${spotId}"]`);
+  if (!section) return;
+  try {
+    const token = getAuthToken();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(`/api/ratings/${spotId}`, { headers });
+    const data = await res.json();
+    section.querySelector(".rating-average").textContent = data.average > 0 ? data.average : "--";
+    section.querySelector(".rating-total").textContent = `${data.total} 条评分`;
+    const myRating = data.myRating || 0;
+    updateStarDisplay(spotId, myRating);
+    const clearBtn = section.querySelector(".rating-clear-btn");
+    if (clearBtn) clearBtn.style.display = myRating > 0 ? "inline-block" : "none";
+  } catch (e) {
+    console.error("加载评分失败:", e);
+  }
+}
+
+function updateStarDisplay(spotId, rating) {
+  const container = document.querySelector(`.star-rating[data-spot="${spotId}"]`);
+  if (!container) return;
+  container.querySelectorAll(".star").forEach(star => {
+    const val = parseFloat(star.dataset.value);
+    star.classList.remove("active", "half-active");
+    if (val <= Math.floor(rating)) {
+      star.classList.add("active");
+    } else if (val === Math.ceil(rating) && rating % 1 !== 0) {
+      star.classList.add("half-active");
+    }
+  });
+}
+
+document.addEventListener("click", async (event) => {
+  const star = event.target.closest(".star-rating .star");
+  if (!star) return;
+  const container = star.closest(".star-rating");
+  const spotId = container.dataset.spot;
+  const rect = star.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const value = x < rect.width / 2 ? parseFloat(star.dataset.value) - 0.5 : parseFloat(star.dataset.value);
+  if (value < 0.5 || value > 5) return;
+  if (!isLoggedIn()) { openAuthModal("login"); return; }
+  try {
+    const token = getAuthToken();
+    const res = await fetch("/api/ratings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ spotId, rating: value })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      updateStarDisplay(spotId, value);
+      const section = document.querySelector(`.rating-section[data-spot="${spotId}"]`);
+      section.querySelector(".rating-average").textContent = data.average;
+      section.querySelector(".rating-total").textContent = `${data.total} 条评分`;
+      section.querySelector(".rating-clear-btn").style.display = "inline-block";
+    }
+  } catch (e) {
+    console.error("评分失败:", e);
+  }
+});
+
+document.addEventListener("click", async (event) => {
+  const btn = event.target.closest(".rating-clear-btn");
+  if (!btn) return;
+  const spotId = btn.dataset.spot;
+  if (!isLoggedIn()) return;
+  try {
+    const token = getAuthToken();
+    const res = await fetch(`/api/ratings/${spotId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      updateStarDisplay(spotId, 0);
+      const section = document.querySelector(`.rating-section[data-spot="${spotId}"]`);
+      section.querySelector(".rating-average").textContent = data.average > 0 ? data.average : "--";
+      section.querySelector(".rating-total").textContent = `${data.total} 条评分`;
+      btn.style.display = "none";
+    }
+  } catch (e) {
+    console.error("取消评分失败:", e);
+  }
+});
+
 infoIndexList.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-info-index]");
   if (!button) return;
@@ -1481,7 +1940,31 @@ infoModuleBtn.addEventListener("click", () => {
   switchModule("info");
 });
 
+profileModuleBtn.addEventListener("click", () => {
+  switchModule("profile");
+});
+
+routeModuleBtn.addEventListener("click", () => {
+  switchModule("route");
+});
+
+chatModuleBtn.addEventListener("click", () => {
+  switchModule("chat");
+});
+
+if (adminModuleBtn) {
+  adminModuleBtn.addEventListener("click", () => {
+    const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
+    if (!admin) { openAuthModal("login"); return; }
+    switchModule("admin");
+  });
+}
+
 backToMap.addEventListener("click", () => {
+  selectSpot(selectedId, { module: "map", openPopup: true });
+});
+
+backToMapFromProfile.addEventListener("click", () => {
   selectSpot(selectedId, { module: "map", openPopup: true });
 });
 
@@ -1489,6 +1972,9 @@ authOpenBtn.addEventListener("click", () => openAuthModal("login"));
 authCloseBtn.addEventListener("click", closeAuthModal);
 loginTab.addEventListener("click", () => setAuthMode("login"));
 registerTab.addEventListener("click", () => setAuthMode("register"));
+if (adminTab) adminTab.addEventListener("click", () => setAuthMode("admin"));
+if (goAdminLogin) goAdminLogin.addEventListener("click", () => setAuthMode("admin"));
+if (goAdminRegister) goAdminRegister.addEventListener("click", () => setAuthMode("adminRegister"));
 
 authModal.addEventListener("click", (event) => {
   if (event.target === authModal) closeAuthModal();
@@ -1530,14 +2016,55 @@ registerForm.addEventListener("submit", async (event) => {
   }
 });
 
+if (adminLoginForm) {
+  adminLoginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(adminLoginForm);
+    setAuthMessage("正在登录...");
+    try {
+      const data = await submitAuth("/admin/login", {
+        account: formData.get("account"),
+        password: formData.get("password")
+      });
+      saveAdminAuth(data);
+      setAuthMessage(data.message || "管理员登录成功。", "success");
+      setTimeout(closeAuthModal, 500);
+    } catch (error) {
+      setAuthMessage(error.message, "error");
+    }
+  });
+}
+
+if (adminRegisterForm) {
+  adminRegisterForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(adminRegisterForm);
+    setAuthMessage("正在注册...");
+    try {
+      const data = await submitAuth("/admin/register", {
+        secretKey: formData.get("secretKey"),
+        username: formData.get("username"),
+        email: formData.get("email"),
+        password: formData.get("password")
+      });
+      saveAdminAuth(data);
+      setAuthMessage(data.message || "管理员注册成功。", "success");
+      adminRegisterForm.reset();
+      setTimeout(closeAuthModal, 500);
+    } catch (error) {
+      setAuthMessage(error.message, "error");
+    }
+  });
+}
+
 document.addEventListener("click", async (event) => {
   const likeButton = event.target.closest(".like-btn[data-spot]");
   if (likeButton) {
     const spotId = likeButton.dataset.spot;
     const currentLiked = likeButton.classList.contains("liked");
-    
+
     if (currentLiked) {
-      if (removeLike(spotId)) {
+      if (await removeLike(spotId)) {
         likeButton.classList.remove("liked");
         const icon = likeButton.querySelector(".like-icon");
         const count = likeButton.querySelector(".like-count");
@@ -1545,7 +2072,7 @@ document.addEventListener("click", async (event) => {
         if (count) count.textContent = getSpotLikes(spotId).length;
       }
     } else {
-      if (addLike(spotId)) {
+      if (await addLike(spotId)) {
         likeButton.classList.add("liked");
         const icon = likeButton.querySelector(".like-icon");
         const count = likeButton.querySelector(".like-count");
@@ -1556,14 +2083,43 @@ document.addEventListener("click", async (event) => {
     return;
   }
 
+  const favoriteButton = event.target.closest(".favorite-btn[data-spot]");
+  if (favoriteButton) {
+    const spotId = favoriteButton.dataset.spot;
+    const spotName = favoriteButton.dataset.spotName;
+    const currentFavorited = favoriteButton.classList.contains("favorited");
+
+    if (currentFavorited) {
+      if (await removeFavorite(spotId)) {
+        favoriteButton.classList.remove("favorited");
+        const icon = favoriteButton.querySelector(".favorite-icon");
+        const text = favoriteButton.querySelector("span:last-child");
+        if (icon) icon.textContent = "☆";
+        if (text) text.textContent = "收藏";
+      }
+    } else {
+      if (await addFavorite(spotId, spotName)) {
+        favoriteButton.classList.add("favorited");
+        const icon = favoriteButton.querySelector(".favorite-icon");
+        const text = favoriteButton.querySelector("span:last-child");
+        if (icon) icon.textContent = "★";
+        if (text) text.textContent = "已收藏";
+      }
+    }
+    return;
+  }
+
   const submitComment = event.target.closest(".submit-comment[data-spot]");
   if (submitComment) {
     const spotId = submitComment.dataset.spot;
-    const textarea = document.querySelector(`textarea[data-spot="${spotId}"]`);
+    const commentInput = submitComment.closest(".comment-input");
+    const textarea = commentInput?.querySelector(`textarea[data-spot="${spotId}"]`);
     if (textarea && textarea.value.trim()) {
       if (await addComment(spotId, textarea.value)) {
         textarea.value = "";
-        renderInfoArticle(spots.find(s => s.id === spotId));
+        const spot = spots.find(s => s.id === spotId);
+        renderInfoArticle(spot);
+        renderDetailPanel(spot);
       }
     }
     return;
@@ -1574,9 +2130,63 @@ document.addEventListener("click", async (event) => {
     const spotId = deleteCommentBtn.dataset.spot;
     const commentId = deleteCommentBtn.dataset.comment;
     if (await deleteComment(spotId, commentId)) {
-      renderInfoArticle(spots.find(s => s.id === spotId));
+      const spot = spots.find(s => s.id === spotId);
+      renderInfoArticle(spot);
+      renderDetailPanel(spot);
+      loadUserImages(spotId);
     }
     return;
+  }
+
+  const removeFavoriteBtn = event.target.closest(".remove-favorite[data-spot]");
+  if (removeFavoriteBtn) {
+    const spotId = removeFavoriteBtn.dataset.spot;
+    if (await removeFavorite(spotId)) {
+      loadUserProfile();
+    }
+    return;
+  }
+
+  const viewSpotBtn = event.target.closest(".view-spot[data-spot]");
+  if (viewSpotBtn) {
+    const spotId = viewSpotBtn.dataset.spot;
+    selectSpot(spotId, { module: "info" });
+    return;
+  }
+
+  const goToMapBtn = event.target.closest(".go-to-map");
+  if (goToMapBtn) {
+    switchModule("map");
+    return;
+  }
+
+  const commentSpotLink = event.target.closest(".comment-spot-name[data-spot]");
+  if (commentSpotLink) {
+    selectSpot(commentSpotLink.dataset.spot, { module: "info" });
+    return;
+  }
+
+  const imageSpotLink = event.target.closest(".image-spot-name[data-spot]");
+  if (imageSpotLink) {
+    selectSpot(imageSpotLink.dataset.spot, { module: "info" });
+    return;
+  }
+
+  const imageThumb = event.target.closest(".image-thumb[data-full]");
+  if (imageThumb) {
+    expandImage(imageThumb.dataset.full);
+    return;
+  }
+});
+
+document.addEventListener("change", (event) => {
+  const imageUploadInput = event.target.closest(".image-upload-input[data-spot]");
+  if (imageUploadInput && imageUploadInput.files.length > 0) {
+    const spotId = imageUploadInput.dataset.spot;
+    const file = imageUploadInput.files[0];
+    uploadImage(spotId, file);
+    // 重置 input 以便下次可以上传同一张图片
+    imageUploadInput.value = "";
   }
 });
 
@@ -1592,8 +2202,27 @@ function getSpotComments(spotId) {
   return spotInteractions[spotId]?.comments || [];
 }
 
-function addLike(spotId) {
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
+async function addLike(spotId) {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+  if (!user || !token) {
+    openAuthModal("login");
+    return false;
+  }
+
+  try {
+    await apiRequest(`/interactions/${spotId}/like`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    await loadCommentsFromServer(spotId);
+    return true;
+  } catch (error) {
+    console.error("Failed to add like:", error);
+    alert(error.message || "点赞失败");
+    return false;
+  }
+
   if (!user) {
     openAuthModal("login");
     return false;
@@ -1614,8 +2243,24 @@ function addLike(spotId) {
   return false;
 }
 
-function removeLike(spotId) {
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
+async function removeLike(spotId) {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+  if (!user || !token) return false;
+
+  try {
+    await apiRequest(`/interactions/${spotId}/like`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    await loadCommentsFromServer(spotId);
+    return true;
+  } catch (error) {
+    console.error("Failed to remove like:", error);
+    alert(error.message || "取消点赞失败");
+    return false;
+  }
+
   if (!user) return false;
   
   if (!spotInteractions[spotId]) return false;
@@ -1633,8 +2278,8 @@ function removeLike(spotId) {
 }
 
 async function addComment(spotId, content) {
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
-  const token = localStorage.getItem("landscapeToken");
+  const user = getCurrentUser();
+  const token = getAuthToken();
   
   if (!user || !token) {
     openAuthModal("login");
@@ -1642,6 +2287,20 @@ async function addComment(spotId, content) {
   }
   
   try {
+    await apiRequest("/comments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        spotId,
+        content: content.trim()
+      })
+    });
+    await loadCommentsFromServer(spotId);
+    return true;
+
     const response = await fetch("/api/comments", {
       method: "POST",
       headers: {
@@ -1669,8 +2328,156 @@ async function addComment(spotId, content) {
   }
 }
 
+async function loadUserImages(spotId) {
+  const container = document.getElementById(`gallery-grid-${spotId}`);
+  if (!container) return;
+
+  try {
+    const serverImages = await apiRequest(`/images/${spotId}`);
+    renderUserImages(spotId, serverImages);
+    return;
+
+    const response = await fetch(`/api/images/${spotId}`);
+    if (!response.ok) throw new Error("加载图片失败");
+    const images = await response.json();
+    renderUserImages(spotId, images);
+  } catch (error) {
+    console.error("Failed to load user images:", error);
+    container.innerHTML = '<p class="gallery-error">无法加载图片库</p>';
+  }
+}
+
+function renderUserImages(spotId, images) {
+  const container = document.getElementById(`gallery-grid-${spotId}`);
+  if (!container) return;
+
+  if (images.length === 0) {
+    container.innerHTML = '<p class="gallery-empty">暂无用户分享图片</p>';
+    return;
+  }
+
+  container.innerHTML = images.map(img => `
+    <div class="gallery-item">
+      <img src="${img.url}" alt="用户分享" loading="lazy" onclick="expandImage(this.src)">
+      <div class="gallery-info">
+        <span>${img.username}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+function expandImage(src) {
+  const overlay = document.createElement('div');
+  overlay.className = 'image-overlay';
+  overlay.innerHTML = `
+    <div class="overlay-content">
+      <img src="${src}" alt="放大查看">
+      <button class="overlay-close">&times;</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.onclick = (e) => {
+    if (e.target.className === 'image-overlay' || e.target.className === 'overlay-close') {
+      document.body.removeChild(overlay);
+    }
+  };
+}
+
+async function uploadImage(spotId, file) {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+
+  if (!user || !token) {
+    alert("请先登录后再上传图片。");
+    openAuthModal("login");
+    return;
+  }
+
+  try {
+    const imageData = await resizeAndConvertToBase64(file, 800, 800);
+    await apiRequest("/images/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ spotId, imageData })
+    });
+    alert("图片上传成功");
+    loadUserImages(spotId);
+    if (activeModule === "profile") loadUserProfile();
+    return;
+
+    const response = await fetch("/api/images/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ spotId, imageData })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "上传失败");
+    }
+
+    alert("图片上传成功！");
+    loadUserImages(spotId);
+  } catch (error) {
+    console.error("Upload error:", error);
+    alert(error.message || "上传图片时发生错误");
+  }
+}
+
+function resizeAndConvertToBase64(file, maxWidth, maxHeight) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.7));
+      };
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
 async function loadCommentsFromServer(spotId) {
   try {
+    const serverInteraction = await apiRequest(`/interactions/${spotId}`);
+    
+    if (!spotInteractions[spotId]) {
+      spotInteractions[spotId] = { likes: [], comments: [] };
+    }
+    
+    spotInteractions[spotId].likes = serverInteraction.likes || [];
+    spotInteractions[spotId].comments = serverInteraction.comments || [];
+    saveSpotInteractions();
+    return;
+
     const response = await fetch(`/api/interactions/${spotId}`);
     const data = await response.json();
     
@@ -1686,8 +2493,8 @@ async function loadCommentsFromServer(spotId) {
 }
 
 async function deleteComment(spotId, commentId) {
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
-  const token = localStorage.getItem("landscapeToken");
+  const user = getCurrentUser();
+  const token = getAuthToken();
   
   if (!user || !token) {
     openAuthModal("login");
@@ -1695,6 +2502,16 @@ async function deleteComment(spotId, commentId) {
   }
   
   try {
+    await apiRequest(`/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    await loadCommentsFromServer(spotId);
+    return true;
+
     const response = await fetch(`/api/comments/${commentId}`, {
       method: "DELETE",
       headers: {
@@ -1719,7 +2536,7 @@ async function deleteComment(spotId, commentId) {
 }
 
 function isLiked(spotId) {
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
+  const user = getCurrentUser();
   if (!user) return false;
   
   const likes = getSpotLikes(spotId);
@@ -1741,7 +2558,7 @@ function renderLikeButton(spotId, container) {
 
 function renderComments(spotId, container) {
   const comments = getSpotComments(spotId);
-  const user = JSON.parse(localStorage.getItem("landscapeUser"));
+  const user = getCurrentUser();
   
   if (comments.length === 0) {
     container.innerHTML = `
@@ -1766,20 +2583,1132 @@ function renderComments(spotId, container) {
   }
 }
 
+// 收藏功能
+async function loadFavorites() {
+  const token = getAuthToken();
+  if (!token) {
+    userFavorites = [];
+    return;
+  }
+
+  try {
+    const favoritesPayload = await apiRequest("/favorites", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    userFavorites = favoritesPayload.favorites || [];
+    return;
+
+    const response = await fetch("/api/favorites", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("加载收藏失败");
+
+    const data = await response.json();
+    userFavorites = data.favorites || [];
+  } catch (error) {
+    console.error("Failed to load favorites:", error);
+    userFavorites = [];
+  }
+}
+
+function isFavorited(spotId) {
+  return userFavorites.some(fav => fav.spotId === spotId);
+}
+
+async function addFavorite(spotId, spotName) {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+
+  if (!user || !token) {
+    openAuthModal("login");
+    return false;
+  }
+
+  try {
+    await apiRequest("/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ spotId, spotName })
+    });
+    await loadFavorites();
+    if (activeModule === "profile") loadUserProfile();
+    return true;
+
+    const response = await fetch("/api/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ spotId, spotName })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "收藏失败");
+    }
+
+    await loadFavorites();
+    return true;
+  } catch (error) {
+    console.error("Failed to add favorite:", error);
+    alert(error.message || "收藏失败");
+    return false;
+  }
+}
+
+async function removeFavorite(spotId) {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+
+  if (!user || !token) {
+    return false;
+  }
+
+  try {
+    await apiRequest(`/favorites/${spotId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    await loadFavorites();
+    if (activeModule === "profile") loadUserProfile();
+    return true;
+
+    const response = await fetch(`/api/favorites/${spotId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "取消收藏失败");
+    }
+
+    await loadFavorites();
+    return true;
+  } catch (error) {
+    console.error("Failed to remove favorite:", error);
+    alert(error.message || "取消收藏失败");
+    return false;
+  }
+}
+
+async function loadAndRenderUserComments() {
+  const token = getAuthToken();
+  if (!token) {
+    myCommentsList.innerHTML = `<div class="profile-empty"><p>请先登录</p></div>`;
+    return;
+  }
+  try {
+    const data = await apiRequest("/user/comments", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const comments = data.comments || [];
+    if (comments.length === 0) {
+      myCommentsList.innerHTML = `<div class="profile-empty"><p>您还没有发表过评论</p></div>`;
+      return;
+    }
+    myCommentsList.innerHTML = comments.map(comment => {
+      const spot = spots.find(s => s.id === comment.spotId);
+      const spotName = spot ? spot.name : "未知景点";
+      return `
+        <div class="comment-item">
+          <div class="comment-spot">
+            <span class="comment-spot-label">景点：</span>
+            <span class="comment-spot-name" data-spot="${comment.spotId}">${escapeHtml(spotName)}</span>
+          </div>
+          <p class="comment-content">${escapeHtml(comment.content)}</p>
+          <span class="comment-time">${comment.createdAt || ""}</span>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error("Failed to load comments:", error);
+    myCommentsList.innerHTML = `<div class="profile-empty"><p>加载评论失败</p></div>`;
+  }
+}
+
+async function loadAndRenderUserImages() {
+  const token = getAuthToken();
+  if (!token) {
+    myImagesList.innerHTML = `<div class="profile-empty"><p>请先登录</p></div>`;
+    return;
+  }
+  try {
+    const data = await apiRequest("/user/images", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const images = data.images || [];
+    if (images.length === 0) {
+      myImagesList.innerHTML = `<div class="profile-empty"><p>您还没有上传过图片</p></div>`;
+      return;
+    }
+    myImagesList.innerHTML = images.map(img => {
+      const spot = spots.find(s => s.id === img.spotId);
+      const spotName = spot ? spot.name : "未知景点";
+      return `
+        <div class="image-item">
+          <img src="${img.url}" alt="${spotName}" class="image-thumb" data-full="${img.url}" loading="lazy" onerror="imageFallback(this)">
+          <div class="image-item-info">
+            <span class="image-spot-name" data-spot="${img.spotId}">${escapeHtml(spotName)}</span>
+            <span class="image-time">${img.createdAt ? new Date(img.createdAt).toLocaleString("zh-CN") : ""}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error("Failed to load images:", error);
+    myImagesList.innerHTML = `<div class="profile-empty"><p>加载图片失败</p></div>`;
+  }
+}
+
+async function loadUserProfile() {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+
+  if (!user || !token) {
+    favoritesList.innerHTML = `
+      <div class="favorites-empty">
+        <p>请先登录查看您的收藏</p>
+        <button class="go-to-login" type="button">立即登录</button>
+      </div>
+    `;
+
+    document.querySelector(".go-to-login")?.addEventListener("click", () => {
+      openAuthModal("login");
+    });
+
+    favCount.textContent = "0";
+    commentCount.textContent = "0";
+    imageCount.textContent = "0";
+    myCommentsList.innerHTML = `<div class="profile-empty"><p>请先登录查看您的评论</p></div>`;
+    myImagesList.innerHTML = `<div class="profile-empty"><p>请先登录查看您的图片</p></div>`;
+    return;
+  }
+
+  await loadFavorites();
+
+  // 统计数据
+  let profileStats = {
+    favoritesCount: userFavorites.length,
+    commentsCount: 0,
+    likesCount: 0,
+    imagesCount: 0
+  };
+
+  if (token) {
+    try {
+      const profile = await apiRequest("/profile", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      profileStats = {
+        ...profileStats,
+        ...(profile.stats || {})
+      };
+    } catch (error) {
+      console.error("Failed to load profile stats:", error);
+    }
+  }
+
+  favCount.textContent = profileStats.favoritesCount;
+  commentCount.textContent = profileStats.commentsCount;
+  imageCount.textContent = profileStats.imagesCount;
+  renderProfileFavorites();
+  loadAndRenderUserComments();
+  loadAndRenderUserImages();
+  profileLoaded = true;
+}
+
+function renderProfileFavorites() {
+  if (userFavorites.length === 0) {
+    favoritesList.innerHTML = `
+      <div class="favorites-empty">
+        <p>您还没有收藏任何景点</p>
+        <button class="go-to-map" type="button">去地图浏览景点</button>
+      </div>
+    `;
+    return;
+  }
+
+  favoritesList.innerHTML = userFavorites.map(fav => {
+    const spot = spots.find(s => s.id === fav.spotId);
+    if (!spot) return "";
+
+    return `
+      <div class="favorite-item">
+        <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+        <div class="favorite-item-info">
+          <h4>${spot.name}</h4>
+          <div class="fav-meta">
+            <span class="tag">${spot.type}</span>
+            <span class="tag">${spot.dynasty}</span>
+          </div>
+          <p>${spot.intro}</p>
+        </div>
+        <div class="favorite-actions">
+          <button type="button" class="view-spot" data-spot="${spot.id}">查看详情</button>
+          <button type="button" class="remove-favorite" data-spot="${spot.id}">取消收藏</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
 async function init() {
   try {
-    updateAuthView(JSON.parse(localStorage.getItem("landscapeUser")));
+    const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
+    if (admin && adminModuleBtn) {
+      adminModuleBtn.style.display = "";
+      updateAuthView(null);
+    } else {
+      updateAuthView(JSON.parse(localStorage.getItem("landscapeUser")));
+    }
   } catch (_error) {
     updateAuthView(null);
   }
 
+  await loadFavorites();
+
   render();
+  renderRouteSelectedList();
   fitToSpots(spots);
   selectSpot(spots[0].id, { openPopup: true, pan: false, module: "map" });
-  
+
   if (selectedId) {
     await loadCommentsFromServer(selectedId);
   }
+
+  // 后台预加载个人中心、聊天室和管理后台数据
+  setTimeout(() => {
+    const user = JSON.parse(localStorage.getItem("landscapeUser"));
+    const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
+    if (user) loadUserProfile();
+    loadChatMessages();
+    if (admin) loadAdminData();
+  }, 2000);
 }
+
+// ==================== 路线规划 ====================
+const routeSelectedIds = new Set();
+const routePolylines = [];
+const routeColors = ["#1a73e8", "#e8710a", "#0d9488", "#7c3aed", "#d92121", "#059669", "#c2410c", "#6366f1"];
+
+const routeSelectedList = document.querySelector("#routeSelectedList");
+const routeResults = document.querySelector("#routeResults");
+const generateRoutesBtn = document.querySelector("#generateRoutes");
+const clearRoutePlanBtn = document.querySelector("#clearRoutePlan");
+
+function toggleRouteSpot(spotId) {
+  if (routeSelectedIds.has(spotId)) {
+    routeSelectedIds.delete(spotId);
+  } else {
+    routeSelectedIds.add(spotId);
+  }
+  renderRouteSelectedList();
+  renderRouteSpotList();
+  generateRoutesBtn.disabled = routeSelectedIds.size < 2;
+}
+
+async function loadRecommendedRoutes() {
+  const container = document.querySelector("#recommendedRoutes");
+  if (!container) return;
+
+  try {
+    const lToken = getAuthToken();
+    const headers = {};
+    if (lToken) headers["Authorization"] = `Bearer ${lToken}`;
+
+    const res = await fetch("/api/recommended-routes", { headers });
+    const data = await res.json();
+    if (!data.routes) return;
+
+    container.innerHTML = data.routes.map((route, idx) => {
+      const rankLabel = idx < 3 ? ["🥇", "🥈", "🥉"][idx] : `#${idx + 1}`;
+      const spotNames = route.spotIds.map(id => {
+        const s = spots.find(sp => sp.id === id);
+        return s ? s.name : id;
+      });
+      return `
+        <div class="rec-route-card" data-route-id="${route.id}">
+          <div class="rec-route-top">
+            <span class="rec-route-name">${escapeHtml(route.name)}</span>
+            <span class="rec-route-rank">${rankLabel}</span>
+          </div>
+          <p class="rec-route-desc">${escapeHtml(route.description)}</p>
+          <div class="rec-route-bottom">
+            <span class="rec-route-spots">${spotNames.join(" → ")}</span>
+            <button type="button" class="rec-route-like-btn ${route.liked ? "liked" : ""}" data-route-like="${route.id}">
+              ${route.liked ? "❤" : "♡"} ${route.likeCount}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    container.querySelectorAll(".rec-route-like-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const routeId = btn.dataset.routeLike;
+        const lToken = getAuthToken();
+        if (!lToken) { openAuthModal("login"); return; }
+
+        const isLiked = btn.classList.contains("liked");
+        const method = isLiked ? "DELETE" : "POST";
+        try {
+          const res = await fetch(`/api/recommended-routes/${routeId}/like`, {
+            method,
+            headers: { "Authorization": `Bearer ${lToken}` }
+          });
+          if (res.ok) {
+            const result = await res.json();
+            btn.classList.toggle("liked", result.liked);
+            btn.innerHTML = `${result.liked ? "❤" : "♡"} ${result.likeCount}`;
+          }
+        } catch {}
+      });
+    });
+
+    container.querySelectorAll(".rec-route-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const routeId = card.dataset.routeId;
+        const route = data.routes.find(r => r.id === routeId);
+        if (!route) return;
+        routeSelectedIds.clear();
+        route.spotIds.forEach(id => routeSelectedIds.add(id));
+        renderRouteSelectedList();
+        renderRouteSpotList();
+        generateRoutesBtn.disabled = routeSelectedIds.size < 2;
+        generateRoutes();
+      });
+    });
+  } catch (err) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:12px;">加载推荐路线失败</p>';
+  }
+}
+
+function renderRouteSpotList() {
+  if (!routeSpotList) return;
+  routeSpotList.innerHTML = spots.map(spot => {
+    const inRoute = routeSelectedIds.has(spot.id);
+    return `
+      <div class="route-spot-card">
+        <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+        <div class="route-spot-info">
+          <h4>${escapeHtml(spot.name)}</h4>
+          <div class="tag-row">
+            <span class="tag">${spot.type}</span>
+            <span class="tag">${spot.dynasty}</span>
+          </div>
+        </div>
+        <button type="button" class="route-add-btn ${inRoute ? "selected" : ""}" data-route-add="${spot.id}" title="${inRoute ? "从路线中移除" : "添加到路线规划"}">${inRoute ? "−" : "+"}</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderRouteSelectedList() {
+  if (routeSelectedIds.size === 0) {
+    routeSelectedList.innerHTML = `<p class="route-empty">暂无选中景点</p>`;
+    return;
+  }
+  routeSelectedList.innerHTML = [...routeSelectedIds].map(id => {
+    const spot = spots.find(s => s.id === id);
+    if (!spot) return "";
+    return `
+      <div class="route-selected-item">
+        <span class="route-selected-name">${escapeHtml(spot.name)}</span>
+        <button type="button" class="route-remove-btn" data-route-spot="${spot.id}">×</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function haversineDistance(a, b) {
+  const R = 6371;
+  const dLat = (b.lat - a.lat) * Math.PI / 180;
+  const dLng = (b.lng - a.lng) * Math.PI / 180;
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+
+function groupSpotsIntoRoutes(selectedSpots) {
+  if (selectedSpots.length === 0) return [];
+
+  const threshold = 5;
+  const visited = new Set();
+  const groups = [];
+
+  for (const spot of selectedSpots) {
+    if (visited.has(spot.id)) continue;
+    const group = [spot];
+    visited.add(spot.id);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const candidate of selectedSpots) {
+        if (visited.has(candidate.id)) continue;
+        for (const member of group) {
+          if (haversineDistance(member, candidate) < threshold) {
+            group.push(candidate);
+            visited.add(candidate.id);
+            changed = true;
+            break;
+          }
+        }
+      }
+    }
+    groups.push(group);
+  }
+
+  return groups;
+}
+
+function sortSpotsInRoute(group) {
+  if (group.length <= 2) return group;
+  const sorted = [group[0]];
+  const remaining = group.slice(1);
+  while (remaining.length > 0) {
+    const last = sorted[sorted.length - 1];
+    let nearestIdx = 0;
+    let nearestDist = Infinity;
+    for (let i = 0; i < remaining.length; i++) {
+      const d = haversineDistance(last, remaining[i]);
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearestIdx = i;
+      }
+    }
+    sorted.push(remaining.splice(nearestIdx, 1)[0]);
+  }
+  return sorted;
+}
+
+function clearRoutePolylines() {
+  routePolylines.forEach(p => map.removeLayer(p));
+  routePolylines.length = 0;
+}
+
+function generateRoutes() {
+  clearRoutePolylines();
+  routeResults.innerHTML = "";
+
+  const selectedSpots = [...routeSelectedIds].map(id => spots.find(s => s.id === id)).filter(Boolean);
+  if (selectedSpots.length < 2) return;
+
+  const sorted = sortSpotsInRoute(selectedSpots);
+  const color = "#2563eb";
+  const points = sorted.map(s => [s.lat, s.lng]);
+
+  const polyline = L.polyline(points, {
+    color,
+    weight: 4,
+    opacity: 0.85,
+    dashArray: "10 6"
+  }).addTo(map);
+  routePolylines.push(polyline);
+
+  const startIcon = L.divIcon({
+    className: "route-marker-icon",
+    html: `<div style="background:${color};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">起</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+  const endIcon = L.divIcon({
+    className: "route-marker-icon",
+    html: `<div style="background:${color};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">终</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+  L.marker(points[0], { icon: startIcon }).addTo(map);
+  L.marker(points[points.length - 1], { icon: endIcon }).addTo(map);
+
+  const totalDist = sorted.reduce((sum, s, i) => i === 0 ? 0 : sum + haversineDistance(sorted[i - 1], s), 0);
+
+  routeResults.innerHTML = `
+    <div class="route-result-card" style="border-left: 4px solid ${color};">
+      <div class="route-result-header">
+        <span class="route-result-name" style="color:${color};">推荐路线</span>
+        <span class="route-result-dist">约 ${totalDist.toFixed(1)} km</span>
+      </div>
+      <div class="route-result-steps">
+        ${sorted.map((s, i) => `
+          <span class="route-step" data-spot="${s.id}">
+            <span class="route-step-num" style="background:${color};">${i + 1}</span>
+            ${escapeHtml(s.name)}
+          </span>
+        `).join('<span class="route-step-arrow">→</span>')}
+      </div>
+    </div>
+  `;
+
+  map.fitBounds(L.latLngBounds(points).pad(0.15), { animate: true });
+}
+
+generateRoutesBtn.addEventListener("click", generateRoutes);
+
+clearRoutePlanBtn.addEventListener("click", () => {
+  routeSelectedIds.clear();
+  clearRoutePolylines();
+  routeResults.innerHTML = "";
+  renderRouteSelectedList();
+  renderRouteSpotList();
+  generateRoutesBtn.disabled = true;
+});
+
+routeSelectedList.addEventListener("click", (event) => {
+  const removeBtn = event.target.closest(".route-remove-btn");
+  if (removeBtn) {
+    toggleRouteSpot(removeBtn.dataset.routeSpot);
+  }
+});
+
+routeResults.addEventListener("click", (event) => {
+  const step = event.target.closest(".route-step[data-spot]");
+  if (step) {
+    selectSpot(step.dataset.spot, { module: "map", openPopup: true });
+  }
+});
+
+if (routeSpotList) {
+  routeSpotList.addEventListener("click", (event) => {
+    const addBtn = event.target.closest("button[data-route-add]");
+    if (addBtn) {
+      toggleRouteSpot(addBtn.dataset.routeAdd);
+      return;
+    }
+    const card = event.target.closest(".route-spot-card");
+    if (card) {
+      const spotId = card.querySelector("[data-route-add]")?.dataset.routeAdd;
+      if (spotId) selectSpot(spotId, { module: "map", openPopup: true });
+    }
+  });
+}
+
+// 聊天室
+let profileLoaded = false;
+let chatLoaded = false;
+let chatMessagesLoaded = false;
+let adminDataLoaded = false;
+
+async function loadChatMessages() {
+  if (!chatMessages) return;
+  try {
+    const res = await fetch("/api/chat/messages?limit=100");
+    const data = await res.json();
+    if (!data.messages) return;
+    chatMessages.innerHTML = "";
+    data.messages.forEach(msg => appendChatMessage(msg));
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatMessagesLoaded = true;
+    if (!chatLoaded) {
+      connectChatSSE();
+      chatLoaded = true;
+    }
+  } catch {
+    chatMessages.innerHTML = '<div class="profile-empty"><p>加载聊天记录失败</p></div>';
+  }
+}
+
+function appendChatMessage(msg) {
+  if (!chatMessages) return;
+  const currentUser = getCurrentUser();
+  const myId = currentUser ? currentUser.id : null;
+  const isSelf = myId && msg.userId === myId;
+  const time = new Date(msg.createdAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+
+  const div = document.createElement("div");
+  div.className = `chat-msg${isSelf ? " self" : ""}`;
+  const imageHtml = msg.image ? `<div class="chat-msg-image"><img src="${msg.image}" alt="图片" loading="lazy" onclick="openChatImageModal('${msg.image.replace(/'/g, "\\'")}')"></div>` : "";
+  div.innerHTML = `
+    <div class="chat-msg-header">
+      <span class="chat-msg-user">${escapeHtml(msg.username)}</span>
+      <span class="chat-msg-time">${time}</span>
+    </div>
+    ${msg.content ? `<div class="chat-msg-content">${escapeHtml(msg.content)}</div>` : ""}
+    ${imageHtml}
+  `;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function connectChatSSE() {
+  const es = new EventSource("/api/chat/stream");
+  es.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      appendChatMessage(msg);
+    } catch {}
+  };
+  es.onerror = () => {
+    es.close();
+    setTimeout(connectChatSSE, 3000);
+  };
+}
+
+async function sendChatMessage() {
+  const user = getCurrentUser();
+  const token = getAuthToken();
+  if (!user || !token) { openAuthModal("login"); return; }
+  const displayName = user.username;
+
+  const content = chatInput.value.trim();
+  if (!content && !chatPendingImage) return;
+
+  chatInput.value = "";
+  const imageData = chatPendingImage;
+  clearChatImagePreview();
+
+  try {
+    await fetch("/api/chat/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ content, image: imageData })
+    });
+  } catch {
+    chatInput.value = content;
+  }
+}
+
+function clearChatImagePreview() {
+  chatPendingImage = null;
+  if (chatImagePreview) chatImagePreview.style.display = "none";
+  if (chatPreviewImg) chatPreviewImg.src = "";
+  if (chatImageInput) chatImageInput.value = "";
+}
+
+if (chatImageInput) {
+  chatImageInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      alert("图片大小不能超过 3MB");
+      chatImageInput.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      chatPendingImage = reader.result;
+      chatPreviewImg.src = reader.result;
+      chatImagePreview.style.display = "";
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+if (chatImageRemove) chatImageRemove.addEventListener("click", clearChatImagePreview);
+
+// 聊天图片放大
+const chatImageModal = document.querySelector("#chatImageModal");
+const chatImageModalImg = document.querySelector("#chatImageModalImg");
+const chatImageModalClose = document.querySelector("#chatImageModalClose");
+
+function openChatImageModal(src) {
+  if (!chatImageModal || !chatImageModalImg) return;
+  chatImageModalImg.src = src;
+  chatImageModal.classList.add("active");
+}
+
+function closeChatImageModal() {
+  if (chatImageModal) chatImageModal.classList.remove("active");
+}
+
+if (chatImageModalClose) chatImageModalClose.addEventListener("click", closeChatImageModal);
+if (chatImageModal) chatImageModal.addEventListener("click", (e) => {
+  if (e.target === chatImageModal) closeChatImageModal();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeChatImageModal(); });
+
+// 聊天气泡主题
+const chatThemes = [
+  { id: "default", name: "默认", color: "#a8a29e" },
+  { id: "sakura", name: "樱花粉", color: "#f472b6" },
+  { id: "lavender", name: "薰衣草", color: "#8b5cf6" },
+  { id: "ocean", name: "海洋蓝", color: "#38bdf8" },
+  { id: "meadow", name: "草地绿", color: "#4ade80" },
+  { id: "sunset", name: "暖阳橙", color: "#fb923c" },
+  { id: "honey", name: "蜜糖黄", color: "#facc15" },
+  { id: "cherry", name: "樱桃红", color: "#f87171" }
+];
+
+const chatThemeToggle = document.querySelector("#chatThemeToggle");
+const chatThemePanel = document.querySelector("#chatThemePanel");
+const chatThemeGrid = document.querySelector("#chatThemeGrid");
+let currentChatTheme = localStorage.getItem("chatTheme") || "default";
+
+function applyChatTheme(themeId) {
+  currentChatTheme = themeId;
+  localStorage.setItem("chatTheme", themeId);
+  if (chatMessages) {
+    if (themeId === "default") {
+      chatMessages.removeAttribute("data-theme");
+    } else {
+      chatMessages.setAttribute("data-theme", themeId);
+    }
+  }
+  document.querySelectorAll(".chat-theme-opt").forEach(opt => {
+    opt.classList.toggle("active", opt.dataset.theme === themeId);
+  });
+}
+
+function renderChatThemes() {
+  if (!chatThemeGrid) return;
+  chatThemeGrid.innerHTML = chatThemes.map(t =>
+    `<button type="button" class="chat-theme-opt ${t.id === currentChatTheme ? "active" : ""}" data-theme="${t.id}" style="background:${t.color};">${t.name}</button>`
+  ).join("");
+  chatThemeGrid.querySelectorAll(".chat-theme-opt").forEach(opt => {
+    opt.addEventListener("click", () => applyChatTheme(opt.dataset.theme));
+  });
+}
+
+if (chatThemeToggle) {
+  chatThemeToggle.addEventListener("click", () => {
+    if (!chatThemePanel) return;
+    const show = chatThemePanel.style.display === "none";
+    chatThemePanel.style.display = show ? "" : "none";
+    if (show && !chatThemeGrid.children.length) renderChatThemes();
+  });
+}
+
+applyChatTheme(currentChatTheme);
+
+// 聊天背景底图
+const chatBgs = [
+  { id: "default", name: "默认", color: "#f5f3ed", emoji: "💬" },
+  { id: "sakura", name: "樱花粉", color: "#fff0f5", emoji: "🌸" },
+  { id: "star", name: "星空夜", color: "#1a1a3e", emoji: "🌙" },
+  { id: "ocean", name: "海底世界", color: "#e0f4ff", emoji: "🐚" },
+  { id: "garden", name: "花园小径", color: "#f0fdf4", emoji: "🌿" },
+  { id: "heart", name: "可爱甜心", color: "#fff0f6", emoji: "💖" },
+  { id: "rainbow", name: "彩虹糖", color: "#fef2f2", emoji: "🌈" },
+  { id: "cloud", name: "蓝天白云", color: "#e0f2fe", emoji: "☁️" },
+  { id: "kitty", name: "Hello Kitty", color: "#fff0f5", emoji: "🐱" },
+  { id: "minion", name: "小黄人", color: "#fffde0", emoji: "🍌" },
+  { id: "totoro", name: "龙猫", color: "#f0ede8", emoji: "🌲" },
+  { id: "panda", name: "熊猫", color: "#f5f5f5", emoji: "🐼" },
+  { id: "frog", name: "青蛙", color: "#f0faf0", emoji: "🐸" },
+  { id: "bunny", name: "兔子", color: "#fff5f7", emoji: "🐰" }
+];
+
+const chatBgToggle = document.querySelector("#chatBgToggle");
+const chatBgPanel = document.querySelector("#chatBgPanel");
+const chatBgGrid = document.querySelector("#chatBgGrid");
+let currentChatBg = localStorage.getItem("chatBg") || "default";
+
+function applyChatBg(bgId) {
+  currentChatBg = bgId;
+  localStorage.setItem("chatBg", bgId);
+  if (chatMessages) {
+    if (bgId === "default") {
+      chatMessages.removeAttribute("data-bg");
+    } else {
+      chatMessages.setAttribute("data-bg", bgId);
+    }
+  }
+  document.querySelectorAll(".chat-bg-opt").forEach(opt => {
+    opt.classList.toggle("active", opt.dataset.bg === bgId);
+  });
+  document.querySelectorAll(".chat-char").forEach(c => {
+    c.style.display = c.dataset.char === bgId ? "" : "none";
+  });
+}
+
+function renderChatBgs() {
+  if (!chatBgGrid) return;
+  chatBgGrid.innerHTML = chatBgs.map(b =>
+    `<button type="button" class="chat-theme-opt chat-bg-opt ${b.id === currentChatBg ? "active" : ""}" data-bg="${b.id}" style="background:${b.color};${b.id === 'star' ? 'color:#fff;' : ''}">${b.emoji} ${b.name}</button>`
+  ).join("");
+  chatBgGrid.querySelectorAll(".chat-bg-opt").forEach(opt => {
+    opt.addEventListener("click", () => applyChatBg(opt.dataset.bg));
+  });
+}
+
+if (chatBgToggle) {
+  chatBgToggle.addEventListener("click", () => {
+    if (!chatBgPanel) return;
+    const show = chatBgPanel.style.display === "none";
+    chatBgPanel.style.display = show ? "" : "none";
+    if (show && !chatBgGrid.children.length) renderChatBgs();
+  });
+}
+
+applyChatBg(currentChatBg);
+
+// 表情包
+const emojiData = [
+  { name: "笑脸", tab: "😊", emojis: "😀😃😄😁😆🥹😅🤣😂🙂😊😇🥰😍🤩😘😗😚😋😛🤔🤫🤭🫡🤐😐😶😏😒🙄😬🤥😌😔😪🤤😴😷🤒🤕🥴😵🤯🤠🥳🥸😎🤓🧐😤😡🤬😈👿💀☠️💩🤡👹👺👻👽🤖😺😸😻🙈🙉🙊" },
+  { name: "手势", tab: "👋", emojis: "👋🤚🖐️✋🖖👌🤌🤏✌️🤞🫰🤟🤘🤙🫵👈👉👆🖕👇☝️🫵👍👎✊👊🤛🤜👏🫶🙌👐🤲🤝🙏💪🦾" },
+  { name: "动物", tab: "🐱", emojis: "🐶🐱🐭🐹🐰🦊🐻🐼🐻‍❄️🐨🐯🦁🐮🐷🐸🐵🙈🙉🙊🐒🐔🐧🐦🐤🐣🐥🦆🦅🦉🦇🐺🐗🐴🦄🐝🪱🐛🦋🐌🐞🐜🪳🦟🦗🕷️🐢🐍🦎🦂🦀🐡🐠🐟🐬🐳🐋🦈🐊🐅🐆🦓🦍🦧🐘🦣🦛🦏🐪🐫🦒🦘🦬🐃🐂🐄🐎🐖🐏🐑🦙🐐🦌🐕🐩🦮🐈" },
+  { name: "食物", tab: "🍔", emojis: "🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🫑🌽🥕🫒🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🧈🥞🧇🥓🥩🍗🍖🦴🌭🍔🍟🍕🫓🥪🥙🧆🌮🌯🫔🥗🥘🫕🥫🍝🍜🍲🍛🍣🍱🥟🦪🦐🍙🍚🍘🍥🥠🥮🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🧂🥤🧋🧃🍶🍺🍻🥂🍷🥃🍸🍹🧊🥄🍴🍽️🥣🥡🥢" },
+  { name: "活动", tab: "⚽", emojis: "⚽⚾🥎🏀🏐🏉🎾🥏🎳🏏🪃🏑🏒🥍🏓🏸🥊🥋🥅⛳⛸️🎣🤿🎿🛷🥌🎯🪀🪁🎱🔮🪄🧿🎮🎰🎲🧩🧸🪅🪆♠️♥️♦️♣️♟️🃏🀄🎴🎭🖼️🎨🧵🪡🧶🪢" },
+  { name: "旅行", tab: "✈️", emojis: "🚗🚕🚌🏎️🚓🚑🚒🚐🛻🚚🚛🚜🦯🦽🦼🛴🚲🛵🏍️🛺🚨🚔🚍🚘🚖🚡🚠🚟🚃🚋🚞🚝🚄🚅🚈🚂🚆🚇🚊🚉✈️🛩️🛫🛬🪂💺🛰️🚀🛸🚢⛵🛶🚤🛥️🛳️⛴️🗼🏟️🎡🎢🏰🏯🏟️🗻🏔️🏕️🏖️🏜️🏝️🏞️🌋⛰️" },
+  { name: "物品", tab: "💡", emojis: "⌚📱📲💻⌨️🖥️🖨️🖱️🖲️🕹️🗜️💽💾💿📀📼📷📸📹🎥📽️🔍🔎🔬🔭📡💊💉🩹🩺🚪🛏️🛋️🪑🚽🪠🚿🛁🪒🧴🧷🧹🧺🧻🪣🧼🪥🧽🪦🥼🦺👔👕👖🧣🧤🧥🧦👗👘🥻🩱🩲🩳👙👚🎀🎗️🪢" },
+  { name: "爱心", tab: "❤️", emojis: "❤️🧡💛💚💙💜🖤🤍🤎💔❣️💕💞💓💗💖💘💝💟☮️✝️☪️🕉️☸️✡️🔯🕎☯️☦️🛐⛎♈♉♊♋♌♍♎♏♐♑♒♓🆔⚛️🉑☢️☣️📴📳🈶🈚🈸🈺🈷️✴️🆚💮🉐㊙️㊗️🈴🈵🈹🈲🅰️🅱️🆎🆑🅾️🆘❌⭕🛑⛔📛🚫💯💢♨️🚷🚯🚳🚱🔞📵🚭" },
+  { name: "旗帜", tab: "🏁", emojis: "🏁🚩🎌🏴🏳️🏳️‍🌈🏳️‍⚧️🏴‍☠️🇨🇳🇺🇸🇯🇵🇰🇷🇬🇧🇫🇷🇩🇪🇮🇹🇷🇺🇧🇷🇮🇳🇦🇺🇨🇦🇪🇸🇲🇽🇳🇱🇸🇪🇨🇭" }
+];
+
+const chatEmojiBtn = document.querySelector("#chatEmojiBtn");
+const chatEmojiPanel = document.querySelector("#chatEmojiPanel");
+const emojiTabs = document.querySelector("#emojiTabs");
+const emojiGrid = document.querySelector("#emojiGrid");
+let currentEmojiCat = 0;
+
+function renderEmojiTabs() {
+  if (!emojiTabs) return;
+  emojiTabs.innerHTML = emojiData.map((cat, i) =>
+    `<button type="button" class="emoji-tab ${i === currentEmojiCat ? 'active' : ''}" data-cat="${i}">${cat.tab}</button>`
+  ).join("");
+  emojiTabs.querySelectorAll(".emoji-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      currentEmojiCat = Number(tab.dataset.cat);
+      renderEmojiTabs();
+      renderEmojiGrid();
+    });
+  });
+}
+
+function renderEmojiGrid() {
+  if (!emojiGrid) return;
+  const emojis = emojiData[currentEmojiCat].emojis;
+  emojiGrid.innerHTML = [...emojis].map(e =>
+    `<button type="button" class="emoji-item">${e}</button>`
+  ).join("");
+  emojiGrid.querySelectorAll(".emoji-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (chatInput) {
+        chatInput.value += btn.textContent;
+        chatInput.focus();
+      }
+    });
+  });
+}
+
+if (chatEmojiBtn) {
+  chatEmojiBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!chatEmojiPanel) return;
+    const show = chatEmojiPanel.style.display === "none";
+    chatEmojiPanel.style.display = show ? "" : "none";
+    if (show && !emojiTabs.children.length) {
+      renderEmojiTabs();
+      renderEmojiGrid();
+    }
+  });
+}
+
+if (chatEmojiPanel) {
+  chatEmojiPanel.addEventListener("click", (e) => e.stopPropagation());
+}
+
+document.addEventListener("click", (e) => {
+  if (chatEmojiPanel && chatEmojiPanel.style.display !== "none" &&
+      !chatEmojiPanel.contains(e.target) && e.target !== chatEmojiBtn && !chatEmojiBtn.contains(e.target)) {
+    chatEmojiPanel.style.display = "none";
+  }
+});
+
+if (chatSendBtn) chatSendBtn.addEventListener("click", sendChatMessage);
+if (chatInput) chatInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendChatMessage();
+});
+
+// 管理后台
+function getAdminToken() {
+  return localStorage.getItem("landscapeAdminToken") || "";
+}
+
+async function adminRequest(path, options = {}) {
+  const headers = { ...options.headers, "Authorization": `Bearer ${getAdminToken()}` };
+  const res = await fetch(`/api${path}`, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "请求失败");
+  return data;
+}
+
+const adminTabBtns = document.querySelectorAll(".admin-tab-btn");
+adminTabBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    adminTabBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".admin-panel").forEach(p => p.style.display = "none");
+    const panel = document.getElementById(btn.dataset.panel);
+    if (panel) panel.style.display = "";
+  });
+});
+
+async function loadAdminData() {
+  const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
+  if (!admin) return;
+  try {
+    const [usersData, commentsData, imagesData, chatData, ratingsData] = await Promise.all([
+      adminRequest("/admin/users"),
+      adminRequest("/admin/comments"),
+      adminRequest("/admin/images"),
+      adminRequest("/admin/chat"),
+      adminRequest("/admin/ratings")
+    ]);
+    renderAdminUsers(usersData.users);
+    renderAdminComments(commentsData.comments);
+    renderAdminImages(imagesData.images);
+    renderAdminChat(chatData.messages);
+    renderAdminRatings(ratingsData.ratings);
+    adminDataLoaded = true;
+  } catch (err) {
+    console.error("Failed to load admin data:", err);
+  }
+}
+
+function renderAdminUsers(users) {
+  const el = document.querySelector("#adminUserList");
+  if (!el) return;
+  if (!users.length) { el.innerHTML = '<div class="profile-empty"><p>暂无注册用户</p></div>'; return; }
+  el.innerHTML = users.map(u => `
+    <div class="admin-item">
+      <div class="admin-item-info">
+        <div class="admin-item-name">${escapeHtml(u.username)}</div>
+        <div class="admin-item-meta">${escapeHtml(u.email)} · ${u.createdAt ? new Date(u.createdAt).toLocaleDateString("zh-CN") : ""}</div>
+      </div>
+      <button type="button" class="admin-delete-btn" data-admin-delete-user="${u.id}">删除</button>
+    </div>
+  `).join("");
+}
+
+function renderAdminComments(comments) {
+  const el = document.querySelector("#adminCommentList");
+  if (!el) return;
+  if (!comments.length) { el.innerHTML = '<div class="profile-empty"><p>暂无评论</p></div>'; return; }
+  el.innerHTML = comments.map(c => `
+    <div class="admin-item">
+      <div class="admin-item-info">
+        <div class="admin-item-name">${escapeHtml(c.username || "未知用户")} · ${escapeHtml(c.spotId)}</div>
+        <div class="admin-item-meta">${escapeHtml(c.content)}</div>
+      </div>
+      <button type="button" class="admin-delete-btn" data-admin-delete-comment="${c.id}">删除</button>
+    </div>
+  `).join("");
+}
+
+function renderAdminImages(images) {
+  const el = document.querySelector("#adminImageList");
+  if (!el) return;
+  if (!images.length) { el.innerHTML = '<div class="profile-empty"><p>暂无图片</p></div>'; return; }
+  el.innerHTML = images.map(img => `
+    <div class="admin-item">
+      <div class="admin-item-info">
+        <div class="admin-item-name">${escapeHtml(img.username || "未知用户")} · ${escapeHtml(img.spotId)}</div>
+        <div class="admin-item-meta">${img.createdAt ? new Date(img.createdAt).toLocaleDateString("zh-CN") : ""}</div>
+      </div>
+      <button type="button" class="admin-delete-btn" data-admin-delete-image="${img.id}">删除</button>
+    </div>
+  `).join("");
+}
+
+function renderAdminChat(messages) {
+  const el = document.querySelector("#adminChatList");
+  if (!el) return;
+  if (!messages.length) { el.innerHTML = '<div class="profile-empty"><p>暂无聊天记录</p></div>'; return; }
+  el.innerHTML = messages.map(m => {
+    const time = m.createdAt ? new Date(m.createdAt).toLocaleTimeString("zh-CN", {hour:"2-digit", minute:"2-digit"}) : "";
+    const imageHtml = m.image ? `<img src="${m.image}" class="admin-chat-img" alt="图片" onclick="openChatImageModal('${m.image.replace(/'/g, "\\'")}')" style="cursor:pointer;" />` : "";
+    return `
+      <div class="admin-item">
+        <div class="admin-item-info">
+          <div class="admin-item-name">${escapeHtml(m.username || "未知用户")}</div>
+          <div class="admin-item-meta">${escapeHtml(m.content || "")} ${imageHtml} · ${time}</div>
+        </div>
+        <button type="button" class="admin-delete-btn" data-admin-delete-chat="${m.id}">删除</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderAdminRatings(ratings) {
+  const el = document.querySelector("#adminRatingList");
+  if (!el) return;
+  if (!ratings.length) { el.innerHTML = '<div class="profile-empty"><p>暂无评分记录</p></div>'; return; }
+  el.innerHTML = ratings.map(r => {
+    const time = r.createdAt ? new Date(r.createdAt).toLocaleTimeString("zh-CN", {hour:"2-digit", minute:"2-digit"}) : "";
+    const stars = "★".repeat(Math.floor(r.rating)) + (r.rating % 1 !== 0 ? "☆" : "");
+    return `
+      <div class="admin-item">
+        <div class="admin-item-info">
+          <div class="admin-item-name">${escapeHtml(r.username || "未知用户")} · <span style="color:#f5a623">${r.rating}分</span></div>
+          <div class="admin-item-meta">景点: ${escapeHtml(r.spotId)} · ${time}</div>
+        </div>
+        <button type="button" class="admin-delete-btn" data-admin-delete-rating="${r.id}">删除</button>
+      </div>
+    `;
+  }).join("");
+}
+
+document.addEventListener("click", async (e) => {
+  const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
+  if (!admin) return;
+
+  const userId = e.target.closest("[data-admin-delete-user]")?.dataset.adminDeleteUser;
+  if (userId && confirm("确定要删除该用户？此操作不可撤销。")) {
+    const el = e.target.closest("[data-admin-delete-user]").parentElement;
+    try {
+      await adminRequest(`/admin/users/${userId}`, { method: "DELETE" });
+      el.remove();
+    } catch (err) { alert(err.message); }
+  }
+
+  const commentId = e.target.closest("[data-admin-delete-comment]")?.dataset.adminDeleteComment;
+  if (commentId && confirm("确定要删除该评论？")) {
+    const el = e.target.closest("[data-admin-delete-comment]").parentElement;
+    try {
+      await adminRequest(`/admin/comments/${commentId}`, { method: "DELETE" });
+      el.remove();
+    } catch (err) { alert(err.message); }
+  }
+
+  const imageId = e.target.closest("[data-admin-delete-image]")?.dataset.adminDeleteImage;
+  if (imageId && confirm("确定要删除该图片？")) {
+    const el = e.target.closest("[data-admin-delete-image]").parentElement;
+    try {
+      await adminRequest(`/admin/images/${imageId}`, { method: "DELETE" });
+      el.remove();
+    } catch (err) { alert(err.message); }
+  }
+
+  const chatId = e.target.closest("[data-admin-delete-chat]")?.dataset.adminDeleteChat;
+  if (chatId && confirm("确定要删除该聊天记录？")) {
+    const el = e.target.closest("[data-admin-delete-chat]").parentElement;
+    try {
+      await adminRequest(`/admin/chat/${chatId}`, { method: "DELETE" });
+      el.remove();
+    } catch (err) { alert(err.message); }
+  }
+
+  const ratingId = e.target.closest("[data-admin-delete-rating]")?.dataset.adminDeleteRating;
+  if (ratingId && confirm("确定要删除该评分？")) {
+    const el = e.target.closest("[data-admin-delete-rating]").parentElement;
+    try {
+      await adminRequest(`/admin/ratings/${ratingId}`, { method: "DELETE" });
+      el.remove();
+    } catch (err) { alert(err.message); }
+  }
+});
 
 init();

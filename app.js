@@ -145,6 +145,8 @@ const i18n = {
     loginRegister: "登录/注册",
     administrator: "管理员",
     // 地图图层
+    gaode: "高德",
+    osm: "OSM",
     standard: "标准",
     satellite: "卫星",
     terrain: "地形",
@@ -2083,7 +2085,11 @@ const map = L.map("map", {
 L.control.zoom({ position: "bottomright" }).addTo(map);
 
 const baseLayers = {
-  "标准": L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  "高德": L.tileLayer("https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}", {
+    maxZoom: 18,
+    attribution: '&copy; 高德地图'
+  }),
+  "OSM": L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }),
@@ -2097,14 +2103,14 @@ const baseLayers = {
   })
 };
 
-let currentLayerName = "标准";
-baseLayers["标准"].addTo(map);
+let currentLayerName = "高德";
+baseLayers["高德"].addTo(map);
 
 const LayerSwitcher = L.Control.extend({
   options: { position: "topleft" },
   onAdd: function () {
     const container = L.DomUtil.create("div", "layer-switcher");
-    const names = ["标准", "卫星", "地形"];
+    const names = ["高德", "OSM", "卫星", "地形"];
     names.forEach(name => {
       const btn = L.DomUtil.create("button", "", container);
       btn.textContent = name;

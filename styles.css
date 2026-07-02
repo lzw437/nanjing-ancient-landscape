@@ -56,6 +56,12 @@ button {
   z-index: 2;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .brand p {
   margin: 0 0 5px;
   color: var(--red);
@@ -67,6 +73,23 @@ button {
   margin: 0;
   font-size: 24px;
   line-height: 1.18;
+}
+
+.lang-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 .module-tabs {

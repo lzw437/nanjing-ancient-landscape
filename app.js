@@ -4832,4 +4832,64 @@ document.addEventListener("click", async (e) => {
   }
 });
 
+// ===== Mobile Sidebar Toggle =====
+const sidebarToggleBtn = document.getElementById("sidebarToggle");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarEl = document.querySelector(".sidebar");
+
+function openSidebar() {
+  sidebarEl.classList.add("open");
+  sidebarToggleBtn.classList.add("active");
+  sidebarOverlay.classList.add("visible");
+}
+
+function closeSidebar() {
+  sidebarEl.classList.remove("open");
+  sidebarToggleBtn.classList.remove("active");
+  sidebarOverlay.classList.remove("visible");
+}
+
+if (sidebarToggleBtn) {
+  sidebarToggleBtn.addEventListener("click", () => {
+    if (sidebarEl.classList.contains("open")) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+}
+
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener("click", closeSidebar);
+}
+
+// Close sidebar on module switch (mobile)
+const origSwitchModule = typeof switchModule === "function" ? switchModule : null;
+function switchModuleMobile(name) {
+  if (window.innerWidth <= 980) closeSidebar();
+}
+
+document.querySelectorAll(".module-tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    setTimeout(() => {
+      if (window.innerWidth <= 980) closeSidebar();
+    }, 50);
+  });
+});
+
+// Close sidebar when clicking a spot card on mobile
+document.addEventListener("click", (e) => {
+  if (window.innerWidth > 980) return;
+  if (e.target.closest(".spot-card") || e.target.closest("[data-detail]") || e.target.closest("[data-map]")) {
+    setTimeout(closeSidebar, 100);
+  }
+});
+
+// Recalculate map size when sidebar closes
+if (typeof map !== "undefined") {
+  window.addEventListener("resize", () => {
+    setTimeout(() => map.invalidateSize(), 350);
+  });
+}
+
 init();

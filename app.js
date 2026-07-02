@@ -1,3 +1,1095 @@
+// ===== 多语言系统 =====
+let currentLang = localStorage.getItem("landscapeLang") || "zh";
+
+const i18n = {
+  zh: {
+    // 导航
+    appName: "南京古景点地图",
+    mapTab: "地图总览",
+    infoTab: "详细资料库",
+    routeTab: "推荐路线",
+    chatTab: "聊天室",
+    profileTab: "个人中心",
+    adminTab: "管理后台",
+    // 搜索与统计
+    searchPlaceholder: "输入名称、朝代或关键词",
+    spotsCount: "处景点",
+    dynastyCount: "历史阶段",
+    // 景点汇总
+    spotSummary: "景点汇总",
+    showAll: "全图",
+    allTypes: "全部",
+    noMatch: "没有找到匹配景点。",
+    // 弹窗与详情
+    viewDetail: "查看详细介绍",
+    enterInfo: "进入详细资料库",
+    favorite: "收藏",
+    favorited: "已收藏",
+    mapLocate: "地图定位",
+    address: "地址",
+    hours: "开放时间",
+    ticket: "门票",
+    transit: "交通",
+    coordinates: "坐标",
+    highlight: "参观亮点",
+    route: "推荐路线",
+    gisLayer: "GIS 图层",
+    gisValue: "点位 + 线状路线",
+    userRating: "用户评分",
+    ratingCount: "条评分",
+    cancelRating: "取消评分",
+    history: "历史背景",
+    images: "图片",
+    userComments: "用户评论",
+    commentPlaceholder: "写下你对这个景点的看法...",
+    postComment: "发表评论",
+    uploadImage: "📷 上传图片",
+    delete: "删除",
+    noComments: "暂无评论，快来发表第一条评论吧！",
+    // 详细资料库
+    infoTitle: "景点详细资料库",
+    backToMap: "返回地图",
+    allSpots: "全部景点",
+    latLng: "经纬度",
+    spotType: "景点类型",
+    dynastyLabel: "历史阶段",
+    gis要素: "适合展示的 GIS 要素",
+    shareImages: "用户分享图片",
+    loading: "加载中...",
+    // 个人中心
+    profile: "个人中心",
+    myFavorites: "我的收藏",
+    myComments: "我的评论",
+    myImages: "我的图片",
+    favSpot: "收藏景点",
+    postComm: "发表评论",
+    uploadImg: "上传图片",
+    loginFirst: "请先登录",
+    noFavorites: "您还没有收藏任何景点",
+    noCommentsYet: "您还没有发表过评论",
+    noImagesYet: "您还没有上传过图片",
+    goToMap: "去地图浏览景点",
+    viewDetail2: "查看详情",
+    unfavorite: "取消收藏",
+    spotLabel: "景点：",
+    // 推荐路线
+    customRoute: "自定义路线",
+    customHint: "点击景点右侧 + 添加到路线规划",
+    sysRoutes: "系统推荐路线",
+    sysHint: "为你精选经典路线，点击路线可直接生成，点赞支持你喜欢的路线",
+    routeResult: "路线结果",
+    selectedSpots: "已选景点",
+    clear: "清空",
+    generateRoute: "生成推荐路线",
+    noSelected: "暂无选中景点",
+    start: "起",
+    end: "终",
+    recommendedRoute: "推荐路线",
+    km: "km",
+    addToRoute: "添加到路线规划",
+    removeFromRoute: "从路线中移除",
+    likeRoute: "点赞",
+    unlikeRoute: "取消点赞",
+    routeLoadFailed: "加载推荐路线失败",
+    // 聊天室
+    chatTitle: "聊天室",
+    chatHint: "实时交流，分享你的旅行体验",
+    chatPlaceholder: "输入消息...",
+    send: "发送",
+    preview: "预览",
+    // 管理后台
+    adminTitle: "管理后台",
+    userMgmt: "用户管理",
+    commentMgmt: "评论管理",
+    imageMgmt: "图片管理",
+    ratingMgmt: "评分管理",
+    chatMgmt: "聊天管理",
+    noUsers: "暂无注册用户",
+    noCommentsAdmin: "暂无评论",
+    noImagesAdmin: "暂无图片",
+    noChat: "暂无聊天记录",
+    noRatings: "暂无评分记录",
+    unknownUser: "未知用户",
+    unknownSpot: "未知景点",
+    spotLabelShort: "景点:",
+    confirmDeleteUser: "确定要删除该用户？此操作不可撤销。",
+    confirmDeleteComment: "确定要删除该评论？",
+    confirmDeleteImage: "确定要删除该图片？",
+    confirmDeleteChat: "确定要删除该聊天记录？",
+    confirmDeleteRating: "确定要删除该评分？",
+    // 认证
+    loginTab: "登录",
+    registerTab: "注册",
+    adminAuthTab: "管理员",
+    userLogin: "用户登录",
+    emailOrUser: "邮箱或用户名",
+    password: "密码",
+    loginBtn: "登录",
+    userRegister: "用户注册",
+    username: "用户名",
+    email: "邮箱",
+    registerBtn: "注册并登录",
+    adminLogin: "管理员登录",
+    adminRegister: "管理员注册",
+    adminKey: "管理员密钥",
+    adminKeyPlaceholder: "请输入管理员密钥",
+    adminKeyHint: "密钥：888888",
+    registerAdmin: "注册管理员",
+    goAdminLogin: "管理员登录",
+    goAdminRegister: "注册管理员账号",
+    // 按钮
+    switchAccount: "切换账号",
+    loggedIn: "已登录",
+    notLogged: "未登录",
+    guest: "游客访问",
+    loginRegister: "登录/注册",
+    administrator: "管理员",
+    // 地图图层
+    standard: "标准",
+    satellite: "卫星",
+    terrain: "地形",
+    // 图例
+    legendTemple: "寺庙",
+    legendGarden: "园林",
+    legendWall: "城墙遗址",
+    legendCulture: "文化古建",
+    legendTomb: "陵寝遗址",
+    legendModern: "近代史迹",
+    // 空状态
+    noUserGallery: "暂无用户分享图片",
+    noFavLogin: "请先登录查看您的收藏",
+    noCommentLogin: "请先登录查看您的评论",
+    noImageLogin: "请先登录查看您的图片",
+    // 提示
+    loginFirstAlert: "请先登录后再上传图片。",
+    imgSizeLimit: "图片大小不能超过 3MB",
+    imgUploadSuccess: "图片上传成功",
+    favSuccess: "收藏成功",
+    unfavSuccess: "已取消收藏",
+    commentPosted: "评论发表成功",
+    commentDeleted: "评论已删除",
+    ratingSubmitted: "评分已提交",
+    ratingCleared: "评分已取消",
+    routeEmpty: "请先选择景点",
+    chatEmpty: "请输入消息内容",
+    chatImgSizeLimit: "图片大小不能超过 3MB",
+    // 页脚
+    sourceNote: "地图底图来自 OpenStreetMap，部分景点图片来自 Wikimedia Commons，图片无法访问时会显示占位图。",
+    // 主题
+    themeDefault: "默认",
+    themeSakura: "樱花粉",
+    themeLavender: "薰衣草",
+    themeOcean: "海洋蓝",
+    themeMeadow: "草地绿",
+    themeSunset: "暖阳橙",
+    themeHoney: "蜜糖黄",
+    themeCherry: "樱桃红",
+    bgDefault: "默认",
+    bgSakura: "樱花粉",
+    bgStar: "星空夜",
+    bgOcean: "海底世界",
+    bgGarden: "花园小径",
+    bgHeart: "可爱甜心",
+    bgRainbow: "彩虹糖",
+    bgSky: "蓝天白云",
+    bgKitty: "Hello Kitty",
+    bgMinion: "小黄人",
+    bgTotoro: "龙猫",
+    bgPanda: "熊猫",
+    bgFrog: "青蛙",
+    bgBunny: "兔子",
+    // 表情
+    emojiSmile: "笑脸",
+    emojiGesture: "手势",
+    emojiAnimal: "动物",
+    emojiFood: "食物",
+    emojiActivity: "活动",
+    emojiTravel: "旅行",
+    emojiObject: "物品",
+    emojiHeart: "爱心",
+    emojiFlag: "旗帜",
+    // 时间
+    justNow: "刚刚",
+    minAgo: "分钟前",
+    hourAgo: "小时前",
+    dayAgo: "天前",
+  },
+  en: {
+    appName: "Nanjing Historic Sites Map",
+    mapTab: "Map",
+    infoTab: "Details",
+    routeTab: "Routes",
+    chatTab: "Chat",
+    profileTab: "Profile",
+    adminTab: "Admin",
+    searchPlaceholder: "Search by name, dynasty, or keyword",
+    spotsCount: "sites",
+    dynastyCount: "dynasties",
+    spotSummary: "All Sites",
+    showAll: "Full Map",
+    allTypes: "All",
+    noMatch: "No matching sites found.",
+    viewDetail: "View Details",
+    enterInfo: "Open in Details",
+    favorite: "Favorite",
+    favorited: "Favorited",
+    mapLocate: "Locate on Map",
+    address: "Address",
+    hours: "Hours",
+    ticket: "Ticket",
+    transit: "Transit",
+    coordinates: "Coordinates",
+    highlight: "Highlights",
+    route: "Route",
+    gisLayer: "GIS Layer",
+    gisValue: "Point + Linear Route",
+    userRating: "Rating",
+    ratingCount: "ratings",
+    cancelRating: "Cancel Rating",
+    history: "History",
+    images: "Images",
+    userComments: "Comments",
+    commentPlaceholder: "Share your thoughts about this site...",
+    postComment: "Post",
+    uploadImage: "📷 Upload",
+    delete: "Delete",
+    noComments: "No comments yet. Be the first!",
+    infoTitle: "Site Details",
+    backToMap: "Back to Map",
+    allSpots: "All Sites",
+    latLng: "Lat/Lng",
+    spotType: "Type",
+    dynastyLabel: "Dynasty",
+    gis要素: "GIS Features",
+    shareImages: "User Photos",
+    loading: "Loading...",
+    profile: "Profile",
+    myFavorites: "Favorites",
+    myComments: "Comments",
+    myImages: "Images",
+    favSpot: "Favorites",
+    postComm: "Comments",
+    uploadImg: "Images",
+    loginFirst: "Please log in",
+    noFavorites: "No favorites yet",
+    noCommentsYet: "No comments yet",
+    noImagesYet: "No images yet",
+    goToMap: "Browse Map",
+    viewDetail2: "View Details",
+    unfavorite: "Unfavorite",
+    spotLabel: "Site: ",
+    customRoute: "Custom Route",
+    customHint: "Tap + on a site to add it to your route",
+    sysRoutes: "Recommended Routes",
+    sysHint: "Curated routes — tap to generate, like to support",
+    routeResult: "Route Result",
+    selectedSpots: "Selected",
+    clear: "Clear",
+    generateRoute: "Generate Route",
+    noSelected: "No sites selected",
+    start: "Start",
+    end: "End",
+    recommendedRoute: "Recommended",
+    km: "km",
+    addToRoute: "Add to route",
+    removeFromRoute: "Remove from route",
+    likeRoute: "Like",
+    unlikeRoute: "Unlike",
+    routeLoadFailed: "Failed to load routes",
+    chatTitle: "Chat Room",
+    chatHint: "Real-time chat, share your travel experience",
+    chatPlaceholder: "Type a message...",
+    send: "Send",
+    preview: "Preview",
+    adminTitle: "Admin Panel",
+    userMgmt: "Users",
+    commentMgmt: "Comments",
+    imageMgmt: "Images",
+    ratingMgmt: "Ratings",
+    chatMgmt: "Messages",
+    noUsers: "No users yet",
+    noCommentsAdmin: "No comments yet",
+    noImagesAdmin: "No images yet",
+    noChat: "No messages yet",
+    noRatings: "No ratings yet",
+    unknownUser: "Unknown",
+    unknownSpot: "Unknown site",
+    spotLabelShort: "Site:",
+    confirmDeleteUser: "Delete this user? This cannot be undone.",
+    confirmDeleteComment: "Delete this comment?",
+    confirmDeleteImage: "Delete this image?",
+    confirmDeleteChat: "Delete this message?",
+    confirmDeleteRating: "Delete this rating?",
+    loginTab: "Login",
+    registerTab: "Register",
+    adminAuthTab: "Admin",
+    userLogin: "User Login",
+    emailOrUser: "Email or Username",
+    password: "Password",
+    loginBtn: "Login",
+    userRegister: "User Register",
+    username: "Username",
+    email: "Email",
+    registerBtn: "Register & Login",
+    adminLogin: "Admin Login",
+    adminRegister: "Admin Register",
+    adminKey: "Admin Key",
+    adminKeyPlaceholder: "Enter admin key",
+    adminKeyHint: "Key: 888888",
+    registerAdmin: "Register Admin",
+    goAdminLogin: "Admin Login",
+    goAdminRegister: "Register Admin",
+    switchAccount: "Switch",
+    loggedIn: "Logged in",
+    notLogged: "Not logged in",
+    guest: "Guest",
+    loginRegister: "Login",
+    administrator: "Admin",
+    standard: "Standard",
+    satellite: "Satellite",
+    terrain: "Terrain",
+    legendTemple: "Temple",
+    legendGarden: "Garden",
+    legendWall: "City Wall",
+    legendCulture: "Heritage",
+    legendTomb: "Tomb",
+    legendModern: "Modern",
+    noUserGallery: "No user photos yet",
+    noFavLogin: "Please log in to view favorites",
+    noCommentLogin: "Please log in to view comments",
+    noImageLogin: "Please log in to view images",
+    loginFirstAlert: "Please log in before uploading.",
+    imgSizeLimit: "Image must be under 3MB",
+    imgUploadSuccess: "Image uploaded successfully",
+    favSuccess: "Favorited",
+    unfavSuccess: "Unfavorited",
+    commentPosted: "Comment posted",
+    commentDeleted: "Comment deleted",
+    ratingSubmitted: "Rating submitted",
+    ratingCleared: "Rating cleared",
+    routeEmpty: "Please select spots first",
+    chatEmpty: "Please enter a message",
+    chatImgSizeLimit: "Image must be under 3MB",
+    sourceNote: "Map tiles from OpenStreetMap, some images from Wikimedia Commons. Placeholder shown when images fail to load.",
+    themeDefault: "Default",
+    themeSakura: "Sakura",
+    themeLavender: "Lavender",
+    themeOcean: "Ocean",
+    themeMeadow: "Meadow",
+    themeSunset: "Sunset",
+    themeHoney: "Honey",
+    themeCherry: "Cherry",
+    bgDefault: "Default",
+    bgSakura: "Sakura",
+    bgStar: "Starry Night",
+    bgOcean: "Ocean",
+    bgGarden: "Garden",
+    bgHeart: "Sweet Heart",
+    bgRainbow: "Rainbow",
+    bgSky: "Blue Sky",
+    bgKitty: "Hello Kitty",
+    bgMinion: "Minion",
+    bgTotoro: "Totoro",
+    bgPanda: "Panda",
+    bgFrog: "Frog",
+    bgBunny: "Bunny",
+    emojiSmile: "Smile",
+    emojiGesture: "Gesture",
+    emojiAnimal: "Animal",
+    emojiFood: "Food",
+    emojiActivity: "Activity",
+    emojiTravel: "Travel",
+    emojiObject: "Object",
+    emojiHeart: "Heart",
+    emojiFlag: "Flag",
+    justNow: "just now",
+    minAgo: "min ago",
+    hourAgo: "h ago",
+    dayAgo: "d ago",
+  }
+};
+
+function t(key) {
+  return (i18n[currentLang] && i18n[currentLang][key]) || i18n.zh[key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem("landscapeLang", lang);
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  updateUI();
+  render();
+  const langBtn = document.getElementById("langToggle");
+  if (langBtn) langBtn.textContent = lang === "zh" ? "EN" : "中";
+}
+
+function updateUI() {
+  const el = (id) => document.getElementById(id);
+  if (el("appTitle")) el("appTitle").textContent = t("appName");
+  if (el("mapModuleBtn")) el("mapModuleBtn").textContent = t("mapTab");
+  if (el("infoModuleBtn")) el("infoModuleBtn").textContent = t("infoTab");
+  if (el("routeModuleBtn")) el("routeModuleBtn").textContent = t("routeTab");
+  if (el("chatModuleBtn")) el("chatModuleBtn").textContent = t("chatTab");
+  if (el("profileModuleBtn")) el("profileModuleBtn").textContent = t("profileTab");
+  if (el("adminModuleBtn")) el("adminModuleBtn").textContent = t("adminTab");
+  const searchInput = el("searchInput");
+  if (searchInput) searchInput.placeholder = t("searchPlaceholder");
+  // 更新模块标题
+  document.querySelectorAll("[data-i18n]").forEach(node => {
+    const key = node.dataset.i18n;
+    if (key) node.textContent = t(key);
+  });
+  // 更新 placeholder
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(node => {
+    const key = node.dataset.i18nPlaceholder;
+    if (key) node.placeholder = t(key);
+  });
+  // 更新 auth 状态
+  const user = getCurrentUser();
+  updateAuthView(user);
+  // 更新文档标题
+  document.title = t("appName") + " GIS";
+}
+
+function spotT(spot, field) {
+  if (currentLang === "zh") return spot[field];
+  const tr = spotTranslations[spot.id];
+  if (!tr) return spot[field];
+  const enField = field + "En";
+  return tr[enField] || tr[field] || spot[field];
+}
+
+const spotTranslations = {
+  "ming-xiaoling": {
+    nameEn: "Ming Xiaoling Mausoleum",
+    typeEn: "Mausoleum Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "The mausoleum of Emperor Zhu Yuanzhang and Empress Ma, located at the southern foot of Purple Mountain, a key witness to Nanjing's Ming Dynasty capital layout.",
+    detailEn: [
+      "Built during the Hongwu period, it is the joint tomb of Ming Dynasty founder Zhu Yuanzhang and Empress Ma. The mausoleum combines natural terrain, waterways, spirit ways, and sacrificial architecture into a pattern of 'building the tomb according to the mountain.'",
+      "The most distinctive feature is the Spirit Way lined with stone animals and officials, displaying early Ming stone carving art. The square city, meridian tower, and treasure top represent core sacrificial and symbolic spaces.",
+      "From a GIS perspective, it serves as an excellent case of 'point-based site + area heritage,' forming the Purple Mountain historical-cultural landscape belt with Sun Yat-sen Mausoleum, Linggu Temple, and Meiling Palace."
+    ],
+    highlightEn: "Spirit Way stone statues, Square City & Meridian Tower, Purple Mountain",
+    routeEn: "Eastern Suburbs Historical Line"
+  },
+  "fuzimiao": {
+    nameEn: "Confucius Temple & Qinhuai River",
+    typeEn: "Cultural District",
+    dynastyEn: "Eastern Jin to Ming-Qing",
+    introEn: "The most representative historical-cultural area in southern old Nanjing, centered on the Confucius Temple with surrounding historical nodes.",
+    detailEn: [
+      "The Qinhuai River was both a transportation waterway and urban life interface. During Ming-Qing, the area was densely packed with shops and lantern markets.",
+      "The Jiangnan Examination Hall made Confucius Temple not just a tourist street but a carrier of cultural attributes.",
+      "Suitable for expressing the 'point-line-surface' GIS approach: temple and examination hall as points, Qinhuai River as line, and the scenic belt as surface."
+    ],
+    highlightEn: "Confucius Temple, Jiangnan Examination Hall, Qinhuai River, Wuyi Lane",
+    routeEn: "City South Cultural Line"
+  },
+  "zhonghua-gate": {
+    nameEn: "Zhonghua Gate Fortress",
+    typeEn: "City Wall Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "One of the largest and most structurally complex gates among Nanjing's Ming city walls, originally named Jubao Gate.",
+    detailEn: [
+      "Its most prominent feature is the multi-layered barbican structure. Enemies breaching the first gate would enter enclosed spaces, attacked from both walls and hidden soldier caves.",
+      "This design shows Ming walls pursued not just height and solidity but also emphasized defense routes and troop deployment.",
+      "In GIS work, it can serve as a key node on linear city wall heritage, connecting with Taicheng, Xuanwu Gate, and Yijiang Gate."
+    ],
+    highlightEn: "Multi-layered barbican, Hidden soldier caves, Ming fortification system",
+    routeEn: "City Wall Heritage Line"
+  },
+  "jimingsi": {
+    nameEn: "Jiming Temple",
+    typeEn: "Temple",
+    dynastyEn: "Six Dynasties to Ming-Qing",
+    introEn: "Located in northern old Nanjing, adjacent to Xuanwu Lake and Taicheng, continuing the connection between Southern Dynasties temples and palace city spaces.",
+    detailEn: [
+      "Known for its mountain gate, halls, Medicine Buddha Pagoda, and panoramic views. Spring cherry blossoms and Xuanwu Lake enhance its urban public space attributes.",
+      "Can form a 'Northern Ancient Sites Line' with Taicheng, Xuanwu Lake, and Beiji Peak, reflecting the relationship between religious architecture, city defenses, and natural lakes."
+    ],
+    highlightEn: "Medicine Buddha Pagoda, Cherry blossoms, Xuanwu Lake views",
+    routeEn: "Northern Ancient Sites Line"
+  },
+  "taicheng": {
+    nameEn: "Taicheng (Palace City Wall)",
+    typeEn: "City Wall Site",
+    dynastyEn: "Six Dynasties to Ming Dynasty",
+    introEn: "A very important historical place name, often associated with Six Dynasties Jiankang Palace City memory.",
+    detailEn: [
+      "The current wall mainly belongs to the Ming Dynasty system, but its location evokes Nanjing's historical overlay from Six Dynasties to Ming.",
+      "Very close to Xuanwu Lake and Jiming Temple, forming one of the most concentrated historical landscapes in northern old Nanjing.",
+      "Can serve as both a point on the Ming city wall and a marker of Six Dynasties historical memory."
+    ],
+    highlightEn: "Ancient palace city wall, Xuanwu Lake panoramic views",
+    routeEn: "Northern Ancient Sites Line"
+  },
+  "zhanyuan": {
+    nameEn: "Zhanyuan Garden",
+    typeEn: "Garden",
+    dynastyEn: "Ming-Qing",
+    introEn: "One of the representative classical Jiangnan gardens preserved in southern Nanjing.",
+    detailEn: [
+      "Organizes touring paths through water features, rockeries, pavilions, and courtyards, emphasizing step-by-step scenery changes.",
+      "Combined with modern historical exhibition, simultaneously functional in garden art, local history, and tourism.",
+      "Suitable for explaining how classical gardens are embedded in high-density old city blocks."
+    ],
+    highlightEn: "Classical Jiangnan garden, Rockeries & water features, Taiping exhibits",
+    routeEn: "City South Cultural Line"
+  },
+  "chaotian-palace": {
+    nameEn: "Chaotian Palace",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Ming-Qing",
+    introEn: "One of the most complete and largest Ming-Qing official architectural complexes in old Nanjing.",
+    detailEn: [
+      "Clear axis with courtyards progressing layer by layer, reflecting traditional ritual architecture spatial order.",
+      "Now serves as Nanjing Municipal Museum, displaying architectural heritage and urban history.",
+      "Represents a cultural public service node within the old city from a GIS perspective."
+    ],
+    highlightEn: "Ming-Qing official architecture, Axial layout, Nanjing Municipal Museum",
+    routeEn: "City South Cultural Line"
+  },
+  "qixia-temple": {
+    nameEn: "Qixia Temple",
+    typeEn: "Temple",
+    dynastyEn: "Six Dynasties to Ming-Qing",
+    introEn: "An important representative of Nanjing's Buddhist culture, located on Qixia Mountain in northeastern Nanjing.",
+    detailEn: [
+      "History dates to the Six Dynasties, closely connected with Qixia Mountain's natural landscape and stone carvings.",
+      "Thousand Buddha Rock and Relic Pagoda make it a cultural heritage site with religious artistic value.",
+      "Located outside the main city, showing Nanjing's historical sites extend along mountains and waterways."
+    ],
+    highlightEn: "Thousand Buddha Rock, Relic Pagoda, Autumn red leaves",
+    routeEn: "Eastern Mountain Temple Line"
+  },
+  "linggu-temple": {
+    nameEn: "Linggu Temple",
+    typeEn: "Temple",
+    dynastyEn: "Ming Dynasty to Modern",
+    introEn: "An important part of Nanjing's eastern suburban historical-cultural landscape, at the eastern foot of Purple Mountain.",
+    detailEn: [
+      "Relocated during early Ming due to Ming Xiaoling construction, showing its close relationship with imperial mausoleum building.",
+      "Most distinctive is the Beamless Hall, whose masonry arch uses no wooden beams, demonstrating special architectural techniques.",
+      "Can form continuous tour nodes with Ming Xiaoling, Sun Yat-sen Mausoleum, and Meiling Palace in the Purple Mountain area."
+    ],
+    highlightEn: "Beamless Hall (Wuliang Dian), Linggu Pagoda, Purple Mountain",
+    routeEn: "Eastern Suburbs Historical Line"
+  },
+  "presidential-palace": {
+    nameEn: "Presidential Palace",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Qing Dynasty to Republic",
+    introEn: "One of the most important modern historical architectural complexes in Nanjing, associated with multiple historical periods.",
+    detailEn: [
+      "Contains both Chinese-style courtyards and modern buildings, showing the transition from traditional to modern administrative architecture.",
+      "Not just a single building but a place continuously renovated, overlaid, and reused across eras.",
+      "Suitable for the 'Modern Nanjing Political Center' GIS layer, forming a modern historical route with Meiyuan New Village."
+    ],
+    highlightEn: "Chinese & Western architecture, Republic history, Garden spaces",
+    routeEn: "Modern History Line"
+  },
+  "yuejiang-tower": {
+    nameEn: "Yuejiang Tower",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Ming Dynasty concept, Modern construction",
+    introEn: "Faces the Yangtze from Lion Mountain. Emperor Zhu Yuanzhang once planned its construction and wrote the 'Yuejiang Tower Record.'",
+    detailEn: [
+      "The current tower is a modern reconstruction, but together with Lion Mountain and the Yangtze waterfront, it constitutes Nanjing's riverside historical landscape.",
+      "From the tower, one can observe the Yangtze River, Nanjing Yangtze River Bridge, and Xiaguan port area.",
+      "Demonstrates 'historical cultural imagery sites' - value from historical texts and geographical location rather than building age."
+    ],
+    highlightEn: "Panoramic Yangtze views, Ming historical concept, Lion Mountain",
+    routeEn: "Riverside Historical Line"
+  },
+  "yijiang-gate": {
+    nameEn: "Yijiang Gate",
+    typeEn: "City Wall Site",
+    dynastyEn: "Ming Dynasty to Modern",
+    introEn: "Located in northwestern old Nanjing, near Xiaguan and the Yangtze waterfront, an important node in the Ming city wall system.",
+    detailEn: [
+      "Nanjing's city walls are not regular geometric shapes but built combining mountains, waterways, and city boundaries.",
+      "One can observe how the wall extends toward the Yangtze and connects with Lion Mountain and Yuejiang Tower.",
+      "Connecting with Zhonghua Gate and Taicheng demonstrates Ming city walls as linear cultural heritage."
+    ],
+    highlightEn: "Ming city wall node, Yangtze River proximity, Historical gate",
+    routeEn: "City Wall Heritage Line"
+  },
+  "meiling-palace": {
+    nameEn: "Meiling Palace",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Republic of China",
+    introEn: "At the southern foot of Purple Mountain, a representative of Republican-era architectural heritage.",
+    detailEn: [
+      "Combines Chinese-style roofing with modern functions and mountain forest environment, reflecting Republican architectural fusion.",
+      "Surrounded by dense trees, close to Ming Xiaoling and Sun Yat-sen Mausoleum.",
+      "Suitable for the modern historical sites layer, connecting with the eastern suburban historical line."
+    ],
+    highlightEn: "Republican architecture, Purple Mountain forest, Panoramic views",
+    routeEn: "Eastern Suburbs Historical Line"
+  },
+  "sun-yat-sen-mausoleum": {
+    nameEn: "Sun Yat-sen Mausoleum",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Republic of China",
+    introEn: "The tomb of Dr. Sun Yat-sen at the southern foot of Purple Mountain, a representative of Republican memorial architecture.",
+    detailEn: [
+      "Spatial organization emphasizes touring from low to high, from open to solemn, with architecture closely integrated with terrain.",
+      "Visitors ascend step by step with constantly changing city views and mountain environments.",
+      "Shares the Purple Mountain area with Ming Xiaoling, demonstrating Nanjing's multi-era historical landscape continuity."
+    ],
+    highlightEn: "Memorial architecture, Purple Mountain, Blue sky & white marble",
+    routeEn: "Eastern Suburbs Historical Line"
+  },
+  "ganxi-residence": {
+    nameEn: "Ganxi Former Residence",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Qing Dynasty",
+    introEn: "A large Qing Dynasty residential complex in old southern Nanjing.",
+    detailEn: [
+      "Buildings organize living spaces through multiple courtyards, reflecting Jiangnan urban mansion residential order and family structure.",
+      "Represents ordinary urban life and family residential heritage, unlike palaces, temples, or city walls.",
+      "Can serve as a 'traditional residential' category, demonstrating the old southern city's historical-cultural richness."
+    ],
+    highlightEn: "Qing residential architecture, Multiple courtyards, Folk culture",
+    routeEn: "City South Cultural Line"
+  },
+  "porcelain-tower": {
+    nameEn: "Grand Bao'en Temple Heritage Park",
+    typeEn: "Heritage Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "Famous for its glazed pagoda in the Ming Dynasty, one of Nanjing's most internationally renowned Buddhist buildings.",
+    detailEn: [
+      "Combines archaeological remains, historical documents, and modern exhibition, converting underground remains into readable public cultural space.",
+      "Can serve as a heritage-type site, forming a southern historical-cultural cluster with Zhonghua Gate, Confucius Temple, and Zhanyuan."
+    ],
+    highlightEn: "Ming glazed pagoda concept, Archaeological heritage display",
+    routeEn: "City South Cultural Line"
+  },
+  "ming-palace": {
+    nameEn: "Ming Palace Ruins",
+    typeEn: "Palace Ruins",
+    dynastyEn: "Ming Dynasty",
+    introEn: "Where the early Ming imperial palace was located after Zhu Yuanzhang established Nanjing as capital.",
+    detailEn: [
+      "Ground-level remains are limited, but Wuchao Gate, the heritage park, and place names preserve palace city spatial memory.",
+      "Value lies at the urban pattern level: roads, place names, and ruins all point to the Ming Dynasty capital core.",
+      "Suitable as a 'ruins-memory type site' for GIS display."
+    ],
+    highlightEn: "Ming palace ruins, Wuchao Gate, Urban archaeological park",
+    routeEn: "Eastern Historical Line"
+  },
+  "drum-tower": {
+    nameEn: "Nanjing Drum Tower",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Ming Dynasty",
+    introEn: "Built in the Ming Dynasty, a public building related to ancient city timekeeping, rituals, and management.",
+    detailEn: [
+      "The surrounding area is now a transportation and public activity core, with the ancient building highly integrated with modern urban functions.",
+      "Can serve as an old city center landmark, connecting Xuanwu Lake, Taicheng, Chaotian Palace, and Presidential Palace."
+    ],
+    highlightEn: "Ming drum tower, City center landmark, Panoramic views",
+    routeEn: "Northern Ancient Sites Line"
+  },
+  "xuanwu-gate": {
+    nameEn: "Xuanwu Gate",
+    typeEn: "City Wall Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "On the west side of Xuanwu Lake in northern old Nanjing, an important gate node in the Ming city wall system.",
+    detailEn: [
+      "Xuanwu Lake had both urban defense and landscape value. Xuanwu Gate adjacent to the lake makes the wall part of the city's landscape pattern.",
+      "Displaying with Taicheng, Jiming Temple, and Drum Tower forms a spatial chain of northern historical landscape."
+    ],
+    highlightEn: "Ming city wall gate, Xuanwu Lake views, North city entrance",
+    routeEn: "Northern Ancient Sites Line"
+  },
+  "yuhuatai": {
+    nameEn: "Yuhuatai Memorial",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Modern Era",
+    introEn: "A scenic area combining natural hills, historical legends, and modern memorial attributes in southern Nanjing.",
+    detailEn: [
+      "Memorial buildings and exhibitions make it an important site for modern historical education.",
+      "Can serve as a southern memorial site, showing resources from ancient ruins to modern memorial sites."
+    ],
+    highlightEn: "Modern memorial, Natural hillside, Historical legends",
+    routeEn: "Southern Memorial Line"
+  },
+  "niushou-hongjue": {
+    nameEn: "Niushou Mountain - Hongjue Temple Pagoda",
+    typeEn: "Temple",
+    dynastyEn: "Tang-Song to Ming-Qing",
+    introEn: "An important southern mountain landscape with Hongjue Temple Pagoda as its key historical remnant.",
+    detailEn: [
+      "Value lies in the combination of mountain terrain, temples, pagodas, roads, and viewing spaces.",
+      "Hongjue Temple Pagoda is suitable as a southern mountain Buddhist point, forming a historical tour axis."
+    ],
+    highlightEn: "Hongjue Temple Pagoda, Mountain Buddhist architecture, Valley views",
+    routeEn: "Southern Mountain Line"
+  },
+  "yangshan-quarry": {
+    nameEn: "Yangshan Quarry Stele Materials",
+    typeEn: "Heritage Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "A Ming Dynasty large-scale stone quarrying site in the Tangshan area of eastern Nanjing.",
+    detailEn: [
+      "Displays engineering production remains with massive stele base, body, and cap in the mountain quarry.",
+      "Can supplement 'heritage' and 'engineering' type sites, showing resources beyond urban buildings."
+    ],
+    highlightEn: "Massive stele stones, Ancient quarrying, Mountain carving site",
+    routeEn: "Eastern Mountain Heritage Line"
+  },
+  "nantang-mausoleums": {
+    nameEn: "Southern Tang Mausoleums",
+    typeEn: "Mausoleum Site",
+    dynastyEn: "Five Dynasties",
+    introEn: "Imperial tombs of the Southern Tang Dynasty in southern suburban Nanjing.",
+    detailEn: [
+      "Preserve underground chambers, stone carvings, and mausoleum spatial information, supplementing the Southern Tang period.",
+      "Makes the timeline more complete: Six Dynasties, Southern Tang, Ming-Qing, and Republic of China."
+    ],
+    highlightEn: "Five Dynasties tombs, Underground chambers, Southern Tang history",
+    routeEn: "Southern Heritage Line"
+  },
+  "gao-chun-old-street": {
+    nameEn: "Gaochun Old Street",
+    typeEn: "Cultural District",
+    dynastyEn: "Ming-Qing",
+    introEn: "An important county-level historical-cultural area in Nanjing's resources.",
+    detailEn: [
+      "Emphasizes county-level commercial streets, market life, and waterway transportation.",
+      "Avoids all sites being concentrated in the main city, giving more whole-area GIS character."
+    ],
+    highlightEn: "Ming-Qing street layout, Traditional shops, Water town atmosphere",
+    routeEn: "Southern Suburban Line"
+  },
+  "pukou-station": {
+    nameEn: "Pukou Railway Station",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Modern Era",
+    introEn: "An important node in Nanjing's modern transportation history, on the north bank of the Yangtze.",
+    detailEn: [
+      "The old station has typical modern architectural style and carries literary, cinematic, and urban memories.",
+      "Can serve as a northern Jiangbei modern historical site, supplementing transportation heritage."
+    ],
+    highlightEn: "Republican railway architecture, Yangtze ferry connection",
+    routeEn: "Jiangbei Modern Line"
+  },
+  "meiyuan-xincun": {
+    nameEn: "Meiyuan New Village Memorial",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Modern Era",
+    introEn: "In Nanjing's Yangtze Road area, closely related to modern political and cultural space.",
+    detailEn: [
+      "Relatively intimate building scale with streets preserving modern urban life atmosphere.",
+      "Can form a Yangtze Road modern historical route with Presidential Palace, Rabe House, and Pulu Temple."
+    ],
+    highlightEn: "Modern memorial, Republican streetscape, Historical exhibits",
+    routeEn: "Modern History Line"
+  },
+  "rabe-house": {
+    nameEn: "Rabe Former Residence",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Modern Era",
+    introEn: "Near Nanjing University Gulou Campus, an important site for modern historical memory.",
+    detailEn: [
+      "Small in scale but very concentrated in historical narrative.",
+      "Suitable for forming a composite route with Gulou, Presidential Palace, and Meiyuan New Village."
+    ],
+    highlightEn: "John Rabe history, Nanjing Safety Zone, International heritage",
+    routeEn: "Modern History Line"
+  },
+  "tianshengqiao": {
+    nameEn: "Tiansheng Bridge &胭脂 River",
+    typeEn: "Heritage Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "Important historical water conservancy and transportation landscape in southern suburban Nanjing.",
+    detailEn: [
+      "Supplements water conservancy engineering in Nanjing's historical heritage.",
+      "Located far from the main city, showing spatial expansion of historical sites within Nanjing's range."
+    ],
+    highlightEn: "Ming water engineering, Natural stone bridge, River valley",
+    routeEn: "Southern Suburban Line"
+  },
+  "mochou-lake": {
+    nameEn: "Mochou Lake",
+    typeEn: "Garden",
+    dynastyEn: "Ming-Qing",
+    introEn: "One of Nanjing's famous classical gardens in southwestern old Nanjing.",
+    detailEn: [
+      "History traces to the Six Dynasties, associated with legendary beauty Mochou. Became a literati gathering place during Ming-Qing.",
+      "Can serve as a typical urban garden-water system case, forming a southwestern historical-cultural area."
+    ],
+    highlightEn: "Classical lakeside garden, Shengqi Tower, Summer lotus",
+    routeEn: "Southwestern Cultural Line"
+  },
+  "stone-city": {
+    nameEn: "Stone City (Ghost Face Wall)",
+    typeEn: "City Wall Site",
+    dynastyEn: "Six Dynasties to Ming Dynasty",
+    introEn: "An important Six Dynasties Jiankang defensive fortification in western old Nanjing.",
+    detailEn: [
+      "Existing ruins connect with Ming city walls, forming the unique 'Ghost Face Wall' landscape.",
+      "Can form a western historical-cultural axis with Qingliang Mountain, Mochou Lake, and Yijiang Gate."
+    ],
+    highlightEn: "Ghost Face Wall, Six Dynasties fortress, Mountain defense",
+    routeEn: "Southwestern Cultural Line"
+  },
+  "bai-luzhou": {
+    nameEn: "Bailuzhou Park",
+    typeEn: "Garden",
+    dynastyEn: "Ming-Qing",
+    introEn: "Originally a private garden of Ming Dynasty Prince Zhongshan Xu Da, near Confucius Temple and Qinhuai River.",
+    detailEn: [
+      "Features water scenery with pavilions and corridors along the water, embodying Jiangnan garden art.",
+      "Can form a southern cultural area with Confucius Temple, Zhanyuan, and Zhonghua Gate."
+    ],
+    highlightEn: "Water-focused Jiangnan garden, Spring peach blossoms",
+    routeEn: "City South Cultural Line"
+  },
+  "qingliang-shan": {
+    nameEn: "Qingliang Mountain",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Six Dynasties to Ming-Qing",
+    introEn: "An important mountain in western old Nanjing, a significant geographic landmark since the Six Dynasties.",
+    detailEn: [
+      "Religious buildings like Qingliang Temple once stood here, becoming a literati gathering place during Ming-Qing.",
+      "Can form a western historical-cultural area with Stone City, Mochou Lake, and Wulong Pool."
+    ],
+    highlightEn: "Historic mountain park, City mountain-water landscape",
+    routeEn: "Southwestern Cultural Line"
+  },
+  "wulongtan": {
+    nameEn: "Wulong Pool Park",
+    typeEn: "Garden",
+    dynastyEn: "Ming-Qing",
+    introEn: "One of the city's best-preserved classical gardens in western old Nanjing.",
+    detailEn: [
+      "Historically a literati gathering place with abundant poetry. Yan Lu Gong Shrine reflects garden-culture combination.",
+      "Can form a western historical-cultural area with Qingliang Mountain, Stone City, and Mochou Lake."
+    ],
+    highlightEn: "Classical garden, Clear pool, Cultural literary heritage",
+    routeEn: "Southwestern Cultural Line"
+  },
+  "jingjue-temple": {
+    nameEn: "Jingjue Mosque",
+    typeEn: "Temple",
+    dynastyEn: "Ming-Qing",
+    introEn: "One of Nanjing's most important mosques in southern old Nanjing.",
+    detailEn: [
+      "Blends traditional Chinese building styles with Islamic cultural characteristics.",
+      "Reflects Nanjing's multicultural features as a historical capital.",
+      "Can represent religious cultural diversity in GIS display."
+    ],
+    highlightEn: "Islamic architecture, Multicultural heritage, Chinese mosque design",
+    routeEn: "City South Cultural Line"
+  },
+  "huiji-temple": {
+    nameEn: "Huiji Temple",
+    typeEn: "Temple",
+    dynastyEn: "Southern Tang to Ming-Qing",
+    introEn: "An important northern Nanjing Buddhist temple in Pukou District, dating to the Southern Tang period.",
+    detailEn: [
+      "Contains three millennium-old ginkgo trees, famous ancient trees witnessing historical changes.",
+      "Can represent northern Jiangbei Buddhist culture in GIS display."
+    ],
+    highlightEn: "Millennium ginkgo trees, Southern Tang history, Northern Buddhism",
+    routeEn: "Jiangbei Cultural Line"
+  },
+  "longjiang-shipyard": {
+    nameEn: "Longjiang Treasure Shipyard Ruins",
+    typeEn: "Heritage Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "An important construction site for Zheng He's voyages fleet in the Ming Dynasty.",
+    detailEn: [
+      "Preserves ancient dock and workshop remains, demonstrating Ming shipbuilding technology and maritime trade.",
+      "Can form a riverside historical area with Yuejiang Tower and Yijiang Gate."
+    ],
+    highlightEn: "Zheng He treasure ships, Ancient shipyard docks, Maritime heritage",
+    routeEn: "Riverside Historical Line"
+  },
+  "yongshou-pagoda": {
+    nameEn: "Yongshou Temple Pagoda",
+    typeEn: "Temple",
+    dynastyEn: "Ming Dynasty",
+    introEn: "An important Ming Dynasty Buddhist pagoda in Lishui District, southern Nanjing.",
+    detailEn: [
+      "Octagonal seven-story pagoda about 40 meters tall, one of the most complete Ming Dynasty pagodas in Nanjing.",
+      "Shows Buddhist culture extended beyond the main city to surrounding districts."
+    ],
+    highlightEn: "Ming octagonal pagoda, Southern suburban Buddhism",
+    routeEn: "Southern Suburban Line"
+  },
+  "qiwengweng": {
+    nameEn: "Qiweng Water Storage",
+    typeEn: "Heritage Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "An important remnant of Ming Dynasty water conservancy engineering in Xiaguan District.",
+    detailEn: [
+      "Unique structure of seven connected urn-shaped pools achieving water supply through natural pressure.",
+      "Can represent ancient water conservancy technology in GIS display."
+    ],
+    highlightEn: "Ming water engineering, Seven connected pools",
+    routeEn: "Riverside Historical Line"
+  },
+  "xianlin-temple": {
+    nameEn: "Xianlin Temple",
+    typeEn: "Temple",
+    dynastyEn: "Six Dynasties to Ming-Qing",
+    introEn: "An important eastern Nanjing Buddhist temple dating to the Six Dynasties.",
+    detailEn: [
+      "Reflects Buddhist culture extension to eastern Nanjing, forming part of the eastern Buddhist network.",
+      "Can represent eastern Buddhist culture in GIS display."
+    ],
+    highlightEn: "Six Dynasties Buddhist heritage, Eastern Nanjing",
+    routeEn: "Eastern Mountain Temple Line"
+  },
+  "jiangning-imperial": {
+    nameEn: "Jiangning Weaving Bureau",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Qing Dynasty",
+    introEn: "The imperial weaving institution in eastern old Nanjing during the Qing Dynasty.",
+    detailEn: [
+      "Closely related to 'Dream of the Red Chamber' - the Cao family served as Weaving Commissioners for generations.",
+      "Can represent handicraft culture, forming an eastern historical-cultural area with Ming Palace and Presidential Palace."
+    ],
+    highlightEn: "Imperial silk weaving, Dream of the Red Chamber link",
+    routeEn: "Eastern Historical Line"
+  },
+  "xuanwu-lake-park": {
+    nameEn: "Xuanwu Lake Park",
+    typeEn: "Garden",
+    dynastyEn: "Six Dynasties to Modern",
+    introEn: "The city's largest inland lake, historically an imperial garden related to the Six Dynasties palace city.",
+    detailEn: [
+      "Today an important urban public space with five islands and pavilions around the lake.",
+      "Can form a northern historical-cultural area with Taicheng, Jiming Temple, and Xuanwu Gate."
+    ],
+    highlightEn: "City's largest lake, Five-island landscape, Imperial garden",
+    routeEn: "Northern Ancient Sites Line"
+  },
+  "nanjing-museum": {
+    nameEn: "Nanjing Museum",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Republic of China",
+    introEn: "Founded in 1933, one of China's earliest large comprehensive museums, with Liao Dynasty revival architecture.",
+    detailEn: [
+      "Houses collections from Paleolithic to modern times, especially Han artifacts, Six Dynasties celadon, and Ming-Qing art.",
+      "Forms a Purple Mountain southern cultural belt with Ming Palace, Sun Yat-sen Mausoleum, and Meiling Palace."
+    ],
+    highlightEn: "Liao-style architecture, Vast collections, Chinese art heritage",
+    routeEn: "Eastern Historical Line"
+  },
+  "yangtze-bridge": {
+    nameEn: "Nanjing Yangtze River Bridge",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Modern Era",
+    introEn: "Built 1960-1968, the first fully self-designed double-deck road-rail bridge on the Yangtze.",
+    detailEn: [
+      "Marked an important breakthrough in Chinese bridge engineering, with distinctive era characteristics.",
+      "Connects Pukou with the main city, an important geographic node for studying cross-river transportation."
+    ],
+    highlightEn: "First self-designed Yangtze bridge, Road-rail double-deck, Iconic towers",
+    routeEn: "Jiangbei Modern Line"
+  },
+  "yihe-road": {
+    nameEn: "Yihe Road Heritage District",
+    typeEn: "Cultural District",
+    dynastyEn: "Republic of China",
+    introEn: "The embassy district and upscale residential area during the Republican period.",
+    detailEn: [
+      "Diverse architectural styles including Western villas, Spanish houses, and modernism, witnessing Republican-era planning.",
+      "Suitable as a historical district case showing Republican urban functional zoning."
+    ],
+    highlightEn: "Republican embassies, Western mansions, Tree-lined avenues",
+    routeEn: "Republican Architecture Line"
+  },
+  "laomendong": {
+    nameEn: "Laomendong Historic District",
+    typeEn: "Cultural District",
+    dynastyEn: "Ming-Qing",
+    introEn: "East of Zhonghua Gate, historically a prosperous commercial and residential area.",
+    detailEn: [
+      "Preserves Ming-Qing street patterns with gray brick walls and stone-paved roads.",
+      "With Confucius Temple, Zhanyuan, and Zhonghua Gate, forms the core southern historical-cultural area."
+    ],
+    highlightEn: "Ming-Qing streets, Traditional craftsmanship, Heritage reuse",
+    routeEn: "City South Cultural Line"
+  },
+  "yanzi-ji": {
+    nameEn: "Yanzi Rock (Swallow Rock)",
+    typeEn: "Heritage Site",
+    dynastyEn: "Ming-Qing",
+    introEn: "A famous geological landscape and historical scenic spot along the Yangtze, shaped like a flying swallow.",
+    detailEn: [
+      "An important river defense point with Ming-Qing cannon platforms. Emperor Qianlong visited and left inscriptions.",
+      "Located on the northern riverside, connecting with Yuejiang Tower and Mufu Mountain."
+    ],
+    highlightEn: "Yangtze cliff, River defense, Qianlong inscriptions",
+    routeEn: "Riverside Historical Line"
+  },
+  "purple-mountain-observatory": {
+    nameEn: "Purple Mountain Observatory",
+    typeEn: "Modern Historical Site",
+    dynastyEn: "Republic of China",
+    introEn: "Founded in 1934, a landmark of modern Chinese astronomy on Purple Mountain's third peak.",
+    detailEn: [
+      "Blends Chinese and Western architecture with the natural landscape, now housing an astronomy museum.",
+      "Forms a three-dimensional cultural landscape with Sun Yat-sen Mausoleum, Linggu Temple, and Meiling Palace."
+    ],
+    highlightEn: "Modern astronomy, Panoramic views, Historical telescopes",
+    routeEn: "Eastern Suburbs Historical Line"
+  },
+  "jiuhua-mountain": {
+    nameEn: "Jiuhua Mountain & Xuanzang Temple",
+    typeEn: "Temple",
+    dynastyEn: "Six Dynasties to Modern",
+    introEn: "Historically related to Six Dynasties Buddhist culture, with Xuanzang Temple housing the Holy Relics of Xuanzang.",
+    detailEn: [
+      "Strategically located, echoing Taicheng, Jiming Temple, and Xuanwu Lake with panoramic views.",
+      "Forms a northern Buddhist cultural triangle with Jiming Temple and Taicheng."
+    ],
+    highlightEn: "Xuanzang's relics, City-center Buddhist site, Lake views",
+    routeEn: "Northern Ancient Sites Line"
+  },
+  "fangshan-pagoda": {
+    nameEn: "Fangshan Dinglin Temple Pagoda",
+    typeEn: "Cultural Heritage Building",
+    dynastyEn: "Song Dynasty",
+    introEn: "A Southern Song seven-story octagonal brick pagoda leaning more than the Leaning Tower of Pisa.",
+    detailEn: [
+      "Historically a Buddhist site connected to Liu Xie's 'The Literary Mind and the Carving of Dragons.'",
+      "With Niushou Mountain and Southern Tang Mausoleums, forms the southern historical sites belt."
+    ],
+    highlightEn: "China's leaning pagoda, Song architecture, Volcanic mountain",
+    routeEn: "Southern Mountain Line"
+  },
+  "wuchaomen": {
+    nameEn: "Wuchao Gate (Meridian Gate)",
+    typeEn: "Palace Ruins",
+    dynastyEn: "Ming Dynasty",
+    introEn: "The main southern entrance of Ming Palace, equivalent to Beijing's Meridian Gate.",
+    detailEn: [
+      "Heritage Park preserves gate piers, stone bases, and five stone bridges on Yudai River.",
+      "On the Ming Palace axis with Ming Palace Ruins and Xi'an Gate Ruins, reveals imperial city regulations."
+    ],
+    highlightEn: "Ming Palace southern gate, Heritage park, Archaeological remains",
+    routeEn: "Eastern Historical Line"
+  },
+  "zhenghe-tomb": {
+    nameEn: "Zheng He's Tomb",
+    typeEn: "Mausoleum Site",
+    dynastyEn: "Ming Dynasty",
+    introEn: "At the southern foot of Niushou Mountain, built in Islamic style reflecting Zheng He's special identity.",
+    detailEn: [
+      "Includes a memorial hall and stele corridor, with Niushou Mountain scenery and Hongjue Temple nearby.",
+      "Demonstrates Nanjing's status as the starting point of great Ming maritime voyages."
+    ],
+    highlightEn: "Islamic-style tomb, Maritime explorer memorial, Niushou Mountain",
+    routeEn: "Southern Mountain Line"
+  }
+};
+
 const spots = [
   {
     id: "ming-xiaoling",
@@ -1210,10 +2302,10 @@ function getDetailProfile(spot) {
   };
 
   return {
-    address: `南京市，${spot.name} 周边（坐标 ${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)}）`,
+    address: currentLang === "zh" ? `南京市，${spotT(spot, 'name')} 周边（坐标 ${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)}）` : `Nanjing, near ${spotT(spot, 'name')} (${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)})`,
     hours: fallback.hours,
     ticket: fallback.ticket,
-    transit: `建议优先使用地铁、公交或骑行到达；可在地图中定位 ${spot.name} 后规划路线。`,
+    transit: currentLang === "zh" ? `建议优先使用地铁、公交或骑行到达；可在地图中定位 ${spotT(spot, 'name')} 后规划路线。` : `Recommend metro, bus, or cycling. Locate ${spotT(spot, 'name')} on the map to plan your route.`,
     ...(detailProfiles[spot.id] || {})
   };
 }
@@ -1287,7 +2379,7 @@ async function imageFallback(img) {
 function markerIcon(spot) {
   return L.divIcon({
     className: "",
-    html: `<div class="custom-marker ${spot.markerType}" style="background:${colorMap[spot.markerType]}"><span>${spot.name.slice(0, 1)}</span></div>`,
+    html: `<div class="custom-marker ${spot.markerType}" style="background:${colorMap[spot.markerType]}"><span>${spotT(spot, 'name').slice(0, 1)}</span></div>`,
     iconSize: [34, 34],
     iconAnchor: [17, 34],
     popupAnchor: [0, -30]
@@ -1297,10 +2389,10 @@ function markerIcon(spot) {
 function popupHtml(spot) {
   return `
     <div class="popup-card">
-      <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
-      <h3>${spot.name}</h3>
-      <p>${spot.intro}</p>
-      <button type="button" data-detail="${spot.id}">查看详细介绍</button>
+      <img src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
+      <h3>${spotT(spot, 'name')}</h3>
+      <p>${spotT(spot, 'intro')}</p>
+      <button type="button" data-detail="${spot.id}">${t("viewDetail")}</button>
     </div>
   `;
 }
@@ -1359,37 +2451,51 @@ function getFilteredSpots() {
   const text = searchText.trim().toLowerCase();
   return spots.filter((spot) => {
     const typeMatch = currentType === "全部" || spot.type === currentType;
-    const nameMatch = !text || spot.name.toLowerCase().includes(text);
+    const nameMatch = !text || spotT(spot, 'name').toLowerCase().includes(text) || spot.name.toLowerCase().includes(text);
     return typeMatch && nameMatch;
   });
 }
 
+const typeTranslations = {
+  "全部": { en: "All" },
+  "陵寝遗址": { en: "Mausoleum Site" },
+  "文化街区": { en: "Cultural District" },
+  "城墙遗址": { en: "City Wall Site" },
+  "寺庙": { en: "Temple" },
+  "园林": { en: "Garden" },
+  "文化古建": { en: "Cultural Heritage" },
+  "近代史迹": { en: "Modern Historical Site" },
+  "遗址": { en: "Heritage Site" },
+  "宫城遗址": { en: "Palace Ruins" }
+};
+
 function renderFilters() {
-  typeFilters.innerHTML = typeLabels.map((label) => `
-    <button type="button" class="${label === currentType ? "active" : ""}" data-type="${label}">${label}</button>
-  `).join("");
+  typeFilters.innerHTML = typeLabels.map((label) => {
+    const displayLabel = currentLang === "zh" ? label : (typeTranslations[label]?.en || label);
+    return `<button type="button" class="${label === currentType ? "active" : ""}" data-type="${label}">${displayLabel}</button>`;
+  }).join("");
 }
 
 function renderList(filteredSpots) {
   if (!filteredSpots.length) {
-    spotList.innerHTML = `<p class="empty-message">没有找到匹配景点。</p>`;
+    spotList.innerHTML = `<p class="empty-message">${t("noMatch")}</p>`;
     return;
   }
 
   spotList.innerHTML = filteredSpots.map((spot) => `
     <article class="spot-card ${spot.id === selectedId ? "active" : ""}" data-id="${spot.id}">
-      <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+      <img src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
       <div>
-        <h3>${spot.name}</h3>
+        <h3>${spotT(spot, 'name')}</h3>
         <div class="tag-row">
-          <span class="tag">${spot.type}</span>
-          <span class="tag">${spot.dynasty}</span>
+          <span class="tag">${spotT(spot, 'type')}</span>
+          <span class="tag">${spotT(spot, 'dynasty')}</span>
         </div>
-        <p>${spot.intro}</p>
+        <p>${spotT(spot, 'intro')}</p>
       </div>
       <div class="card-actions">
-        <button type="button" data-map="${spot.id}">地图定位</button>
-        <button type="button" data-info="${spot.id}">详细介绍</button>
+        <button type="button" data-map="${spot.id}">${t("mapLocate")}</button>
+        <button type="button" data-info="${spot.id}">${t("viewDetail")}</button>
       </div>
     </article>
   `).join("");
@@ -1421,60 +2527,60 @@ function renderDetailPanel(spot) {
   const likesCount = getSpotLikes(spot.id).length;
   const favorited = isFavorited(spot.id);
   const profile = getDetailProfile(spot);
-  const historyParagraphs = (spot.detail || []).slice(0, 3);
+  const historyParagraphs = (spotT(spot, 'detail') || []).slice(0, 3);
 
   detailPanel.innerHTML = `
-    <img class="detail-image" src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+    <img class="detail-image" src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
     <div class="detail-body">
       <div class="tag-row">
-        <span class="tag">${spot.type}</span>
-        <span class="tag">${spot.dynasty}</span>
+        <span class="tag">${spotT(spot, 'type')}</span>
+        <span class="tag">${spotT(spot, 'dynasty')}</span>
       </div>
-      <h2>${spot.name}</h2>
-      <p class="detail-lead">${spot.intro}</p>
+      <h2>${spotT(spot, 'name')}</h2>
+      <p class="detail-lead">${spotT(spot, 'intro')}</p>
       <div class="panel-actions">
         <button type="button" class="like-btn ${liked ? "liked" : ""}" data-spot="${spot.id}">
           <span class="like-icon">${liked ? "♥" : "♡"}</span>
           <span class="like-count">${likesCount}</span>
         </button>
-        <button type="button" class="favorite-btn ${favorited ? "favorited" : ""}" data-spot="${spot.id}" data-spot-name="${spot.name}">
+        <button type="button" class="favorite-btn ${favorited ? "favorited" : ""}" data-spot="${spot.id}" data-spot-name="${spotT(spot, 'name')}">
           <span class="favorite-icon">${favorited ? "★" : "☆"}</span>
-          <span>${favorited ? "已收藏" : "收藏"}</span>
+          <span>${favorited ? t("favorited") : t("favorite")}</span>
         </button>
-        <button type="button" data-open-info="${spot.id}">进入详细资料库</button>
+        <button type="button" data-open-info="${spot.id}">${t("enterInfo")}</button>
       </div>
       <div class="detail-meta expanded-detail-meta">
         <div>
-          <span>地址</span>
+          <span>${t("address")}</span>
           <strong>${profile.address}</strong>
         </div>
         <div>
-          <span>开放时间</span>
+          <span>${t("hours")}</span>
           <strong>${profile.hours}</strong>
         </div>
         <div>
-          <span>门票</span>
+          <span>${t("ticket")}</span>
           <strong>${profile.ticket}</strong>
         </div>
         <div>
-          <span>交通</span>
+          <span>${t("transit")}</span>
           <strong>${profile.transit}</strong>
         </div>
         <div>
-          <span>坐标</span>
+          <span>${t("coordinates")}</span>
           <strong>${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)}</strong>
         </div>
         <div>
-          <span>参观亮点</span>
-          <strong>${spot.highlight}</strong>
+          <span>${t("highlight")}</span>
+          <strong>${spotT(spot, 'highlight')}</strong>
         </div>
         <div>
-          <span>推荐路线</span>
-          <strong>${spot.route}</strong>
+          <span>${t("route")}</span>
+          <strong>${spotT(spot, 'route')}</strong>
         </div>
         <div>
-          <span>GIS 图层</span>
-          <strong>点位 + 线状路线</strong>
+          <span>${t("gisLayer")}</span>
+          <strong>${t("gisValue")}</strong>
         </div>
       </div>
 
@@ -1493,12 +2599,12 @@ function renderDetailPanel(spot) {
       </section>
 
       <section class="detail-section">
-        <h3>历史背景</h3>
+        <h3>${t("history")}</h3>
         ${historyParagraphs.map((paragraph) => `<p>${paragraph}</p>`).join("")}
       </section>
 
       <section class="detail-section">
-        <h3>图片</h3>
+        <h3>${t("images")}</h3>
         <div class="detail-gallery">
           <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
         </div>
@@ -1506,12 +2612,12 @@ function renderDetailPanel(spot) {
 
       <section class="detail-section detail-comments">
         <div class="detail-section-heading">
-          <h3>用户评论</h3>
-          <span>${getSpotComments(spot.id).length} 条评论</span>
+          <h3>${t("userComments")}</h3>
+          <span>${getSpotComments(spot.id).length} ${t("ratingCount")}</span>
         </div>
         <div class="comment-input compact-comment-input">
-          <textarea placeholder="写下你对这个景点的看法..." rows="3" data-spot="${spot.id}"></textarea>
-          <button type="button" class="submit-comment" data-spot="${spot.id}">发表评论</button>
+          <textarea placeholder="${t("commentPlaceholder")}" rows="3" data-spot="${spot.id}"></textarea>
+          <button type="button" class="submit-comment" data-spot="${spot.id}">${t("postComment")}</button>
         </div>
         <div class="comments-list panel-comments-list">
           ${renderCommentItems(spot.id)}
@@ -1522,7 +2628,7 @@ function renderDetailPanel(spot) {
 }
 function renderInfoArticle(spot) {
   if (!spot) return;
-  infoTitle.textContent = spot.name;
+  infoTitle.textContent = spotT(spot, 'name');
   const liked = isLiked(spot.id);
   const likesCount = getSpotLikes(spot.id).length;
   const favorited = isFavorited(spot.id);
@@ -1530,39 +2636,39 @@ function renderInfoArticle(spot) {
   const user = getCurrentUser();
 
   infoArticle.innerHTML = `
-    <img class="info-hero" src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+    <img class="info-hero" src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
     <div class="info-body">
       <div class="tag-row">
-        <span class="tag">${spot.type}</span>
-        <span class="tag">${spot.dynasty}</span>
-        <span class="tag">${spot.route}</span>
+        <span class="tag">${spotT(spot, 'type')}</span>
+        <span class="tag">${spotT(spot, 'dynasty')}</span>
+        <span class="tag">${spotT(spot, 'route')}</span>
       </div>
-      <h3>${spot.name}</h3>
-      <p class="lead">${spot.intro}</p>
-      ${spot.detail.map((paragraph) => `<p>${paragraph}</p>`).join("")}
+      <h3>${spotT(spot, 'name')}</h3>
+      <p class="lead">${spotT(spot, 'intro')}</p>
+      ${spotT(spot, 'detail').map((paragraph) => `<p>${paragraph}</p>`).join("")}
       <div class="detail-meta info-meta">
         <div>
-          <span>经纬度</span>
+          <span>${t("latLng")}</span>
           <strong>${spot.lat.toFixed(4)}, ${spot.lng.toFixed(4)}</strong>
         </div>
         <div>
-          <span>景点类型</span>
-          <strong>${spot.type}</strong>
+          <span>${t("spotType")}</span>
+          <strong>${spotT(spot, 'type')}</strong>
         </div>
         <div>
-          <span>历史阶段</span>
-          <strong>${spot.dynasty}</strong>
+          <span>${t("dynastyLabel")}</span>
+          <strong>${spotT(spot, 'dynasty')}</strong>
         </div>
         <div>
-          <span>适合展示的 GIS 要素</span>
-          <strong>${spot.highlight}</strong>
+          <span>${t("gis要素")}</span>
+          <strong>${spotT(spot, 'highlight')}</strong>
         </div>
       </div>
 
       <div class="user-gallery-section" id="gallery-${spot.id}">
-        <h4>用户分享图片</h4>
+        <h4>${t("shareImages")}</h4>
         <div class="gallery-grid" id="gallery-grid-${spot.id}">
-          <p class="loading-gallery">加载中...</p>
+          <p class="loading-gallery">${t("loading")}</p>
         </div>
       </div>
 
@@ -1572,29 +2678,29 @@ function renderInfoArticle(spot) {
             <span class="like-icon">${liked ? "♥" : "♡"}</span>
             <span class="like-count">${likesCount}</span>
           </button>
-          <button type="button" class="favorite-btn ${favorited ? "favorited" : ""}" data-spot="${spot.id}" data-spot-name="${spot.name}">
+          <button type="button" class="favorite-btn ${favorited ? "favorited" : ""}" data-spot="${spot.id}" data-spot-name="${spotT(spot, 'name')}">
             <span class="favorite-icon">${favorited ? "★" : "☆"}</span>
-            <span>${favorited ? "已收藏" : "收藏"}</span>
+            <span>${favorited ? t("favorited") : t("favorite")}</span>
           </button>
-          <span class="comment-count">${comments.length} 条评论</span>
+          <span class="comment-count">${comments.length} ${t("ratingCount")}</span>
         </div>
 
         <div class="comment-section">
           <div class="comment-input">
-            <textarea placeholder="写下你的评论..." rows="3" data-spot="${spot.id}"></textarea>
+            <textarea placeholder="${t("commentPlaceholder")}" rows="3" data-spot="${spot.id}"></textarea>
             <div class="comment-actions">
               <label class="submit-comment" for="image-upload-${spot.id}">
-                📷 上传图片
+                ${t("uploadImage")}
                 <input type="file" id="image-upload-${spot.id}" class="image-upload-input" accept="image/*" data-spot="${spot.id}">
               </label>
-              <button type="button" class="submit-comment" data-spot="${spot.id}">发表评论</button>
+              <button type="button" class="submit-comment" data-spot="${spot.id}">${t("postComment")}</button>
             </div>
           </div>
 
           <div class="comments-list" id="comments-${spot.id}">
             ${comments.length === 0 ? `
               <div class="comments-empty">
-                <p>暂无评论，快来发表第一条评论吧！</p>
+                <p>${t("noComments")}</p>
               </div>
             ` : comments.map(comment => {
               const canDelete = user && (user.id || user.username) === comment.userId;
@@ -1603,7 +2709,7 @@ function renderInfoArticle(spot) {
                   <div class="comment-header">
                     <strong>${comment.username}</strong>
                     <span>${comment.createdAt}</span>
-                    ${canDelete ? `<button type="button" class="comment-delete" data-comment="${comment.id}" data-spot="${spot.id}">删除</button>` : ""}
+                    ${canDelete ? `<button type="button" class="comment-delete" data-comment="${comment.id}" data-spot="${spot.id}">${t("delete")}</button>` : ""}
                   </div>
                   <p>${comment.content}</p>
                 </div>
@@ -1634,15 +2740,15 @@ function renderInfoIndex(filteredSpots) {
   const visibleSpots = filteredSpots.length ? filteredSpots : spots;
   infoIndexList.innerHTML = visibleSpots.map((spot) => `
     <button type="button" class="${spot.id === selectedId ? "active" : ""}" data-info-index="${spot.id}">
-      <strong>${spot.name}</strong>
-      <span>${spot.type} · ${spot.dynasty}</span>
+      <strong>${spotT(spot, 'name')}</strong>
+      <span>${spotT(spot, 'type')} · ${spotT(spot, 'dynasty')}</span>
     </button>
   `).join("");
 }
 
 function updateStats(filteredSpots) {
   spotCount.textContent = filteredSpots.length;
-  dynastyCount.textContent = new Set(filteredSpots.map((spot) => spot.dynasty)).size;
+  dynastyCount.textContent = new Set(filteredSpots.map((spot) => spotT(spot, 'dynasty'))).size;
 }
 
 function fitToSpots(filteredSpots) {
@@ -1686,17 +2792,17 @@ function closeAuthModal() {
 function updateAuthView(user) {
   const admin = JSON.parse(localStorage.getItem("landscapeAdmin") || "null");
   if (admin) {
-    authStatus.textContent = "管理员";
+    authStatus.textContent = t("administrator");
     authUser.textContent = admin.username || admin.email;
-    authOpenBtn.textContent = "切换账号";
+    authOpenBtn.textContent = t("switchAccount");
   } else if (user) {
-    authStatus.textContent = "已登录";
+    authStatus.textContent = t("loggedIn");
     authUser.textContent = user.username || user.email;
-    authOpenBtn.textContent = "切换账号";
+    authOpenBtn.textContent = t("switchAccount");
   } else {
-    authStatus.textContent = "未登录";
-    authUser.textContent = "游客访问";
-    authOpenBtn.textContent = "登录/注册";
+    authStatus.textContent = t("notLogged");
+    authUser.textContent = t("guest");
+    authOpenBtn.textContent = t("loginRegister");
   }
 }
 
@@ -1951,6 +3057,15 @@ routeModuleBtn.addEventListener("click", () => {
 chatModuleBtn.addEventListener("click", () => {
   switchModule("chat");
 });
+
+// 语言切换
+const langToggleBtn = document.getElementById("langToggle");
+if (langToggleBtn) {
+  langToggleBtn.textContent = currentLang === "zh" ? "EN" : "中";
+  langToggleBtn.addEventListener("click", () => {
+    setLang(currentLang === "zh" ? "en" : "zh");
+  });
+}
 
 if (adminModuleBtn) {
   adminModuleBtn.addEventListener("click", () => {
@@ -2388,7 +3503,7 @@ async function uploadImage(spotId, file) {
   const token = getAuthToken();
 
   if (!user || !token) {
-    alert("请先登录后再上传图片。");
+    alert(t("loginFirstAlert"));
     openAuthModal("login");
     return;
   }
@@ -2403,7 +3518,7 @@ async function uploadImage(spotId, file) {
       },
       body: JSON.stringify({ spotId, imageData })
     });
-    alert("图片上传成功");
+    alert(t("imgUploadSuccess"));
     loadUserImages(spotId);
     if (activeModule === "profile") loadUserProfile();
     return;
@@ -2422,7 +3537,7 @@ async function uploadImage(spotId, file) {
       throw new Error(errorData.message || "上传失败");
     }
 
-    alert("图片上传成功！");
+    alert(t("imgUploadSuccess"));
     loadUserImages(spotId);
   } catch (error) {
     console.error("Upload error:", error);
@@ -2712,7 +3827,7 @@ async function removeFavorite(spotId) {
 async function loadAndRenderUserComments() {
   const token = getAuthToken();
   if (!token) {
-    myCommentsList.innerHTML = `<div class="profile-empty"><p>请先登录</p></div>`;
+    myCommentsList.innerHTML = `<div class="profile-empty"><p>${t("loginFirst")}</p></div>`;
     return;
   }
   try {
@@ -2721,16 +3836,16 @@ async function loadAndRenderUserComments() {
     });
     const comments = data.comments || [];
     if (comments.length === 0) {
-      myCommentsList.innerHTML = `<div class="profile-empty"><p>您还没有发表过评论</p></div>`;
+      myCommentsList.innerHTML = `<div class="profile-empty"><p>${t("noCommentsYet")}</p></div>`;
       return;
     }
     myCommentsList.innerHTML = comments.map(comment => {
       const spot = spots.find(s => s.id === comment.spotId);
-      const spotName = spot ? spot.name : "未知景点";
+      const spotName = spot ? spotT(spot, 'name') : t("unknownSpot");
       return `
         <div class="comment-item">
           <div class="comment-spot">
-            <span class="comment-spot-label">景点：</span>
+            <span class="comment-spot-label">${t("spotLabel")}</span>
             <span class="comment-spot-name" data-spot="${comment.spotId}">${escapeHtml(spotName)}</span>
           </div>
           <p class="comment-content">${escapeHtml(comment.content)}</p>
@@ -2740,14 +3855,14 @@ async function loadAndRenderUserComments() {
     }).join("");
   } catch (error) {
     console.error("Failed to load comments:", error);
-    myCommentsList.innerHTML = `<div class="profile-empty"><p>加载评论失败</p></div>`;
+    myCommentsList.innerHTML = `<div class="profile-empty"><p>${t("loading")}</p></div>`;
   }
 }
 
 async function loadAndRenderUserImages() {
   const token = getAuthToken();
   if (!token) {
-    myImagesList.innerHTML = `<div class="profile-empty"><p>请先登录</p></div>`;
+    myImagesList.innerHTML = `<div class="profile-empty"><p>${t("loginFirst")}</p></div>`;
     return;
   }
   try {
@@ -2756,18 +3871,18 @@ async function loadAndRenderUserImages() {
     });
     const images = data.images || [];
     if (images.length === 0) {
-      myImagesList.innerHTML = `<div class="profile-empty"><p>您还没有上传过图片</p></div>`;
+      myImagesList.innerHTML = `<div class="profile-empty"><p>${t("noImagesYet")}</p></div>`;
       return;
     }
     myImagesList.innerHTML = images.map(img => {
       const spot = spots.find(s => s.id === img.spotId);
-      const spotName = spot ? spot.name : "未知景点";
+      const spotName = spot ? spotT(spot, 'name') : t("unknownSpot");
       return `
         <div class="image-item">
           <img src="${img.url}" alt="${spotName}" class="image-thumb" data-full="${img.url}" loading="lazy" onerror="imageFallback(this)">
           <div class="image-item-info">
             <span class="image-spot-name" data-spot="${img.spotId}">${escapeHtml(spotName)}</span>
-            <span class="image-time">${img.createdAt ? new Date(img.createdAt).toLocaleString("zh-CN") : ""}</span>
+            <span class="image-time">${img.createdAt ? new Date(img.createdAt).toLocaleString(currentLang === "zh" ? "zh-CN" : "en-US") : ""}</span>
           </div>
         </div>
       `;
@@ -2785,8 +3900,8 @@ async function loadUserProfile() {
   if (!user || !token) {
     favoritesList.innerHTML = `
       <div class="favorites-empty">
-        <p>请先登录查看您的收藏</p>
-        <button class="go-to-login" type="button">立即登录</button>
+        <p>${t("noFavLogin")}</p>
+        <button class="go-to-login" type="button">${t("loginRegister")}</button>
       </div>
     `;
 
@@ -2797,8 +3912,8 @@ async function loadUserProfile() {
     favCount.textContent = "0";
     commentCount.textContent = "0";
     imageCount.textContent = "0";
-    myCommentsList.innerHTML = `<div class="profile-empty"><p>请先登录查看您的评论</p></div>`;
-    myImagesList.innerHTML = `<div class="profile-empty"><p>请先登录查看您的图片</p></div>`;
+    myCommentsList.innerHTML = `<div class="profile-empty"><p>${t("noCommentLogin")}</p></div>`;
+    myImagesList.innerHTML = `<div class="profile-empty"><p>${t("noImageLogin")}</p></div>`;
     return;
   }
 
@@ -2841,8 +3956,8 @@ function renderProfileFavorites() {
   if (userFavorites.length === 0) {
     favoritesList.innerHTML = `
       <div class="favorites-empty">
-        <p>您还没有收藏任何景点</p>
-        <button class="go-to-map" type="button">去地图浏览景点</button>
+        <p>${t("noFavorites")}</p>
+        <button class="go-to-map" type="button">${t("goToMap")}</button>
       </div>
     `;
     return;
@@ -2854,18 +3969,18 @@ function renderProfileFavorites() {
 
     return `
       <div class="favorite-item">
-        <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+        <img src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
         <div class="favorite-item-info">
-          <h4>${spot.name}</h4>
+          <h4>${spotT(spot, 'name')}</h4>
           <div class="fav-meta">
-            <span class="tag">${spot.type}</span>
-            <span class="tag">${spot.dynasty}</span>
+            <span class="tag">${spotT(spot, 'type')}</span>
+            <span class="tag">${spotT(spot, 'dynasty')}</span>
           </div>
-          <p>${spot.intro}</p>
+          <p>${spotT(spot, 'intro')}</p>
         </div>
         <div class="favorite-actions">
-          <button type="button" class="view-spot" data-spot="${spot.id}">查看详情</button>
-          <button type="button" class="remove-favorite" data-spot="${spot.id}">取消收藏</button>
+          <button type="button" class="view-spot" data-spot="${spot.id}">${t("viewDetail2")}</button>
+          <button type="button" class="remove-favorite" data-spot="${spot.id}">${t("unfavorite")}</button>
         </div>
       </div>
     `;
@@ -2944,7 +4059,7 @@ async function loadRecommendedRoutes() {
       const rankLabel = idx < 3 ? ["🥇", "🥈", "🥉"][idx] : `#${idx + 1}`;
       const spotNames = route.spotIds.map(id => {
         const s = spots.find(sp => sp.id === id);
-        return s ? s.name : id;
+        return s ? spotT(s, 'name') : id;
       });
       return `
         <div class="rec-route-card" data-route-id="${route.id}">
@@ -3010,15 +4125,15 @@ function renderRouteSpotList() {
     const inRoute = routeSelectedIds.has(spot.id);
     return `
       <div class="route-spot-card">
-        <img src="${spot.image}" alt="${spot.name}" onerror="imageFallback(this)">
+        <img src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
         <div class="route-spot-info">
-          <h4>${escapeHtml(spot.name)}</h4>
+          <h4>${escapeHtml(spotT(spot, 'name'))}</h4>
           <div class="tag-row">
-            <span class="tag">${spot.type}</span>
-            <span class="tag">${spot.dynasty}</span>
+            <span class="tag">${spotT(spot, 'type')}</span>
+            <span class="tag">${spotT(spot, 'dynasty')}</span>
           </div>
         </div>
-        <button type="button" class="route-add-btn ${inRoute ? "selected" : ""}" data-route-add="${spot.id}" title="${inRoute ? "从路线中移除" : "添加到路线规划"}">${inRoute ? "−" : "+"}</button>
+        <button type="button" class="route-add-btn ${inRoute ? "selected" : ""}" data-route-add="${spot.id}" title="${inRoute ? t("removeFromRoute") : t("addToRoute")}">${inRoute ? "−" : "+"}</button>
       </div>
     `;
   }).join("");
@@ -3026,7 +4141,7 @@ function renderRouteSpotList() {
 
 function renderRouteSelectedList() {
   if (routeSelectedIds.size === 0) {
-    routeSelectedList.innerHTML = `<p class="route-empty">暂无选中景点</p>`;
+    routeSelectedList.innerHTML = `<p class="route-empty">${t("noSelected")}</p>`;
     return;
   }
   routeSelectedList.innerHTML = [...routeSelectedIds].map(id => {
@@ -3034,7 +4149,7 @@ function renderRouteSelectedList() {
     if (!spot) return "";
     return `
       <div class="route-selected-item">
-        <span class="route-selected-name">${escapeHtml(spot.name)}</span>
+        <span class="route-selected-name">${escapeHtml(spotT(spot, 'name'))}</span>
         <button type="button" class="route-remove-btn" data-route-spot="${spot.id}">×</button>
       </div>
     `;
@@ -3127,13 +4242,13 @@ function generateRoutes() {
 
   const startIcon = L.divIcon({
     className: "route-marker-icon",
-    html: `<div style="background:${color};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">起</div>`,
+    html: `<div style="background:${color};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">${t("start")}</div>`,
     iconSize: [24, 24],
     iconAnchor: [12, 12]
   });
   const endIcon = L.divIcon({
     className: "route-marker-icon",
-    html: `<div style="background:${color};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">终</div>`,
+    html: `<div style="background:${color};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">${t("end")}</div>`,
     iconSize: [24, 24],
     iconAnchor: [12, 12]
   });
@@ -3145,14 +4260,14 @@ function generateRoutes() {
   routeResults.innerHTML = `
     <div class="route-result-card" style="border-left: 4px solid ${color};">
       <div class="route-result-header">
-        <span class="route-result-name" style="color:${color};">推荐路线</span>
-        <span class="route-result-dist">约 ${totalDist.toFixed(1)} km</span>
+        <span class="route-result-name" style="color:${color};">${t("recommendedRoute")}</span>
+        <span class="route-result-dist">~ ${totalDist.toFixed(1)} ${t("km")}</span>
       </div>
       <div class="route-result-steps">
         ${sorted.map((s, i) => `
           <span class="route-step" data-spot="${s.id}">
             <span class="route-step-num" style="background:${color};">${i + 1}</span>
-            ${escapeHtml(s.name)}
+            ${escapeHtml(spotT(s, 'name'))}
           </span>
         `).join('<span class="route-step-arrow">→</span>')}
       </div>
@@ -3223,7 +4338,7 @@ async function loadChatMessages() {
       chatLoaded = true;
     }
   } catch {
-    chatMessages.innerHTML = '<div class="profile-empty"><p>加载聊天记录失败</p></div>';
+    chatMessages.innerHTML = '<div class="profile-empty"><p>' + t("loading") + '</p></div>';
   }
 }
 
@@ -3232,11 +4347,11 @@ function appendChatMessage(msg) {
   const currentUser = getCurrentUser();
   const myId = currentUser ? currentUser.id : null;
   const isSelf = myId && msg.userId === myId;
-  const time = new Date(msg.createdAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+  const time = new Date(msg.createdAt).toLocaleTimeString(currentLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit" });
 
   const div = document.createElement("div");
   div.className = `chat-msg${isSelf ? " self" : ""}`;
-  const imageHtml = msg.image ? `<div class="chat-msg-image"><img src="${msg.image}" alt="图片" loading="lazy" onclick="openChatImageModal('${msg.image.replace(/'/g, "\\'")}')"></div>` : "";
+  const imageHtml = msg.image ? `<div class="chat-msg-image"><img src="${msg.image}" alt="image" loading="lazy" onclick="openChatImageModal('${msg.image.replace(/'/g, "\\'")}')"></div>` : "";
   div.innerHTML = `
     <div class="chat-msg-header">
       <span class="chat-msg-user">${escapeHtml(msg.username)}</span>
@@ -3302,7 +4417,7 @@ if (chatImageInput) {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 3 * 1024 * 1024) {
-      alert("图片大小不能超过 3MB");
+      alert(t("chatImgSizeLimit"));
       chatImageInput.value = "";
       return;
     }
@@ -3581,14 +4696,14 @@ async function loadAdminData() {
 function renderAdminUsers(users) {
   const el = document.querySelector("#adminUserList");
   if (!el) return;
-  if (!users.length) { el.innerHTML = '<div class="profile-empty"><p>暂无注册用户</p></div>'; return; }
+  if (!users.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noUsers")}</p></div>`; return; }
   el.innerHTML = users.map(u => `
     <div class="admin-item">
       <div class="admin-item-info">
         <div class="admin-item-name">${escapeHtml(u.username)}</div>
-        <div class="admin-item-meta">${escapeHtml(u.email)} · ${u.createdAt ? new Date(u.createdAt).toLocaleDateString("zh-CN") : ""}</div>
+        <div class="admin-item-meta">${escapeHtml(u.email)} · ${u.createdAt ? new Date(u.createdAt).toLocaleDateString(currentLang === "zh" ? "zh-CN" : "en-US") : ""}</div>
       </div>
-      <button type="button" class="admin-delete-btn" data-admin-delete-user="${u.id}">删除</button>
+      <button type="button" class="admin-delete-btn" data-admin-delete-user="${u.id}">${t("delete")}</button>
     </div>
   `).join("");
 }
@@ -3596,14 +4711,14 @@ function renderAdminUsers(users) {
 function renderAdminComments(comments) {
   const el = document.querySelector("#adminCommentList");
   if (!el) return;
-  if (!comments.length) { el.innerHTML = '<div class="profile-empty"><p>暂无评论</p></div>'; return; }
+  if (!comments.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noCommentsAdmin")}</p></div>`; return; }
   el.innerHTML = comments.map(c => `
     <div class="admin-item">
       <div class="admin-item-info">
-        <div class="admin-item-name">${escapeHtml(c.username || "未知用户")} · ${escapeHtml(c.spotId)}</div>
+        <div class="admin-item-name">${escapeHtml(c.username || t("unknownUser"))} · ${escapeHtml(c.spotId)}</div>
         <div class="admin-item-meta">${escapeHtml(c.content)}</div>
       </div>
-      <button type="button" class="admin-delete-btn" data-admin-delete-comment="${c.id}">删除</button>
+      <button type="button" class="admin-delete-btn" data-admin-delete-comment="${c.id}">${t("delete")}</button>
     </div>
   `).join("");
 }
@@ -3611,14 +4726,14 @@ function renderAdminComments(comments) {
 function renderAdminImages(images) {
   const el = document.querySelector("#adminImageList");
   if (!el) return;
-  if (!images.length) { el.innerHTML = '<div class="profile-empty"><p>暂无图片</p></div>'; return; }
+  if (!images.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noImagesAdmin")}</p></div>`; return; }
   el.innerHTML = images.map(img => `
     <div class="admin-item">
       <div class="admin-item-info">
-        <div class="admin-item-name">${escapeHtml(img.username || "未知用户")} · ${escapeHtml(img.spotId)}</div>
-        <div class="admin-item-meta">${img.createdAt ? new Date(img.createdAt).toLocaleDateString("zh-CN") : ""}</div>
+        <div class="admin-item-name">${escapeHtml(img.username || t("unknownUser"))} · ${escapeHtml(img.spotId)}</div>
+        <div class="admin-item-meta">${img.createdAt ? new Date(img.createdAt).toLocaleDateString(currentLang === "zh" ? "zh-CN" : "en-US") : ""}</div>
       </div>
-      <button type="button" class="admin-delete-btn" data-admin-delete-image="${img.id}">删除</button>
+      <button type="button" class="admin-delete-btn" data-admin-delete-image="${img.id}">${t("delete")}</button>
     </div>
   `).join("");
 }
@@ -3626,17 +4741,17 @@ function renderAdminImages(images) {
 function renderAdminChat(messages) {
   const el = document.querySelector("#adminChatList");
   if (!el) return;
-  if (!messages.length) { el.innerHTML = '<div class="profile-empty"><p>暂无聊天记录</p></div>'; return; }
+  if (!messages.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noChat")}</p></div>`; return; }
   el.innerHTML = messages.map(m => {
-    const time = m.createdAt ? new Date(m.createdAt).toLocaleTimeString("zh-CN", {hour:"2-digit", minute:"2-digit"}) : "";
-    const imageHtml = m.image ? `<img src="${m.image}" class="admin-chat-img" alt="图片" onclick="openChatImageModal('${m.image.replace(/'/g, "\\'")}')" style="cursor:pointer;" />` : "";
+    const time = m.createdAt ? new Date(m.createdAt).toLocaleTimeString(currentLang === "zh" ? "zh-CN" : "en-US", {hour:"2-digit", minute:"2-digit"}) : "";
+    const imageHtml = m.image ? `<img src="${m.image}" class="admin-chat-img" alt="image" onclick="openChatImageModal('${m.image.replace(/'/g, "\\'")}')" style="cursor:pointer;" />` : "";
     return `
       <div class="admin-item">
         <div class="admin-item-info">
-          <div class="admin-item-name">${escapeHtml(m.username || "未知用户")}</div>
+          <div class="admin-item-name">${escapeHtml(m.username || t("unknownUser"))}</div>
           <div class="admin-item-meta">${escapeHtml(m.content || "")} ${imageHtml} · ${time}</div>
         </div>
-        <button type="button" class="admin-delete-btn" data-admin-delete-chat="${m.id}">删除</button>
+        <button type="button" class="admin-delete-btn" data-admin-delete-chat="${m.id}">${t("delete")}</button>
       </div>
     `;
   }).join("");
@@ -3645,17 +4760,17 @@ function renderAdminChat(messages) {
 function renderAdminRatings(ratings) {
   const el = document.querySelector("#adminRatingList");
   if (!el) return;
-  if (!ratings.length) { el.innerHTML = '<div class="profile-empty"><p>暂无评分记录</p></div>'; return; }
+  if (!ratings.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noRatings")}</p></div>`; return; }
   el.innerHTML = ratings.map(r => {
-    const time = r.createdAt ? new Date(r.createdAt).toLocaleTimeString("zh-CN", {hour:"2-digit", minute:"2-digit"}) : "";
+    const time = r.createdAt ? new Date(r.createdAt).toLocaleTimeString(currentLang === "zh" ? "zh-CN" : "en-US", {hour:"2-digit", minute:"2-digit"}) : "";
     const stars = "★".repeat(Math.floor(r.rating)) + (r.rating % 1 !== 0 ? "☆" : "");
     return `
       <div class="admin-item">
         <div class="admin-item-info">
-          <div class="admin-item-name">${escapeHtml(r.username || "未知用户")} · <span style="color:#f5a623">${r.rating}分</span></div>
-          <div class="admin-item-meta">景点: ${escapeHtml(r.spotId)} · ${time}</div>
+          <div class="admin-item-name">${escapeHtml(r.username || t("unknownUser"))} · <span style="color:#f5a623">${r.rating}${currentLang === "zh" ? "分" : ""}</span></div>
+          <div class="admin-item-meta">${t("spotLabelShort")} ${escapeHtml(r.spotId)} · ${time}</div>
         </div>
-        <button type="button" class="admin-delete-btn" data-admin-delete-rating="${r.id}">删除</button>
+        <button type="button" class="admin-delete-btn" data-admin-delete-rating="${r.id}">${t("delete")}</button>
       </div>
     `;
   }).join("");
@@ -3666,7 +4781,7 @@ document.addEventListener("click", async (e) => {
   if (!admin) return;
 
   const userId = e.target.closest("[data-admin-delete-user]")?.dataset.adminDeleteUser;
-  if (userId && confirm("确定要删除该用户？此操作不可撤销。")) {
+  if (userId && confirm(t("confirmDeleteUser"))) {
     const el = e.target.closest("[data-admin-delete-user]").parentElement;
     try {
       await adminRequest(`/admin/users/${userId}`, { method: "DELETE" });
@@ -3675,7 +4790,7 @@ document.addEventListener("click", async (e) => {
   }
 
   const commentId = e.target.closest("[data-admin-delete-comment]")?.dataset.adminDeleteComment;
-  if (commentId && confirm("确定要删除该评论？")) {
+  if (commentId && confirm(t("confirmDeleteComment"))) {
     const el = e.target.closest("[data-admin-delete-comment]").parentElement;
     try {
       await adminRequest(`/admin/comments/${commentId}`, { method: "DELETE" });
@@ -3684,7 +4799,7 @@ document.addEventListener("click", async (e) => {
   }
 
   const imageId = e.target.closest("[data-admin-delete-image]")?.dataset.adminDeleteImage;
-  if (imageId && confirm("确定要删除该图片？")) {
+  if (imageId && confirm(t("confirmDeleteImage"))) {
     const el = e.target.closest("[data-admin-delete-image]").parentElement;
     try {
       await adminRequest(`/admin/images/${imageId}`, { method: "DELETE" });
@@ -3693,7 +4808,7 @@ document.addEventListener("click", async (e) => {
   }
 
   const chatId = e.target.closest("[data-admin-delete-chat]")?.dataset.adminDeleteChat;
-  if (chatId && confirm("确定要删除该聊天记录？")) {
+  if (chatId && confirm(t("confirmDeleteChat"))) {
     const el = e.target.closest("[data-admin-delete-chat]").parentElement;
     try {
       await adminRequest(`/admin/chat/${chatId}`, { method: "DELETE" });
@@ -3702,7 +4817,7 @@ document.addEventListener("click", async (e) => {
   }
 
   const ratingId = e.target.closest("[data-admin-delete-rating]")?.dataset.adminDeleteRating;
-  if (ratingId && confirm("确定要删除该评分？")) {
+  if (ratingId && confirm(t("confirmDeleteRating"))) {
     const el = e.target.closest("[data-admin-delete-rating]").parentElement;
     try {
       await adminRequest(`/admin/ratings/${ratingId}`, { method: "DELETE" });

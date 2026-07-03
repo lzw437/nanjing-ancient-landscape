@@ -244,6 +244,8 @@ const i18n = {
     weatherWind: "风向",
     weatherWindPower: "风力",
     weatherHumidity: "湿度",
+    weatherNow: "当前天气",
+    weatherForecast: "未来预报",
     weatherReportTime: "更新时间",
   },
   en: {
@@ -467,6 +469,8 @@ const i18n = {
     weatherWind: "Wind",
     weatherPower: "Power",
     weatherHumidity: "Humidity",
+    weatherNow: "Current",
+    weatherForecast: "Forecast",
     weatherReportTime: "Updated",
   }
 };
@@ -494,7 +498,7 @@ function updateUI() {
   if (el("chatModuleBtn")) el("chatModuleBtn").textContent = t("chatTab");
   if (el("profileModuleBtn")) el("profileModuleBtn").textContent = t("profileTab");
   if (el("statsModuleBtn")) el("statsModuleBtn").textContent = t("statsTab");
-  if (el("weatherModuleBtn")) el("weatherModuleBtn").textContent = t("weatherTab");
+  if (el("weatherPanelBtn")) el("weatherPanelBtn").textContent = t("weatherTab");
   if (el("adminModuleBtn")) el("adminModuleBtn").textContent = t("adminTab");
   const searchInput = el("searchInput");
   if (searchInput) searchInput.placeholder = t("searchPlaceholder");
@@ -2256,8 +2260,9 @@ const sidebarAdminContent = document.querySelector("#sidebarAdminContent");
 const statsModuleBtn = document.querySelector("#statsModuleBtn");
 const sidebarStatsContent = document.querySelector("#sidebarStatsContent");
 const statsModule = document.querySelector("#statsModule");
-const weatherModuleBtn = document.querySelector("#weatherModuleBtn");
-const sidebarWeatherContent = document.querySelector("#sidebarWeatherContent");
+const weatherPanelBtn = document.querySelector("#weatherPanelBtn");
+const weatherPopover = document.querySelector("#weatherPopover");
+const weatherCloseBtn = document.querySelector("#weatherCloseBtn");
 const authMessage = document.querySelector("#authMessage");
 const apiBase = location.protocol === "file:" ? "http://localhost:3000/api" : "/api";
 
@@ -2481,29 +2486,26 @@ function switchModule(moduleName) {
   const showChat = moduleName === "chat";
   const showAdmin = moduleName === "admin";
   const showStats = moduleName === "stats";
-  const showWeather = moduleName === "weather";
-  const showMap = !showInfo && !showProfile && !showStats && !showWeather;
+  const showMap = !showInfo && !showProfile && !showStats;
   mapModule.classList.toggle("active", showMap);
   infoModule.classList.toggle("active", showInfo);
   profileModule.classList.toggle("active", showProfile);
   if (statsModule) statsModule.classList.toggle("active", showStats);
-  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin && !showStats && !showWeather);
+  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin && !showStats);
   infoModuleBtn.classList.toggle("active", showInfo);
   profileModuleBtn.classList.toggle("active", showProfile);
   routeModuleBtn.classList.toggle("active", showRoute);
   chatModuleBtn.classList.toggle("active", showChat);
   if (statsModuleBtn) statsModuleBtn.classList.toggle("active", showStats);
-  if (weatherModuleBtn) weatherModuleBtn.classList.toggle("active", showWeather);
   if (adminModuleBtn) adminModuleBtn.classList.toggle("active", showAdmin);
 
   if (sidebarRouteContent) sidebarRouteContent.style.display = showRoute ? "" : "none";
   if (sidebarChatContent) sidebarChatContent.style.display = showChat ? "" : "none";
   if (sidebarStatsContent) sidebarStatsContent.style.display = showStats ? "" : "none";
-  if (sidebarWeatherContent) sidebarWeatherContent.style.display = showWeather ? "" : "none";
   if (sidebarAdminContent) sidebarAdminContent.style.display = showAdmin ? "" : "none";
-  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin || showStats || showWeather) ? "none" : "";
-  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin || showStats || showWeather) ? "none" : "";
-  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin || showStats || showWeather) ? "none" : "";
+  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
+  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
+  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
 
   if (showMap) {
     setTimeout(() => {
@@ -3322,6 +3324,46 @@ let immersiveNavActive = false;
 let immersiveWatchId = null;
 let immersiveUserMarker = null;
 let mapLocked = false;
+let latestImmersivePosition = null;
+let immersivePositionSeq = 0;
+
+function convertGpsToAmapPosition(lng, lat) {
+  if (!window.AMap || typeof AMap.convertFrom !== "function") {
+    return Promise.resolve([lng, lat]);
+  }
+
+  return new Promise((resolve) => {
+    AMap.convertFrom([lng, lat], "gps", (status, result) => {
+      const converted = result?.locations?.[0];
+      if (status === "complete" && converted) {
+        resolve([converted.getLng(), converted.getLat()]);
+        return;
+      }
+      resolve([lng, lat]);
+    });
+  });
+}
+
+function updateImmersiveUserPosition(lng, lat, heading) {
+  latestImmersivePosition = [lng, lat];
+  const arrowHtml = `<div class="nav-user-marker" style="transform:rotate(${heading || 0}deg)"><span></span></div>`;
+
+  if (!immersiveUserMarker) {
+    immersiveUserMarker = new AMap.Marker({
+      position: latestImmersivePosition,
+      map: navMap,
+      zIndex: 200,
+      offset: new AMap.Pixel(-15, -15),
+      content: arrowHtml
+    });
+  } else {
+    immersiveUserMarker.setPosition(latestImmersivePosition);
+    immersiveUserMarker.setContent(arrowHtml);
+  }
+
+  navMap.setCenter(latestImmersivePosition, false, 200);
+  updateImmersiveInfo(lng, lat);
+}
 
 function startImmersiveNav() {
   if (!currentNavDest || !currentNavOrigin || !navRouteReady) {
@@ -3334,6 +3376,7 @@ function startImmersiveNav() {
   }
   immersiveNavActive = true;
   mapLocked = true;
+  latestImmersivePosition = currentNavOrigin ? [...currentNavOrigin] : null;
   const btn = navEl("navStartBtn");
   btn.textContent = "结束导航";
   btn.classList.add("navigating");
@@ -3348,23 +3391,12 @@ function startImmersiveNav() {
       const lng = pos.coords.longitude;
       const lat = pos.coords.latitude;
       const heading = pos.coords.heading || 0;
-      const arrowHtml = `<div class="nav-user-marker" style="transform:rotate(${heading || 0}deg)"><span></span></div>`;
+      const seq = ++immersivePositionSeq;
 
-      if (!immersiveUserMarker) {
-        immersiveUserMarker = new AMap.Marker({
-          position: [lng, lat],
-          map: navMap,
-          zIndex: 200,
-          offset: new AMap.Pixel(-15, -15),
-          content: arrowHtml
-        });
-      } else {
-        immersiveUserMarker.setPosition([lng, lat]);
-        immersiveUserMarker.setContent(arrowHtml);
-      }
-
-      navMap.setCenter([lng, lat], false, 200);
-      updateImmersiveInfo(lng, lat);
+      convertGpsToAmapPosition(lng, lat).then(([amapLng, amapLat]) => {
+        if (!immersiveNavActive || seq !== immersivePositionSeq) return;
+        updateImmersiveUserPosition(amapLng, amapLat, heading);
+      });
     },
     () => {
       stopImmersiveNav();
@@ -3375,9 +3407,17 @@ function startImmersiveNav() {
 }
 
 function recenterNav() {
-  if (!immersiveUserMarker || !navMap) return;
-  const pos = immersiveUserMarker.getPosition();
-  navMap.setCenter([pos.getLng(), pos.getLat()], true, 300);
+  if (!navMap) return;
+  let center = latestImmersivePosition;
+  if (!center && immersiveUserMarker) {
+    const pos = immersiveUserMarker.getPosition();
+    center = [pos.getLng(), pos.getLat()];
+  }
+  if (!center && currentNavOrigin) {
+    center = currentNavOrigin;
+  }
+  if (!center) return;
+  navMap.setCenter(center, true, 300);
   navMap.setZoom(17, true, 300);
 }
 
@@ -3428,6 +3468,8 @@ function stopImmersiveNav() {
     if (navMap) navMap.remove(immersiveUserMarker);
     immersiveUserMarker = null;
   }
+  latestImmersivePosition = null;
+  immersivePositionSeq += 1;
   if (navEl("navLockOverlay")) navEl("navLockOverlay").style.display = "none";
 }
 
@@ -3613,12 +3655,6 @@ if (statsModuleBtn) {
   });
 }
 
-if (weatherModuleBtn) {
-  weatherModuleBtn.addEventListener("click", () => {
-    switchModule("weather");
-  });
-}
-
 // ===== Weather =====
 const WEATHER_ICONS = {
   "晴": "☀️", "多云": "⛅", "阴": "☁️", "小雨": "🌦️", "中雨": "🌧️", "大雨": "🌧️",
@@ -3649,6 +3685,23 @@ function getAmapWeatherForecast(city) {
         resolve(result);
       } else {
         reject(error || new Error("AMap Weather request failed."));
+      }
+    });
+  });
+}
+
+function getAmapWeatherLive(city) {
+  return new Promise((resolve, reject) => {
+    if (!window.AMap || !AMap.Weather) {
+      reject(new Error("AMap Weather plugin is unavailable."));
+      return;
+    }
+    const weather = new AMap.Weather();
+    weather.getLive(city, (error, result) => {
+      if (!error && result) {
+        resolve(result);
+      } else {
+        reject(error || new Error("AMap live weather request failed."));
       }
     });
   });
@@ -3689,18 +3742,42 @@ function normalizeAmapWeatherForecast(raw) {
   };
 }
 
+function normalizeAmapWeatherLive(raw) {
+  return {
+    city: raw.city || raw.province || "",
+    reporttime: raw.reportTime || raw.reporttime || "",
+    weather: raw.weather || raw.liveWeather || "",
+    temperature: raw.temperature || raw.temp || "",
+    winddirection: raw.windDirection || raw.winddirection || "",
+    windpower: raw.windPower || raw.windpower || "",
+    humidity: raw.humidity || ""
+  };
+}
+
+async function loadWeather(city) {
+  const [forecastState, liveState] = await Promise.allSettled([
+    getAmapWeatherForecast(city),
+    getAmapWeatherLive(city)
+  ]);
+
+  return {
+    forecast: forecastState.status === "fulfilled" ? normalizeAmapWeatherForecast(forecastState.value) : null,
+    live: liveState.status === "fulfilled" ? normalizeAmapWeatherLive(liveState.value) : null
+  };
+}
+
 async function queryWeatherByCity(city) {
   const result = document.getElementById("weatherResult");
   if (!result) return;
   if (!city.trim()) { result.innerHTML = `<p class="weather-empty">${t("weatherCityEmpty")}</p>`; return; }
   result.innerHTML = `<p class="weather-loading">${t("weatherLoading")}</p>`;
   try {
-    const forecast = normalizeAmapWeatherForecast(await getAmapWeatherForecast(city.trim()));
-    if (!forecast.casts.length) {
+    const weather = await loadWeather(city.trim());
+    if (!weather.live && !weather.forecast?.casts?.length) {
       result.innerHTML = `<p class="weather-empty">${t("weatherCityNotFound")}</p>`;
       return;
     }
-    renderWeather(forecast, result);
+    renderWeather(weather, result);
   } catch (e) {
     console.error(e);
     result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
@@ -3719,24 +3796,28 @@ async function queryWeatherByLocation() {
     const lat = pos.coords.latitude;
     const address = await getAmapAddress(lng, lat);
     const city = address.adcode || address.city || address.province;
-    const forecast = normalizeAmapWeatherForecast(await getAmapWeatherForecast(city));
-    if (!forecast.casts.length) {
+    const weather = await loadWeather(city);
+    if (!weather.live && !weather.forecast?.casts?.length) {
       result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
       return;
     }
-    renderWeather(forecast, result);
+    renderWeather(weather, result);
   } catch (e) {
     console.error(e);
     result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
   }
 }
 
-function renderWeather(forecast, container) {
-  const city = forecast.city;
+function renderWeather(weatherData, container) {
+  const forecast = weatherData.forecast || {};
+  const live = weatherData.live || {};
+  const city = live.city || forecast.city || "";
   const casts = forecast.casts || [];
   const today = casts[0] || {};
-  const icon = getWeatherIcon(today.dayweather || "");
-  const tomorrow = casts[1] || {};
+  const currentWeather = live.weather || today.dayweather || "";
+  const icon = getWeatherIcon(currentWeather);
+  const windText = [live.winddirection || today.winddirection, live.windpower || today.windpower].filter(Boolean).join(" ");
+  const reportTime = live.reporttime || forecast.reporttime || "";
 
   let forecastHTML = "";
   casts.forEach((c, i) => {
@@ -3755,16 +3836,40 @@ function renderWeather(forecast, container) {
 
   container.innerHTML = `
     <div class="weather-current">
+      <div class="weather-section-label">${t("weatherNow")}</div>
       <div class="weather-city-name">${icon} ${city}</div>
-      <div class="weather-current-temp">${today.nighttemp}° ~ ${today.daytemp}°</div>
-      <div class="weather-current-desc">${currentLang === "zh" ? today.dayweather : (today.dayweather || "")}</div>
+      <div class="weather-current-temp">${live.temperature ? `${live.temperature}°` : `${today.nighttemp || ""}° ~ ${today.daytemp || ""}°`}</div>
+      <div class="weather-current-desc">${currentWeather}</div>
       <div class="weather-details">
-        <span>${t("weatherWind")}：${currentLang === "zh" ? today.winddirection : ""} ${today.windpower}级</span>
+        ${windText ? `<span>${t("weatherWind")}：${windText}${currentLang === "zh" && !String(windText).includes("级") ? "级" : ""}</span>` : ""}
+        ${live.humidity ? `<span>${t("weatherHumidity")}：${live.humidity}%</span>` : ""}
       </div>
     </div>
-    <div class="weather-forecast">${forecastHTML}</div>
-    <div class="weather-report-time">${t("weatherReportTime")}：${forecast.reporttime}</div>
+    ${forecastHTML ? `<div class="weather-section-label weather-forecast-title">${t("weatherForecast")}</div><div class="weather-forecast">${forecastHTML}</div>` : ""}
+    ${reportTime ? `<div class="weather-report-time">${t("weatherReportTime")}：${reportTime}</div>` : ""}
   `;
+}
+
+function openWeatherPopover() {
+  if (!weatherPopover) return;
+  weatherPopover.style.display = "";
+  weatherPanelBtn?.classList.add("active");
+  setTimeout(() => document.getElementById("weatherSearchInput")?.focus(), 0);
+}
+
+function closeWeatherPopover() {
+  if (!weatherPopover) return;
+  weatherPopover.style.display = "none";
+  weatherPanelBtn?.classList.remove("active");
+}
+
+function toggleWeatherPopover() {
+  if (!weatherPopover) return;
+  if (weatherPopover.style.display === "none") {
+    openWeatherPopover();
+  } else {
+    closeWeatherPopover();
+  }
 }
 
 document.getElementById("weatherSearchBtn")?.addEventListener("click", () => {
@@ -3781,6 +3886,25 @@ document.getElementById("weatherSearchInput")?.addEventListener("keydown", (e) =
 
 document.getElementById("weatherLocBtn")?.addEventListener("click", () => {
   queryWeatherByLocation();
+});
+
+weatherPanelBtn?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleWeatherPopover();
+});
+
+weatherCloseBtn?.addEventListener("click", closeWeatherPopover);
+
+weatherPopover?.addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
+document.addEventListener("click", () => {
+  if (weatherPopover?.style.display !== "none") closeWeatherPopover();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeWeatherPopover();
 });
 
 // 语言切换

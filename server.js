@@ -1100,6 +1100,71 @@ app.get("/api/chat/stream", (req, res) => {
   });
 });
 
+// ===== Visit Tracking & Stats =====
+let visitsCollection;
+
+app.post("/api/visits/:spotId", async (req, res) => {
+  try {
+    if (!visitsCollection) return res.json({ ok: true });
+    await visitsCollection.insertOne({
+      spotId: req.params.spotId,
+      timestamp: new Date()
+    });
+    res.json({ ok: true });
+  } catch (e) {
+    res.json({ ok: true });
+  }
+});
+
+app.get("/api/stats/visits", async (req, res) => {
+  try {
+    if (!visitsCollection) return res.json({ visits: [] });
+    const mode = req.query.mode || "day";
+    const now = new Date();
+    let startDate;
+    if (mode === "day") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (mode === "month") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    }
+    const results = await visitsCollection.aggregate([
+      { $match: { timestamp: { $gte: startDate } } },
+      { $group: { _id: "$spotId", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]).toArray();
+    res.json({ visits: results });
+  } catch (e) {
+    res.json({ visits: [] });
+  }
+});
+
+app.get("/api/stats/ranking", async (req, res) => {
+  try {
+    if (!visitsCollection) return res.json({ visits: [] });
+    const mode = req.query.mode || "day";
+    const now = new Date();
+    let startDate;
+    if (mode === "day") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (mode === "month") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    }
+    const results = await visitsCollection.aggregate([
+      { $match: { timestamp: { $gte: startDate } } },
+      { $group: { _id: "$spotId", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 20 }
+    ]).toArray();
+    res.json({ visits: results });
+  } catch (e) {
+    res.json({ visits: [] });
+  }
+});
+
 async function start() {
   try {
     await client.connect();
@@ -1113,6 +1178,7 @@ async function start() {
     chatMessagesCollection = db.collection("chat_messages");
     adminsCollection = db.collection("admins");
     ratingsCollection = db.collection("ratings");
+    visitsCollection = db.collection("visits");
     await usersCollection.createIndex({ email: 1 }, { unique: true });
     await usersCollection.createIndex({ username: 1 }, { unique: true });
     await interactionsCollection.createIndex({ spotId: 1 }, { unique: true });

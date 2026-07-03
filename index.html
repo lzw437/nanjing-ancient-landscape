@@ -18,7 +18,10 @@
     <aside class="sidebar">
       <header class="brand">
         <h1 id="appTitle">南京古景点地图</h1>
-        <button id="langToggle" type="button" class="lang-btn" title="切换语言">EN</button>
+        <div class="brand-actions">
+          <button id="langToggle" type="button" class="lang-btn" title="切换语言">EN</button>
+          <button id="weatherPanelBtn" type="button" class="weather-tool-btn" data-i18n="weatherTab">天气</button>
+        </div>
       </header>
 
       <section class="auth-strip" aria-label="用户登录状态">
@@ -36,7 +39,6 @@
         <button id="chatModuleBtn" type="button" data-i18n="chatTab">聊天室</button>
         <button id="profileModuleBtn" type="button" data-i18n="profileTab">个人中心</button>
         <button id="statsModuleBtn" type="button" data-i18n="statsTab">数据统计</button>
-        <button id="weatherModuleBtn" type="button" data-i18n="weatherTab">天气</button>
         <button id="adminModuleBtn" type="button" style="display:none;" data-i18n="adminTab">管理后台</button>
       </nav>
 
@@ -157,16 +159,6 @@
         <p class="route-hint" data-i18n="statsHint">查看景点访问数据与排行</p>
       </section>
 
-      <section class="sidebar-weather-content" id="sidebarWeatherContent" style="display:none;">
-        <h3 data-i18n="weatherTitle">天气查询</h3>
-        <div class="weather-search-row">
-          <input id="weatherSearchInput" type="text" data-i18n-placeholder="weatherPlaceholder" placeholder="输入城市名称">
-          <button id="weatherSearchBtn" type="button" data-i18n="weatherSearch">查询</button>
-          <button id="weatherLocBtn" type="button" title="定位当前位置">📍</button>
-        </div>
-        <div id="weatherResult" class="weather-result"></div>
-      </section>
-
       <section class="sidebar-admin-content" id="sidebarAdminContent" style="display:none;">
         <h3 data-i18n="adminTitle">管理后台</h3>
         <div class="admin-tabs">
@@ -199,6 +191,18 @@
     </aside>
 
     <main class="content-stage">
+      <div class="weather-popover" id="weatherPopover" style="display:none;">
+        <div class="weather-popover-head">
+          <h3 data-i18n="weatherTitle">天气查询</h3>
+          <button id="weatherCloseBtn" type="button" class="weather-close-btn" aria-label="关闭">×</button>
+        </div>
+        <div class="weather-search-row">
+          <input id="weatherSearchInput" type="text" data-i18n-placeholder="weatherPlaceholder" placeholder="输入城市名称">
+          <button id="weatherSearchBtn" type="button" data-i18n="weatherSearch">查询</button>
+          <button id="weatherLocBtn" type="button" title="定位当前位置">📍</button>
+        </div>
+        <div id="weatherResult" class="weather-result"></div>
+      </div>
       <section class="map-stage module-view active" id="mapModule" aria-label="地图总览模块">
         <div id="map" aria-label="南京古景点分布地图"></div>
         <article class="detail-panel" id="detailPanel" aria-live="polite"></article>

@@ -35,6 +35,7 @@
         <button id="routeModuleBtn" type="button" data-i18n="routeTab">推荐路线</button>
         <button id="chatModuleBtn" type="button" data-i18n="chatTab">聊天室</button>
         <button id="profileModuleBtn" type="button" data-i18n="profileTab">个人中心</button>
+        <button id="statsModuleBtn" type="button" data-i18n="statsTab">数据统计</button>
         <button id="adminModuleBtn" type="button" style="display:none;" data-i18n="adminTab">管理后台</button>
       </nav>
 
@@ -150,6 +151,11 @@
         </div>
       </section>
 
+      <section class="sidebar-stats-content" id="sidebarStatsContent" style="display:none;">
+        <h3 data-i18n="statsTitle">数据统计</h3>
+        <p class="route-hint" data-i18n="statsHint">查看景点访问数据与排行</p>
+      </section>
+
       <section class="sidebar-admin-content" id="sidebarAdminContent" style="display:none;">
         <h3 data-i18n="adminTitle">管理后台</h3>
         <div class="admin-tabs">
@@ -246,6 +252,36 @@
           <div class="profile-section">
             <h3 data-i18n="myImages">我的图片</h3>
             <div id="myImagesList" class="my-images-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-module module-view" id="statsModule" aria-label="数据统计模块">
+        <div class="info-header">
+          <div>
+            <p data-i18n="statsTitle">数据统计</p>
+            <h2 data-i18n="statsTitle">景点访问统计</h2>
+          </div>
+          <button id="backToMapFromStats" type="button" data-i18n="backToMap">返回地图</button>
+        </div>
+        <div class="stats-dashboard">
+          <div class="stats-mode-bar">
+            <button type="button" class="stats-mode-btn active" data-mode="day" data-i18n="statsDay">今日</button>
+            <button type="button" class="stats-mode-btn" data-mode="month" data-i18n="statsMonth">本月</button>
+            <button type="button" class="stats-mode-btn" data-mode="year" data-i18n="statsYear">本年</button>
+          </div>
+          <div class="stats-charts-row">
+            <div class="stats-card">
+              <h3 data-i18n="statsPieTitle">访问分布</h3>
+              <div class="stats-pie-wrap">
+                <canvas id="statsPieCanvas" width="320" height="320"></canvas>
+                <div id="statsPieLegend" class="stats-pie-legend"></div>
+              </div>
+            </div>
+            <div class="stats-card">
+              <h3 data-i18n="statsRankTitle">访问排行</h3>
+              <div id="statsRankList" class="stats-rank-list"></div>
+            </div>
           </div>
         </div>
       </section>

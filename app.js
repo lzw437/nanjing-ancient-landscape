@@ -215,6 +215,19 @@ const i18n = {
     minAgo: "分钟前",
     hourAgo: "小时前",
     dayAgo: "天前",
+    // 统计
+    statsTab: "数据统计",
+    statsTitle: "数据统计",
+    statsHint: "查看景点访问数据与排行",
+    statsDay: "今日",
+    statsMonth: "本月",
+    statsYear: "本年",
+    statsPieTitle: "访问分布",
+    statsRankTitle: "访问排行",
+    statsRank: "排名",
+    statsVisits: "次访问",
+    statsNoData: "暂无访问数据",
+    statsTotal: "总访问",
   },
   en: {
     appName: "Nanjing Historic Sites Map",
@@ -408,6 +421,19 @@ const i18n = {
     minAgo: "min ago",
     hourAgo: "h ago",
     dayAgo: "d ago",
+    // Stats
+    statsTab: "Statistics",
+    statsTitle: "Statistics",
+    statsHint: "View site visit data and rankings",
+    statsDay: "Today",
+    statsMonth: "This Month",
+    statsYear: "This Year",
+    statsPieTitle: "Visit Distribution",
+    statsRankTitle: "Visit Ranking",
+    statsRank: "Rank",
+    statsVisits: "visits",
+    statsNoData: "No visit data yet",
+    statsTotal: "Total visits",
   }
 };
 
@@ -433,6 +459,7 @@ function updateUI() {
   if (el("routeModuleBtn")) el("routeModuleBtn").textContent = t("routeTab");
   if (el("chatModuleBtn")) el("chatModuleBtn").textContent = t("chatTab");
   if (el("profileModuleBtn")) el("profileModuleBtn").textContent = t("profileTab");
+  if (el("statsModuleBtn")) el("statsModuleBtn").textContent = t("statsTab");
   if (el("adminModuleBtn")) el("adminModuleBtn").textContent = t("adminTab");
   const searchInput = el("searchInput");
   if (searchInput) searchInput.placeholder = t("searchPlaceholder");
@@ -2191,6 +2218,9 @@ const goAdminLogin = document.querySelector("#goAdminLogin");
 const goAdminRegister = document.querySelector("#goAdminRegister");
 const adminModuleBtn = document.querySelector("#adminModuleBtn");
 const sidebarAdminContent = document.querySelector("#sidebarAdminContent");
+const statsModuleBtn = document.querySelector("#statsModuleBtn");
+const sidebarStatsContent = document.querySelector("#sidebarStatsContent");
+const statsModule = document.querySelector("#statsModule");
 const authMessage = document.querySelector("#authMessage");
 const apiBase = location.protocol === "file:" ? "http://localhost:3000/api" : "/api";
 
@@ -2410,23 +2440,27 @@ function switchModule(moduleName) {
   const showRoute = moduleName === "route";
   const showChat = moduleName === "chat";
   const showAdmin = moduleName === "admin";
-  const showMap = !showInfo && !showProfile;
+  const showStats = moduleName === "stats";
+  const showMap = !showInfo && !showProfile && !showStats;
   mapModule.classList.toggle("active", showMap);
   infoModule.classList.toggle("active", showInfo);
   profileModule.classList.toggle("active", showProfile);
-  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin);
+  if (statsModule) statsModule.classList.toggle("active", showStats);
+  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin && !showStats);
   infoModuleBtn.classList.toggle("active", showInfo);
   profileModuleBtn.classList.toggle("active", showProfile);
   routeModuleBtn.classList.toggle("active", showRoute);
   chatModuleBtn.classList.toggle("active", showChat);
+  if (statsModuleBtn) statsModuleBtn.classList.toggle("active", showStats);
   if (adminModuleBtn) adminModuleBtn.classList.toggle("active", showAdmin);
 
   if (sidebarRouteContent) sidebarRouteContent.style.display = showRoute ? "" : "none";
   if (sidebarChatContent) sidebarChatContent.style.display = showChat ? "" : "none";
+  if (sidebarStatsContent) sidebarStatsContent.style.display = showStats ? "" : "none";
   if (sidebarAdminContent) sidebarAdminContent.style.display = showAdmin ? "" : "none";
-  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin) ? "none" : "";
-  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin) ? "none" : "";
-  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin) ? "none" : "";
+  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
+  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
+  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
 
   if (showMap) {
     setTimeout(() => {
@@ -2450,6 +2484,10 @@ function switchModule(moduleName) {
 
   if (showAdmin) {
     if (!adminDataLoaded) loadAdminData();
+  }
+
+  if (showStats) {
+    loadStatsData();
   }
 }
 
@@ -2878,6 +2916,9 @@ function selectSpot(id, options = {}) {
   selectedId = id;
   render();
 
+  // Record visit
+  try { fetch(apiUrl(`/visits/${id}`), { method: "POST" }); } catch {}
+
   if (options.module === "info") {
     switchModule("info");
     infoModule.scrollTo({ top: 0, behavior: "smooth" });
@@ -3064,6 +3105,12 @@ chatModuleBtn.addEventListener("click", () => {
   switchModule("chat");
 });
 
+if (statsModuleBtn) {
+  statsModuleBtn.addEventListener("click", () => {
+    switchModule("stats");
+  });
+}
+
 // 语言切换
 const langToggleBtn = document.getElementById("langToggle");
 if (langToggleBtn) {
@@ -3088,6 +3135,13 @@ backToMap.addEventListener("click", () => {
 backToMapFromProfile.addEventListener("click", () => {
   selectSpot(selectedId, { module: "map", openPopup: true });
 });
+
+const backToMapFromStats = document.querySelector("#backToMapFromStats");
+if (backToMapFromStats) {
+  backToMapFromStats.addEventListener("click", () => {
+    selectSpot(selectedId, { module: "map", openPopup: true });
+  });
+}
 
 authOpenBtn.addEventListener("click", () => openAuthModal("login"));
 authCloseBtn.addEventListener("click", closeAuthModal);
@@ -3473,7 +3527,7 @@ function renderUserImages(spotId, images) {
   if (!container) return;
 
   if (images.length === 0) {
-    container.innerHTML = '<p class="gallery-empty">暂无用户分享图片</p>';
+    container.innerHTML = `<p class="gallery-empty">${t("noUserGallery")}</p>`;
     return;
   }
 
@@ -4829,6 +4883,127 @@ document.addEventListener("click", async (e) => {
       await adminRequest(`/admin/ratings/${ratingId}`, { method: "DELETE" });
       el.remove();
     } catch (err) { alert(err.message); }
+  }
+});
+
+// ===== Statistics Charts =====
+const PIE_COLORS = ["#e74c3c","#e67e22","#f1c40f","#2ecc71","#1abc9c","#3498db","#9b59b6","#34495e","#e91e63","#00bcd4","#8bc34a","#ff9800"];
+let currentStatsMode = "day";
+
+function loadStatsData() {
+  fetchStatsPie(currentStatsMode);
+  fetchStatsRanking();
+}
+
+function fetchStatsPie(mode) {
+  currentStatsMode = mode;
+  document.querySelectorAll(".stats-mode-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.mode === mode);
+  });
+  fetch(apiUrl(`/stats/visits?mode=${mode}`))
+    .then(r => r.json())
+    .then(data => renderPieChart(data.visits || []))
+    .catch(() => renderPieChart([]));
+}
+
+function fetchStatsRanking() {
+  fetch(apiUrl("/stats/ranking"))
+    .then(r => r.json())
+    .then(data => renderRanking(data.visits || []))
+    .catch(() => renderRanking([]));
+}
+
+function renderPieChart(visits) {
+  const canvas = document.getElementById("statsPieCanvas");
+  const legend = document.getElementById("statsPieLegend");
+  if (!canvas || !legend) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  const cx = w / 2, cy = h / 2, r = Math.min(cx, cy) - 30;
+  ctx.clearRect(0, 0, w, h);
+
+  if (!visits.length) {
+    ctx.fillStyle = "#999";
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(t("statsNoData"), cx, cy);
+    legend.innerHTML = "";
+    return;
+  }
+
+  const total = visits.reduce((s, v) => s + v.count, 0);
+  let startAngle = -Math.PI / 2;
+
+  const usedSpots = spots.filter(s => visits.find(v => v._id === s.id));
+  const allEntries = visits.map(v => {
+    const spot = spots.find(s => s.id === v._id);
+    return { name: spot ? spotT(spot, "name") : v._id, count: v.count };
+  });
+
+  let legendHTML = `<div class="stats-pie-total"><strong>${total}</strong> ${t("statsVisits")}</div>`;
+  allEntries.forEach((entry, i) => {
+    const sliceAngle = (entry.count / total) * 2 * Math.PI;
+    const color = PIE_COLORS[i % PIE_COLORS.length];
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, startAngle + sliceAngle);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (sliceAngle > 0.15) {
+      const midAngle = startAngle + sliceAngle / 2;
+      const tx = cx + Math.cos(midAngle) * (r * 0.65);
+      const ty = cy + Math.sin(midAngle) * (r * 0.65);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(entry.count, tx, ty);
+    }
+
+    startAngle += sliceAngle;
+    legendHTML += `<div class="stats-pie-legend-item"><span class="stats-pie-dot" style="background:${color}"></span><span class="stats-pie-label">${entry.name}</span><span class="stats-pie-val">${entry.count}</span></div>`;
+  });
+
+  legend.innerHTML = legendHTML;
+}
+
+function renderRanking(visits) {
+  const list = document.getElementById("statsRankList");
+  if (!list) return;
+
+  if (!visits.length) {
+    list.innerHTML = `<p class="empty-message">${t("statsNoData")}</p>`;
+    return;
+  }
+
+  const maxCount = visits[0]?.count || 1;
+  list.innerHTML = visits.map((v, i) => {
+    const spot = spots.find(s => s.id === v._id);
+    const name = spot ? spotT(spot, "name") : v._id;
+    const pct = Math.round((v.count / maxCount) * 100);
+    const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}`;
+    return `<div class="stats-rank-item">
+      <span class="stats-rank-pos">${medal}</span>
+      <div class="stats-rank-info">
+        <div class="stats-rank-name">${name}</div>
+        <div class="stats-rank-bar-wrap"><div class="stats-rank-bar" style="width:${pct}%"></div></div>
+      </div>
+      <span class="stats-rank-count">${v.count} ${t("statsVisits")}</span>
+    </div>`;
+  }).join("");
+}
+
+// Stats mode button listeners
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".stats-mode-btn");
+  if (btn && btn.dataset.mode) {
+    fetchStatsPie(btn.dataset.mode);
   }
 });
 

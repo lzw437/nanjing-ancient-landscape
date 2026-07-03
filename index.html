@@ -36,6 +36,7 @@
         <button id="chatModuleBtn" type="button" data-i18n="chatTab">聊天室</button>
         <button id="profileModuleBtn" type="button" data-i18n="profileTab">个人中心</button>
         <button id="statsModuleBtn" type="button" data-i18n="statsTab">数据统计</button>
+        <button id="weatherModuleBtn" type="button" data-i18n="weatherTab">天气</button>
         <button id="adminModuleBtn" type="button" style="display:none;" data-i18n="adminTab">管理后台</button>
       </nav>
 
@@ -154,6 +155,16 @@
       <section class="sidebar-stats-content" id="sidebarStatsContent" style="display:none;">
         <h3 data-i18n="statsTitle">数据统计</h3>
         <p class="route-hint" data-i18n="statsHint">查看景点访问数据与排行</p>
+      </section>
+
+      <section class="sidebar-weather-content" id="sidebarWeatherContent" style="display:none;">
+        <h3 data-i18n="weatherTitle">天气查询</h3>
+        <div class="weather-search-row">
+          <input id="weatherSearchInput" type="text" data-i18n-placeholder="weatherPlaceholder" placeholder="输入城市名称">
+          <button id="weatherSearchBtn" type="button" data-i18n="weatherSearch">查询</button>
+          <button id="weatherLocBtn" type="button" title="定位当前位置">📍</button>
+        </div>
+        <div id="weatherResult" class="weather-result"></div>
       </section>
 
       <section class="sidebar-admin-content" id="sidebarAdminContent" style="display:none;">
@@ -371,7 +382,41 @@
     <img id="chatImageModalImg" src="" alt="放大图片">
   </div>
 
+  <div class="nav-overlay" id="navOverlay" style="display:none;">
+    <div class="nav-panel">
+      <div class="nav-header">
+        <h3 id="navTitle">导航</h3>
+        <div class="nav-mode-bar">
+          <button type="button" class="nav-mode-btn active" data-nav-mode="driving">驾车</button>
+          <button type="button" class="nav-mode-btn" data-nav-mode="riding">骑行</button>
+          <button type="button" class="nav-mode-btn" data-nav-mode="walking">步行</button>
+        </div>
+        <button type="button" class="nav-close-btn" id="navCloseBtn">×</button>
+      </div>
+      <div class="nav-origin-row">
+        <input id="navOriginInput" type="text" placeholder="输入起点，或使用当前位置">
+        <button type="button" id="navSearchOriginBtn">搜索起点</button>
+        <button type="button" id="navUseCurrentBtn">当前位置</button>
+        <button type="button" id="navPickMapBtn">地图选点</button>
+      </div>
+      <div class="nav-map-container" id="navMapContainer">
+        <div class="nav-lock-overlay" id="navLockOverlay" style="display:none;"></div>
+      </div>
+      <div id="navRouteInfo" class="nav-route-info"></div>
+      <div class="nav-bottom-bar">
+        <button type="button" class="nav-recenter-btn" id="navRecenterBtn" title="回到当前位置">📍</button>
+        <button type="button" class="nav-start-btn" id="navStartBtn" disabled>开始导航</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window._AMapSecurityConfig = {
+      securityJsCode: "6b5ab48ebb9fec161f911128db51f02e",
+    }
+  </script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://webapi.amap.com/maps?v=2.0&key=07b20844bca4651520f65bed63e6b5f7&plugin=AMap.Driving,AMap.Walking,AMap.Riding,AMap.Geolocation,AMap.Weather,AMap.Geocoder,AMap.ToolBar,AMap.Scale"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -25,6 +25,7 @@ const i18n = {
     enterInfo: "进入详细资料库",
     favorite: "收藏",
     favorited: "已收藏",
+    navigate: "导航",
     mapLocate: "地图定位",
     address: "地址",
     hours: "开放时间",
@@ -228,6 +229,22 @@ const i18n = {
     statsVisits: "次访问",
     statsNoData: "暂无访问数据",
     statsTotal: "总访问",
+    // 天气
+    weatherTab: "天气",
+    weatherTitle: "天气查询",
+    weatherPlaceholder: "输入城市名称",
+    weatherSearch: "查询",
+    weatherLocating: "正在定位...",
+    weatherLoading: "加载中...",
+    weatherFail: "获取天气失败",
+    weatherCityEmpty: "请输入城市名称",
+    weatherCityNotFound: "未找到该城市",
+    weatherTemp: "温度",
+    weatherWeather: "天气",
+    weatherWind: "风向",
+    weatherWindPower: "风力",
+    weatherHumidity: "湿度",
+    weatherReportTime: "更新时间",
   },
   en: {
     appName: "Nanjing Historic Sites Map",
@@ -248,6 +265,7 @@ const i18n = {
     enterInfo: "Open in Details",
     favorite: "Favorite",
     favorited: "Favorited",
+    navigate: "Navigate",
     mapLocate: "Locate on Map",
     address: "Address",
     hours: "Hours",
@@ -434,6 +452,22 @@ const i18n = {
     statsVisits: "visits",
     statsNoData: "No visit data yet",
     statsTotal: "Total visits",
+    // Weather
+    weatherTab: "Weather",
+    weatherTitle: "Weather",
+    weatherPlaceholder: "Enter city name",
+    weatherSearch: "Search",
+    weatherLocating: "Locating...",
+    weatherLoading: "Loading...",
+    weatherFail: "Failed to get weather",
+    weatherCityEmpty: "Please enter a city name",
+    weatherCityNotFound: "City not found",
+    weatherTemp: "Temp",
+    weatherWeather: "Weather",
+    weatherWind: "Wind",
+    weatherPower: "Power",
+    weatherHumidity: "Humidity",
+    weatherReportTime: "Updated",
   }
 };
 
@@ -460,6 +494,7 @@ function updateUI() {
   if (el("chatModuleBtn")) el("chatModuleBtn").textContent = t("chatTab");
   if (el("profileModuleBtn")) el("profileModuleBtn").textContent = t("profileTab");
   if (el("statsModuleBtn")) el("statsModuleBtn").textContent = t("statsTab");
+  if (el("weatherModuleBtn")) el("weatherModuleBtn").textContent = t("weatherTab");
   if (el("adminModuleBtn")) el("adminModuleBtn").textContent = t("adminTab");
   const searchInput = el("searchInput");
   if (searchInput) searchInput.placeholder = t("searchPlaceholder");
@@ -2221,6 +2256,8 @@ const sidebarAdminContent = document.querySelector("#sidebarAdminContent");
 const statsModuleBtn = document.querySelector("#statsModuleBtn");
 const sidebarStatsContent = document.querySelector("#sidebarStatsContent");
 const statsModule = document.querySelector("#statsModule");
+const weatherModuleBtn = document.querySelector("#weatherModuleBtn");
+const sidebarWeatherContent = document.querySelector("#sidebarWeatherContent");
 const authMessage = document.querySelector("#authMessage");
 const apiBase = location.protocol === "file:" ? "http://localhost:3000/api" : "/api";
 
@@ -2428,7 +2465,10 @@ function popupHtml(spot) {
       <img src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
       <h3>${spotT(spot, 'name')}</h3>
       <p>${spotT(spot, 'intro')}</p>
-      <button type="button" data-detail="${spot.id}">${t("viewDetail")}</button>
+      <div class="popup-actions">
+        <button type="button" data-detail="${spot.id}">${t("viewDetail")}</button>
+        <button type="button" class="nav-btn-sm" data-navigate="${spot.id}" data-lat="${spot.lat}" data-lng="${spot.lng}" data-name="${spotT(spot, 'name')}">${t("navigate")}</button>
+      </div>
     </div>
   `;
 }
@@ -2441,26 +2481,29 @@ function switchModule(moduleName) {
   const showChat = moduleName === "chat";
   const showAdmin = moduleName === "admin";
   const showStats = moduleName === "stats";
-  const showMap = !showInfo && !showProfile && !showStats;
+  const showWeather = moduleName === "weather";
+  const showMap = !showInfo && !showProfile && !showStats && !showWeather;
   mapModule.classList.toggle("active", showMap);
   infoModule.classList.toggle("active", showInfo);
   profileModule.classList.toggle("active", showProfile);
   if (statsModule) statsModule.classList.toggle("active", showStats);
-  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin && !showStats);
+  mapModuleBtn.classList.toggle("active", !showInfo && !showProfile && !showRoute && !showChat && !showAdmin && !showStats && !showWeather);
   infoModuleBtn.classList.toggle("active", showInfo);
   profileModuleBtn.classList.toggle("active", showProfile);
   routeModuleBtn.classList.toggle("active", showRoute);
   chatModuleBtn.classList.toggle("active", showChat);
   if (statsModuleBtn) statsModuleBtn.classList.toggle("active", showStats);
+  if (weatherModuleBtn) weatherModuleBtn.classList.toggle("active", showWeather);
   if (adminModuleBtn) adminModuleBtn.classList.toggle("active", showAdmin);
 
   if (sidebarRouteContent) sidebarRouteContent.style.display = showRoute ? "" : "none";
   if (sidebarChatContent) sidebarChatContent.style.display = showChat ? "" : "none";
   if (sidebarStatsContent) sidebarStatsContent.style.display = showStats ? "" : "none";
+  if (sidebarWeatherContent) sidebarWeatherContent.style.display = showWeather ? "" : "none";
   if (sidebarAdminContent) sidebarAdminContent.style.display = showAdmin ? "" : "none";
-  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
-  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
-  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin || showStats) ? "none" : "";
+  if (sidebarControls) sidebarControls.style.display = (showRoute || showChat || showAdmin || showStats || showWeather) ? "none" : "";
+  if (sidebarStats) sidebarStats.style.display = (showRoute || showChat || showAdmin || showStats || showWeather) ? "none" : "";
+  if (sidebarSummary) sidebarSummary.style.display = (showRoute || showChat || showAdmin || showStats || showWeather) ? "none" : "";
 
   if (showMap) {
     setTimeout(() => {
@@ -2591,6 +2634,7 @@ function renderDetailPanel(spot) {
           <span class="favorite-icon">${favorited ? "★" : "☆"}</span>
           <span>${favorited ? t("favorited") : t("favorite")}</span>
         </button>
+        <button type="button" class="nav-btn" data-navigate="${spot.id}" data-lat="${spot.lat}" data-lng="${spot.lng}" data-name="${spotT(spot, 'name')}">${t("navigate")}</button>
         <button type="button" data-open-info="${spot.id}">${t("enterInfo")}</button>
       </div>
       <div class="detail-meta expanded-detail-meta">
@@ -2957,15 +3001,473 @@ spotList.addEventListener("click", (event) => {
     return;
   }
 
+  const navButton = event.target.closest("button[data-navigate]");
+  if (navButton) {
+    const { lat, lng, name } = navButton.dataset;
+    openNavigation(lat, lng, name);
+    return;
+  }
+
   const card = event.target.closest(".spot-card[data-id]");
   if (!card) return;
   selectSpot(card.dataset.id, { module: "map" });
 });
 
 detailPanel.addEventListener("click", (event) => {
+  const navBtn = event.target.closest("button[data-navigate]");
+  if (navBtn) {
+    const { lat, lng, name } = navBtn.dataset;
+    openNavigation(lat, lng, name);
+    return;
+  }
   const button = event.target.closest("button[data-open-info]");
   if (!button) return;
   selectSpot(button.dataset.openInfo, { module: "info" });
+});
+
+// ===== Embedded Navigation =====
+let navMap = null;
+let navGeolocation = null;
+let navDestMarker = null;
+let navOriginMarker = null;
+let navRouteService = null;
+let navMapClickHandler = null;
+let currentNavDest = null;
+let currentNavOrigin = null;
+let currentNavMode = "driving";
+let navRouteReady = false;
+
+const navModeLabels = {
+  driving: "驾车",
+  riding: "骑行",
+  walking: "步行"
+};
+
+function navEl(id) {
+  return document.getElementById(id);
+}
+
+function setNavInfo(message, type = "") {
+  const routeInfo = navEl("navRouteInfo");
+  if (!routeInfo) return;
+  routeInfo.className = `nav-route-info${type ? ` ${type}` : ""}`;
+  routeInfo.innerHTML = message;
+}
+
+function setNavStartEnabled(enabled) {
+  const btn = navEl("navStartBtn");
+  if (btn) btn.disabled = !enabled;
+}
+
+function ensureAmapReady() {
+  return Boolean(window.AMap && AMap.Map && AMap.LngLat);
+}
+
+function openNavigation(lat, lng, name) {
+  if (!ensureAmapReady()) {
+    alert("高德地图加载失败，请检查网络后刷新页面。");
+    return;
+  }
+
+  const destLat = Number(lat);
+  const destLng = Number(lng);
+  if (!Number.isFinite(destLat) || !Number.isFinite(destLng)) {
+    alert("景点坐标无效，无法导航。");
+    return;
+  }
+
+  currentNavDest = { lat: destLat, lng: destLng, name };
+  currentNavOrigin = null;
+  navRouteReady = false;
+  setNavStartEnabled(false);
+  stopImmersiveNav();
+
+  const overlay = navEl("navOverlay");
+  const title = navEl("navTitle");
+  overlay.style.display = "flex";
+  title.textContent = `${t("navigate")} - ${name}`;
+  navEl("navOriginInput").value = "";
+  setNavInfo("正在初始化导航地图...");
+
+  setTimeout(() => {
+    initNavMap();
+    useCurrentLocationAsOrigin();
+  }, 200);
+}
+
+function initNavMap() {
+  if (navMap) {
+    clearNavMapClickMode();
+    clearNavRoute();
+    navMap.destroy();
+    navMap = null;
+  }
+
+  navMap = new AMap.Map("navMapContainer", {
+    zoom: 13,
+    center: [currentNavDest.lng, currentNavDest.lat],
+    resizeEnable: true,
+    mapStyle: "amap://styles/normal"
+  });
+
+  if (AMap.ToolBar) navMap.addControl(new AMap.ToolBar({ position: "RB" }));
+  if (AMap.Scale) navMap.addControl(new AMap.Scale());
+
+  navDestMarker = new AMap.Marker({
+    position: [currentNavDest.lng, currentNavDest.lat],
+    title: currentNavDest.name,
+    map: navMap,
+    icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png"
+  });
+
+  navGeolocation = new AMap.Geolocation({
+    enableHighAccuracy: true,
+    timeout: 10000,
+    zoomToAccuracy: false,
+    showButton: false,
+    showMarker: false,
+    showCircle: false
+  });
+  navMap.addControl(navGeolocation);
+  navMap.setFitView([navDestMarker], false, [80, 80, 80, 80], 14);
+}
+
+function haversineDistanceKm(a, b) {
+  const R = 6371;
+  const dLat = (b[1] - a[1]) * Math.PI / 180;
+  const dLng = (b[0] - a[0]) * Math.PI / 180;
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * Math.PI / 180) * Math.cos(b[1] * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+
+function setOriginMarker(origin, label = "起点") {
+  currentNavOrigin = [Number(origin[0]), Number(origin[1])];
+  if (navOriginMarker) {
+    navOriginMarker.setPosition(currentNavOrigin);
+  } else {
+    navOriginMarker = new AMap.Marker({
+      position: currentNavOrigin,
+      title: label,
+      map: navMap,
+      icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png"
+    });
+  }
+  if (navEl("navOriginInput") && label !== "起点") {
+    navEl("navOriginInput").value = label;
+  }
+}
+
+function clearNavRoute() {
+  navRouteReady = false;
+  setNavStartEnabled(false);
+  if (navRouteService && typeof navRouteService.clear === "function") {
+    navRouteService.clear();
+  }
+  navRouteService = null;
+}
+
+function fitNavView() {
+  const overlays = [navDestMarker, navOriginMarker].filter(Boolean);
+  if (overlays.length) {
+    navMap.setFitView(overlays, false, [80, 80, 80, 80]);
+  }
+}
+
+function planRoute(origin) {
+  if (!navMap || !currentNavDest) return;
+  clearNavMapClickMode();
+  clearNavRoute();
+  setOriginMarker(origin);
+
+  const dest = [currentNavDest.lng, currentNavDest.lat];
+  const distKm = haversineDistanceKm(origin, dest);
+  const modeName = navModeLabels[currentNavMode] || "导航";
+  setNavInfo(`正在规划${modeName}路线...`);
+
+  if (distKm < 0.03) {
+    setNavInfo("起点已经非常接近目的地，无需规划路线。");
+    fitNavView();
+    return;
+  }
+  if (currentNavMode === "riding" && distKm > 100) {
+    setNavInfo(`骑行距离过远（约 ${distKm.toFixed(0)} 公里），骑行导航仅支持 100 公里以内。`);
+    fitNavView();
+    return;
+  }
+  if (currentNavMode === "walking" && distKm > 30) {
+    setNavInfo(`步行距离过远（约 ${distKm.toFixed(0)} 公里），步行导航仅支持 30 公里以内。`);
+    fitNavView();
+    return;
+  }
+
+  if (currentNavMode === "driving") {
+    if (typeof AMap.Driving === "undefined") {
+      setNavInfo("驾车插件未加载，请刷新页面重试。");
+      return;
+    }
+    navRouteService = new AMap.Driving({ map: navMap, policy: AMap.DrivingPolicy.LEAST_TIME });
+  } else if (currentNavMode === "riding") {
+    if (typeof AMap.Riding === "undefined") {
+      setNavInfo("骑行插件未加载，请刷新页面重试。");
+      return;
+    }
+    navRouteService = new AMap.Riding({ map: navMap });
+  } else {
+    if (typeof AMap.Walking === "undefined") {
+      setNavInfo("步行插件未加载，请刷新页面重试。");
+      return;
+    }
+    navRouteService = new AMap.Walking({ map: navMap });
+  }
+
+  navRouteService.search(
+    new AMap.LngLat(origin[0], origin[1]),
+    new AMap.LngLat(dest[0], dest[1]),
+    (status, result) => handleRouteResult(status, result, distKm)
+  );
+}
+
+function handleRouteResult(status, result, fallbackDistanceKm) {
+  const route = result?.routes?.[0];
+  if (status !== "complete" || !route) {
+    setNavInfo(`未找到${navModeLabels[currentNavMode]}路线。可换一种出行方式，或点击地图重新设置起点。`);
+    enableMapPickMode();
+    fitNavView();
+    return;
+  }
+
+  const distance = Number(route.distance || fallbackDistanceKm * 1000);
+  const time = Number(route.time || 0);
+  const km = (distance / 1000).toFixed(distance >= 10000 ? 0 : 1);
+  const min = time ? Math.max(1, Math.round(time / 60)) : "--";
+  const modeIcon = currentNavMode === "driving" ? "🚗" : currentNavMode === "riding" ? "🚴" : "🚶";
+  navRouteReady = true;
+  setNavStartEnabled(true);
+  setNavInfo(`<strong>${modeIcon} ${navModeLabels[currentNavMode]}</strong>：约 ${km} 公里，${min} 分钟。可切换方式或开始导航。`);
+}
+
+function useCurrentLocationAsOrigin() {
+  if (!navGeolocation) return;
+  clearNavMapClickMode();
+  setNavInfo("正在获取当前位置...");
+  navGeolocation.getCurrentPosition((status, result) => {
+    if (status === "complete" && result?.position) {
+      const origin = [result.position.getLng(), result.position.getLat()];
+      navEl("navOriginInput").value = "当前位置";
+      planRoute(origin);
+      return;
+    }
+    setNavInfo("定位失败。可以输入起点搜索，或点击“地图选点”后在地图上选择起点。");
+    enableMapPickMode();
+  });
+}
+
+function searchOriginByInput() {
+  const input = navEl("navOriginInput");
+  const keyword = input?.value.trim();
+  if (!keyword) {
+    setNavInfo("请输入起点名称，或使用当前位置。");
+    return;
+  }
+  if (!AMap.Geocoder) {
+    setNavInfo("地理编码插件未加载，请刷新页面重试。");
+    return;
+  }
+  clearNavMapClickMode();
+  setNavInfo("正在搜索起点...");
+  const geocoder = new AMap.Geocoder({ city: "全国" });
+  geocoder.getLocation(keyword, (status, result) => {
+    const location = result?.geocodes?.[0]?.location;
+    if (status === "complete" && location) {
+      const origin = [location.getLng(), location.getLat()];
+      setOriginMarker(origin, result.geocodes[0].formattedAddress || keyword);
+      planRoute(origin);
+      return;
+    }
+    setNavInfo("没有找到这个起点。可以换个更完整的地址，或改用地图选点。");
+  });
+}
+
+function enableMapPickMode() {
+  if (!navMap) return;
+  clearNavMapClickMode();
+  navEl("navPickMapBtn")?.classList.add("active");
+  setNavInfo("请在地图上点击你的出发位置。");
+  navMapClickHandler = (e) => {
+    const origin = [e.lnglat.getLng(), e.lnglat.getLat()];
+    navEl("navOriginInput").value = "地图选点";
+    clearNavMapClickMode();
+    planRoute(origin);
+  };
+  navMap.on("click", navMapClickHandler);
+}
+
+function clearNavMapClickMode() {
+  if (navMap && navMapClickHandler) {
+    navMap.off("click", navMapClickHandler);
+  }
+  navMapClickHandler = null;
+  navEl("navPickMapBtn")?.classList.remove("active");
+}
+
+function closeNavigation() {
+  stopImmersiveNav();
+  clearNavMapClickMode();
+  clearNavRoute();
+  navEl("navOverlay").style.display = "none";
+}
+
+// ===== Immersive Navigation =====
+let immersiveNavActive = false;
+let immersiveWatchId = null;
+let immersiveUserMarker = null;
+let mapLocked = false;
+
+function startImmersiveNav() {
+  if (!currentNavDest || !currentNavOrigin || !navRouteReady) {
+    setNavInfo("请先设置起点并成功规划路线。");
+    return;
+  }
+  if (!("geolocation" in navigator)) {
+    setNavInfo("当前浏览器不支持实时定位，无法开始实时导航。");
+    return;
+  }
+  immersiveNavActive = true;
+  mapLocked = true;
+  const btn = navEl("navStartBtn");
+  btn.textContent = "结束导航";
+  btn.classList.add("navigating");
+
+  navEl("navLockOverlay").style.display = "block";
+
+  navMap.setZoom(17, false);
+  navMap.setCenter(currentNavOrigin, false);
+
+  immersiveWatchId = navigator.geolocation.watchPosition(
+    (pos) => {
+      const lng = pos.coords.longitude;
+      const lat = pos.coords.latitude;
+      const heading = pos.coords.heading || 0;
+      const arrowHtml = `<div class="nav-user-marker" style="transform:rotate(${heading || 0}deg)"><span></span></div>`;
+
+      if (!immersiveUserMarker) {
+        immersiveUserMarker = new AMap.Marker({
+          position: [lng, lat],
+          map: navMap,
+          zIndex: 200,
+          offset: new AMap.Pixel(-15, -15),
+          content: arrowHtml
+        });
+      } else {
+        immersiveUserMarker.setPosition([lng, lat]);
+        immersiveUserMarker.setContent(arrowHtml);
+      }
+
+      navMap.setCenter([lng, lat], false, 200);
+      updateImmersiveInfo(lng, lat);
+    },
+    () => {
+      stopImmersiveNav();
+      setNavInfo("实时定位失败，已停止导航。你仍可以查看已规划路线。");
+    },
+    { enableHighAccuracy: true, maximumAge: 1000, timeout: 8000 }
+  );
+}
+
+function recenterNav() {
+  if (!immersiveUserMarker || !navMap) return;
+  const pos = immersiveUserMarker.getPosition();
+  navMap.setCenter([pos.getLng(), pos.getLat()], true, 300);
+  navMap.setZoom(17, true, 300);
+}
+
+function updateImmersiveInfo(lng, lat) {
+  if (!currentNavDest) return;
+  const R = 6371;
+  const dLat = (currentNavDest.lat - lat) * Math.PI / 180;
+  const dLng = (currentNavDest.lng - lng) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat * Math.PI / 180) * Math.cos(currentNavDest.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const bearing = Math.atan2(
+    Math.sin((currentNavDest.lng - lng) * Math.PI / 180),
+    Math.cos(lat * Math.PI / 180) * Math.tan(currentNavDest.lat * Math.PI / 180) - Math.sin(lat * Math.PI / 180) * Math.cos((currentNavDest.lng - lng) * Math.PI / 180)
+  ) * 180 / Math.PI;
+
+  const dirEmoji = getDirectionEmoji(bearing);
+
+  if (dist < 0.05) {
+    setNavInfo(`<strong style="color:var(--green);">🎉 已到达目的地：${currentNavDest.name}</strong>`);
+    stopImmersiveNav();
+    return;
+  }
+
+  const km = dist.toFixed(2);
+  setNavInfo(`<strong>${dirEmoji} 前往 ${currentNavDest.name}</strong>　剩余直线距离约 ${km} 公里`);
+}
+
+function getDirectionEmoji(bearing) {
+  const dirs = ["⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️"];
+  const idx = Math.round(((bearing % 360) + 360) % 360 / 45) % 8;
+  return dirs[idx];
+}
+
+function stopImmersiveNav() {
+  immersiveNavActive = false;
+  mapLocked = false;
+  const btn = navEl("navStartBtn");
+  if (btn) {
+    btn.textContent = "开始导航";
+    btn.classList.remove("navigating");
+  }
+  if (immersiveWatchId !== null) {
+    navigator.geolocation.clearWatch(immersiveWatchId);
+    immersiveWatchId = null;
+  }
+  if (immersiveUserMarker) {
+    if (navMap) navMap.remove(immersiveUserMarker);
+    immersiveUserMarker = null;
+  }
+  if (navEl("navLockOverlay")) navEl("navLockOverlay").style.display = "none";
+}
+
+navEl("navStartBtn").addEventListener("click", () => {
+  if (immersiveNavActive) {
+    stopImmersiveNav();
+  } else {
+    startImmersiveNav();
+  }
+});
+
+navEl("navRecenterBtn").addEventListener("click", recenterNav);
+navEl("navUseCurrentBtn").addEventListener("click", useCurrentLocationAsOrigin);
+navEl("navSearchOriginBtn").addEventListener("click", searchOriginByInput);
+navEl("navOriginInput").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") searchOriginByInput();
+});
+navEl("navPickMapBtn").addEventListener("click", enableMapPickMode);
+
+navEl("navCloseBtn").addEventListener("click", closeNavigation);
+navEl("navOverlay").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) closeNavigation();
+});
+document.querySelectorAll(".nav-mode-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.navMode === currentNavMode) return;
+    currentNavMode = btn.dataset.navMode;
+    document.querySelectorAll(".nav-mode-btn").forEach(b => b.classList.toggle("active", b.dataset.navMode === currentNavMode));
+    stopImmersiveNav();
+    if (currentNavOrigin) planRoute(currentNavOrigin);
+    else setNavInfo("请选择或输入起点后规划路线。");
+  });
+});
+
+// Map popup navigation click handler
+document.getElementById("map").addEventListener("click", (event) => {
+  const navBtn = event.target.closest("button[data-navigate]");
+  if (!navBtn) return;
+  const { lat, lng, name } = navBtn.dataset;
+  openNavigation(lat, lng, name);
 });
 
 // 景点评分功能
@@ -3110,6 +3612,176 @@ if (statsModuleBtn) {
     switchModule("stats");
   });
 }
+
+if (weatherModuleBtn) {
+  weatherModuleBtn.addEventListener("click", () => {
+    switchModule("weather");
+  });
+}
+
+// ===== Weather =====
+const WEATHER_ICONS = {
+  "晴": "☀️", "多云": "⛅", "阴": "☁️", "小雨": "🌦️", "中雨": "🌧️", "大雨": "🌧️",
+  "暴雨": "⛈️", "雷阵雨": "⛈️", "小雪": "🌨️", "中雪": "❄️", "大雪": "❄️",
+  "雾": "🌫️", "霾": "🌫️", "阵雨": "🌦️", "雨夹雪": "🌨️", "浮尘": "🌫️",
+  "Sunny": "☀️", "Cloudy": "⛅", "Overcast": "☁️", "Light Rain": "🌦️",
+  "Moderate Rain": "🌧️", "Heavy Rain": "🌧️", "Thunderstorm": "⛈️",
+  "Light Snow": "🌨️", "Moderate Snow": "❄️", "Heavy Snow": "❄️",
+  "Fog": "🌫️", "Haze": "🌫️"
+};
+
+function getWeatherIcon(weather) {
+  for (const [key, icon] of Object.entries(WEATHER_ICONS)) {
+    if (weather.includes(key)) return icon;
+  }
+  return "🌤️";
+}
+
+function getAmapWeatherForecast(city) {
+  return new Promise((resolve, reject) => {
+    if (!window.AMap || !AMap.Weather) {
+      reject(new Error("AMap Weather plugin is unavailable."));
+      return;
+    }
+    const weather = new AMap.Weather();
+    weather.getForecast(city, (error, result) => {
+      if (!error && result) {
+        resolve(result);
+      } else {
+        reject(error || new Error("AMap Weather request failed."));
+      }
+    });
+  });
+}
+
+function getAmapAddress(lng, lat) {
+  return new Promise((resolve, reject) => {
+    if (!window.AMap || !AMap.Geocoder) {
+      reject(new Error("AMap Geocoder plugin is unavailable."));
+      return;
+    }
+    const geocoder = new AMap.Geocoder();
+    geocoder.getAddress([lng, lat], (status, result) => {
+      const component = result?.regeocode?.addressComponent;
+      if (status === "complete" && component) {
+        resolve(component);
+      } else {
+        reject(result || new Error("AMap reverse geocode failed."));
+      }
+    });
+  });
+}
+
+function normalizeAmapWeatherForecast(raw) {
+  const forecasts = raw.forecasts || raw.casts || [];
+  return {
+    city: raw.city || raw.province || "",
+    reporttime: raw.reportTime || raw.reporttime || "",
+    casts: forecasts.map((item) => ({
+      date: item.date || "",
+      weekday: item.week || item.weekday || "",
+      dayweather: item.dayWeather || item.dayweather || item.weather || "",
+      nighttemp: item.nightTemp || item.nighttemp || item.temperature || "",
+      daytemp: item.dayTemp || item.daytemp || item.temperature || "",
+      winddirection: item.dayWindDir || item.winddirection || item.windDirection || "",
+      windpower: item.dayWindPower || item.windpower || item.windPower || ""
+    }))
+  };
+}
+
+async function queryWeatherByCity(city) {
+  const result = document.getElementById("weatherResult");
+  if (!result) return;
+  if (!city.trim()) { result.innerHTML = `<p class="weather-empty">${t("weatherCityEmpty")}</p>`; return; }
+  result.innerHTML = `<p class="weather-loading">${t("weatherLoading")}</p>`;
+  try {
+    const forecast = normalizeAmapWeatherForecast(await getAmapWeatherForecast(city.trim()));
+    if (!forecast.casts.length) {
+      result.innerHTML = `<p class="weather-empty">${t("weatherCityNotFound")}</p>`;
+      return;
+    }
+    renderWeather(forecast, result);
+  } catch (e) {
+    console.error(e);
+    result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
+  }
+}
+
+async function queryWeatherByLocation() {
+  const result = document.getElementById("weatherResult");
+  if (!result) return;
+  result.innerHTML = `<p class="weather-loading">${t("weatherLocating")}</p>`;
+  try {
+    const pos = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 });
+    });
+    const lng = pos.coords.longitude;
+    const lat = pos.coords.latitude;
+    const address = await getAmapAddress(lng, lat);
+    const city = address.adcode || address.city || address.province;
+    const forecast = normalizeAmapWeatherForecast(await getAmapWeatherForecast(city));
+    if (!forecast.casts.length) {
+      result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
+      return;
+    }
+    renderWeather(forecast, result);
+  } catch (e) {
+    console.error(e);
+    result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
+  }
+}
+
+function renderWeather(forecast, container) {
+  const city = forecast.city;
+  const casts = forecast.casts || [];
+  const today = casts[0] || {};
+  const icon = getWeatherIcon(today.dayweather || "");
+  const tomorrow = casts[1] || {};
+
+  let forecastHTML = "";
+  casts.forEach((c, i) => {
+    const label = i === 0 ? (currentLang === "zh" ? "今天" : "Today") :
+                  i === 1 ? (currentLang === "zh" ? "明天" : "Tomorrow") :
+                  i === 2 ? (currentLang === "zh" ? "后天" : "Day After") : c.weekday || "";
+    const fIcon = getWeatherIcon(c.dayweather || "");
+    forecastHTML += `
+      <div class="weather-forecast-day">
+        <span class="weather-forecast-label">${label}</span>
+        <span class="weather-forecast-icon">${fIcon}</span>
+        <span class="weather-forecast-temp">${c.nighttemp}° ~ ${c.daytemp}°</span>
+        <span class="weather-forecast-desc">${currentLang === "zh" ? c.dayweather : (c.dayweather || "")}</span>
+      </div>`;
+  });
+
+  container.innerHTML = `
+    <div class="weather-current">
+      <div class="weather-city-name">${icon} ${city}</div>
+      <div class="weather-current-temp">${today.nighttemp}° ~ ${today.daytemp}°</div>
+      <div class="weather-current-desc">${currentLang === "zh" ? today.dayweather : (today.dayweather || "")}</div>
+      <div class="weather-details">
+        <span>${t("weatherWind")}：${currentLang === "zh" ? today.winddirection : ""} ${today.windpower}级</span>
+      </div>
+    </div>
+    <div class="weather-forecast">${forecastHTML}</div>
+    <div class="weather-report-time">${t("weatherReportTime")}：${forecast.reporttime}</div>
+  `;
+}
+
+document.getElementById("weatherSearchBtn")?.addEventListener("click", () => {
+  const city = document.getElementById("weatherSearchInput").value;
+  queryWeatherByCity(city);
+});
+
+document.getElementById("weatherSearchInput")?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const city = e.target.value;
+    queryWeatherByCity(city);
+  }
+});
+
+document.getElementById("weatherLocBtn")?.addEventListener("click", () => {
+  queryWeatherByLocation();
+});
 
 // 语言切换
 const langToggleBtn = document.getElementById("langToggle");

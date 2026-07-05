@@ -29,7 +29,10 @@
           <span id="authStatus" data-i18n="notLogged">未登录</span>
           <strong id="authUser" data-i18n="guest">游客访问</strong>
         </div>
-        <button id="authOpenBtn" type="button" data-i18n="loginRegister">登录/注册</button>
+        <div class="auth-strip-actions">
+          <button id="authLogoutBtn" type="button" style="display:none;">退出登录</button>
+          <button id="authOpenBtn" type="button" data-i18n="loginRegister">登录/注册</button>
+        </div>
       </section>
 
       <nav class="module-tabs" aria-label="功能模块切换">

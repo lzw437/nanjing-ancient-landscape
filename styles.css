@@ -182,6 +182,24 @@ button {
   cursor: pointer;
 }
 
+.auth-strip-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+#authLogoutBtn {
+  color: var(--red);
+  background: #fff;
+  border-color: var(--red);
+}
+
+#authLogoutBtn:hover {
+  color: #fff;
+  background: var(--red);
+}
+
 .controls {
   display: grid;
   gap: 6px;
@@ -327,6 +345,8 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   cursor: pointer;
+  overflow: hidden;
+  position: relative;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
@@ -345,11 +365,12 @@ button {
   background: #ded6c4;
 }
 
-.spot-card > div {
+.spot-card-body {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   min-width: 0;
   min-height: 156px;
+  overflow: hidden;
 }
 
 .spot-card h3 {
@@ -367,6 +388,7 @@ button {
   line-height: 1.65;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  word-break: break-word;
 }
 
 .card-actions,
@@ -524,6 +546,14 @@ button {
 
 .detail-panel.empty {
   display: none;
+}
+
+.detail-toggle-btn {
+  display: none;
+}
+
+.detail-extra {
+  display: block;
 }
 
 .detail-image {
@@ -1142,7 +1172,7 @@ button {
     height: 140px;
   }
 
-  .spot-card > div {
+  .spot-card-body {
     min-height: 140px;
   }
 
@@ -1175,8 +1205,13 @@ button {
   }
 
   .weather-popover {
-    left: 14px;
-    width: min(340px, calc(100vw - 28px));
+    position: fixed;
+    top: calc(132px + env(safe-area-inset-top, 0px));
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: min(62vh, calc(100dvh - 152px));
+    z-index: 1600;
   }
 
   .weather-search-row {
@@ -1210,6 +1245,7 @@ button {
   .spot-card {
     grid-template-columns: 112px minmax(0, 1fr);
     min-height: 176px;
+    gap: 14px 14px;
   }
 
   .spot-card img {
@@ -1217,8 +1253,9 @@ button {
     height: 112px;
   }
 
-  .spot-card > div {
+  .spot-card-body {
     min-height: 112px;
+    row-gap: 8px;
   }
 
   .spot-card h3 {
@@ -1231,7 +1268,56 @@ button {
 
   .card-actions button {
     min-width: 0;
-    height: 30px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .card-actions {
+    padding-top: 10px;
+    margin-top: 6px;
+    gap: 10px;
+  }
+
+  .favorite-item {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .favorite-item img {
+    width: 96px;
+    height: 96px;
+  }
+
+  .favorite-item-info {
+    min-width: 0;
+  }
+
+  .favorite-item-info h4 {
+    margin-bottom: 8px;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+
+  .favorite-item-info p {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+    word-break: break-word;
+  }
+
+  .favorite-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .view-spot,
+  .remove-favorite {
+    min-height: 36px;
+    padding: 7px 12px;
     font-size: 13px;
   }
 
@@ -3516,6 +3602,12 @@ button {
 @media (max-width: 980px) {
   .sidebar-toggle {
     display: flex;
+    top: calc(76px + env(safe-area-inset-top, 0px));
+    z-index: 3100;
+  }
+
+  .sidebar-toggle.active {
+    top: calc(12px + env(safe-area-inset-top, 0px));
   }
 
   .app-shell {
@@ -3526,24 +3618,26 @@ button {
     position: fixed;
     top: 0;
     left: 0;
-    width: 85vw;
-    max-width: 380px;
-    height: 100vh;
-    z-index: 1000;
+    width: min(420px, 100vw);
+    max-width: none;
+    height: 100dvh;
+    z-index: 3000;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
     border-right: 1px solid var(--line);
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
 
   .sidebar.open {
     transform: translateX(0);
+    padding-top: calc(62px + env(safe-area-inset-top, 0px));
   }
 
   .sidebar-overlay {
     display: none;
+    z-index: 2990;
   }
   .sidebar-overlay.visible {
     display: block;
@@ -3567,6 +3661,35 @@ button {
     width: auto;
     max-height: 50vh;
     z-index: 600;
+    overflow: hidden;
+  }
+
+  .detail-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 36px;
+    margin: 8px 0 12px;
+    color: var(--teal);
+    background: #eef7f8;
+    border: 1px solid rgba(21, 122, 140, 0.28);
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .detail-panel.collapsed {
+    max-height: none;
+  }
+
+  .detail-panel.collapsed .detail-image,
+  .detail-panel.collapsed .detail-extra {
+    display: none;
+  }
+
+  .detail-panel.collapsed .detail-body {
+    padding-bottom: 12px;
   }
 
   .legend {
@@ -3587,9 +3710,117 @@ button {
     padding: 6px 4px;
   }
 
-  .profile-module {
-    height: auto;
-    min-height: 100vh;
+  .controls .search-box > span {
+    display: none;
+  }
+
+  .controls {
+    gap: 4px;
+  }
+
+  .search-box input {
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .filter-row {
+    gap: 4px;
+  }
+
+  .filter-row button {
+    min-height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats div {
+    min-height: 40px;
+    padding: 6px 8px;
+  }
+
+  .stats strong {
+    font-size: 22px;
+  }
+
+  .stats span {
+    font-size: 12px;
+  }
+
+  .brand {
+    order: 0;
+  }
+
+  .auth-strip {
+    order: 1;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .module-tabs {
+    order: 2;
+  }
+
+  .controls {
+    order: 3;
+  }
+
+  .stats {
+    order: 4;
+  }
+
+  .summary,
+  .sidebar-route-content,
+  .sidebar-chat-content,
+  .sidebar-stats-content,
+  .sidebar-admin-content {
+    order: 5;
+  }
+
+  .source-note {
+    order: 6;
+  }
+
+  .auth-strip > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .auth-strip span {
+    display: inline;
+    font-size: 12px;
+  }
+
+  .auth-strip strong {
+    display: inline;
+    max-width: none;
+    font-size: 13px;
+  }
+
+  .auth-strip-actions {
+    flex: 0 0 auto;
+  }
+
+  .auth-strip button {
+    min-height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .info-module,
+  .profile-module,
+  .stats-module {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
   }
 
   .profile-stats {
@@ -3598,11 +3829,6 @@ button {
 
   .my-images-list {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .info-module {
-    height: auto;
-    min-height: 100vh;
   }
 
   .info-layout {
@@ -3618,6 +3844,227 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .stats-module { height: auto; min-height: 100vh; }
   .stats-charts-row { grid-template-columns: 1fr; }
+}
+
+/* ===== Final Mobile Overrides ===== */
+@media (max-width: 680px) {
+  .brand h1 {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
+  .brand-actions {
+    gap: 4px;
+  }
+
+  .lang-btn,
+  .weather-tool-btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 18px;
+    font-size: 12px;
+  }
+
+  .auth-strip {
+    min-height: 34px;
+    padding: 4px 8px;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .auth-strip > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .auth-strip span {
+    display: inline;
+    font-size: 12px;
+  }
+
+  .auth-strip strong {
+    display: inline;
+    max-width: 96px;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .auth-strip button {
+    min-height: 28px;
+    padding: 0 7px;
+    font-size: 12px;
+  }
+
+  .auth-strip-actions {
+    gap: 5px;
+  }
+
+  .auth-strip-actions button {
+    min-width: 64px;
+  }
+
+  .module-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .module-tabs button {
+    min-height: 28px;
+    padding: 3px 2px;
+    font-size: 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .weather-popover {
+    position: fixed;
+    top: calc(88px + env(safe-area-inset-top, 0px));
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-height: calc(100dvh - 108px);
+    padding: 12px;
+    overflow-y: auto;
+    z-index: 3300;
+  }
+
+  .weather-search-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 6px;
+  }
+
+  .weather-search-row input {
+    grid-column: 1 / -1;
+  }
+
+  .summary {
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .spot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 220px;
+    padding-right: 2px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+  }
+
+  .section-title h2 {
+    font-size: 16px;
+  }
+
+  .spot-card {
+    flex: 0 0 auto;
+    grid-template-columns: 104px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    min-height: 168px;
+    gap: 10px 12px;
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .spot-card img {
+    width: 104px;
+    height: 104px;
+    border-radius: 6px;
+    grid-row: 1;
+  }
+
+  .spot-card-body {
+    min-height: 104px;
+    gap: 4px;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .spot-card h3 {
+    margin-bottom: 2px;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .spot-card p {
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-line-clamp: 2;
+    word-break: break-word;
+  }
+
+  .card-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px 0 0;
+    margin-top: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .card-actions button {
+    height: 34px;
+    padding: 0 8px;
+    font-size: 13px;
+    border: 1px solid rgba(45, 106, 79, 0.28);
+    border-radius: 8px;
+  }
+
+  .favorites-section,
+  .profile-section {
+    padding: 14px;
+  }
+
+  .favorite-item {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .favorite-item img {
+    width: 92px;
+    height: 92px;
+  }
+
+  .favorite-item-info {
+    min-width: 0;
+  }
+
+  .favorite-item-info h4 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .favorite-item-info p {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .favorite-actions {
+    grid-column: 2;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .view-spot,
+  .remove-favorite {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 13px;
+  }
 }

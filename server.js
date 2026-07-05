@@ -25,6 +25,7 @@ let routeLikesCollection;
 let chatMessagesCollection;
 let adminsCollection;
 let ratingsCollection;
+let locationRecordsCollection;
 let databaseReady = false;
 const chatSSEClients = [];
 const ADMIN_SECRET_KEY = "888888";
@@ -123,6 +124,41 @@ function publicUser(user) {
   };
 }
 
+function parseTokenPayload(token) {
+  const [payloadB64, signature] = String(token || "").split(".");
+  if (!payloadB64 || !signature) return null;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", tokenSecret)
+    .update(payloadB64)
+    .digest("base64url");
+
+  if (signature !== expectedSignature) return null;
+
+  try {
+    const payload = JSON.parse(Buffer.from(payloadB64, "base64url").toString());
+    if (!payload?.sub || Date.now() > payload.exp) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+async function getOptionalRequestUser(req) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+
+    const payload = parseTokenPayload(authHeader.slice(7));
+    if (!payload?.sub || payload.isAdmin) return null;
+
+    const user = await usersCollection.findOne({ _id: new ObjectId(payload.sub) });
+    return user ? publicUser(user) : null;
+  } catch {
+    return null;
+  }
+}
+
 async function requireAuth(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
@@ -130,18 +166,9 @@ async function requireAuth(req, res, next) {
       return res.status(401).json({ message: "请先登录。" });
     }
 
-    const token = authHeader.slice(7);
-    const [payloadB64] = token.split(".");
-
-    let payload;
-    try {
-      payload = JSON.parse(Buffer.from(payloadB64, "base64url").toString());
-    } catch {
+    const payload = parseTokenPayload(authHeader.slice(7));
+    if (!payload) {
       return res.status(401).json({ message: "无效的令牌。" });
-    }
-
-    if (!payload.sub || Date.now() > payload.exp) {
-      return res.status(401).json({ message: "登录已过期，请重新登录。" });
     }
 
     let userId;
@@ -1165,6 +1192,100 @@ app.get("/api/stats/ranking", async (req, res) => {
   }
 });
 
+app.post("/api/location-records", async (req, res) => {
+  try {
+    if (!locationRecordsCollection) {
+      return res.status(503).json({ message: "定位存储暂不可用。" });
+    }
+
+    const {
+      feature,
+      action,
+      latitude,
+      longitude,
+      accuracy,
+      altitude,
+      heading,
+      speed,
+      city,
+      adcode,
+      weather,
+      destination,
+      meta
+    } = req.body || {};
+
+    const allowedFeatures = new Set(["weather", "navigation"]);
+    const allowedActions = new Set(["current-location", "origin-locate", "map-pick"]);
+    const latNum = Number(latitude);
+    const lngNum = Number(longitude);
+
+    if (!allowedFeatures.has(feature)) {
+      return res.status(400).json({ message: "feature 必须是 weather 或 navigation。" });
+    }
+
+    if (!allowedActions.has(action)) {
+      return res.status(400).json({ message: "action 不合法。" });
+    }
+
+    if (!Number.isFinite(latNum) || latNum < -90 || latNum > 90) {
+      return res.status(400).json({ message: "latitude 不合法。" });
+    }
+
+    if (!Number.isFinite(lngNum) || lngNum < -180 || lngNum > 180) {
+      return res.status(400).json({ message: "longitude 不合法。" });
+    }
+
+    const requestUser = await getOptionalRequestUser(req);
+    const now = new Date();
+    const record = {
+      feature,
+      action,
+      latitude: latNum,
+      longitude: lngNum,
+      accuracy: Number.isFinite(Number(accuracy)) ? Number(accuracy) : null,
+      altitude: Number.isFinite(Number(altitude)) ? Number(altitude) : null,
+      heading: Number.isFinite(Number(heading)) ? Number(heading) : null,
+      speed: Number.isFinite(Number(speed)) ? Number(speed) : null,
+      city: typeof city === "string" ? city.trim() : "",
+      adcode: typeof adcode === "string" ? adcode.trim() : "",
+      weather: weather && typeof weather === "object" ? weather : null,
+      destination: destination && typeof destination === "object" ? {
+        name: typeof destination.name === "string" ? destination.name.trim() : "",
+        latitude: Number.isFinite(Number(destination.latitude)) ? Number(destination.latitude) : null,
+        longitude: Number.isFinite(Number(destination.longitude)) ? Number(destination.longitude) : null
+      } : null,
+      meta: meta && typeof meta === "object" ? meta : null,
+      createdAt: now
+    };
+
+    if (requestUser) {
+      record.userId = requestUser.id;
+      record.username = requestUser.username;
+    }
+
+    const result = await locationRecordsCollection.insertOne(record);
+
+    res.status(201).json({
+      ok: true,
+      record: {
+        id: String(result.insertedId),
+        feature: record.feature,
+        action: record.action,
+        latitude: record.latitude,
+        longitude: record.longitude,
+        accuracy: record.accuracy,
+        city: record.city,
+        adcode: record.adcode,
+        destination: record.destination,
+        createdAt: record.createdAt
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "定位存储失败。" });
+  }
+});
+
 async function start() {
   try {
     await client.connect();
@@ -1178,6 +1299,7 @@ async function start() {
     chatMessagesCollection = db.collection("chat_messages");
     adminsCollection = db.collection("admins");
     ratingsCollection = db.collection("ratings");
+    locationRecordsCollection = db.collection("location_records");
     visitsCollection = db.collection("visits");
     await usersCollection.createIndex({ email: 1 }, { unique: true });
     await usersCollection.createIndex({ username: 1 }, { unique: true });
@@ -1192,6 +1314,9 @@ async function start() {
     await adminsCollection.createIndex({ username: 1 }, { unique: true });
     await ratingsCollection.createIndex({ spotId: 1 });
     await ratingsCollection.createIndex({ spotId: 1, userId: 1 }, { unique: true });
+    await locationRecordsCollection.createIndex({ createdAt: -1 });
+    await locationRecordsCollection.createIndex({ feature: 1, createdAt: -1 });
+    await locationRecordsCollection.createIndex({ userId: 1, createdAt: -1 });
     databaseReady = true;
   } catch (error) {
     console.warn("MongoDB unavailable; starting static site only:", error.message);

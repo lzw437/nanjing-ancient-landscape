@@ -140,6 +140,9 @@ const i18n = {
     goAdminRegister: "注册管理员账号",
     // 按钮
     switchAccount: "切换账号",
+    logout: "退出登录",
+    collapseDetail: "收起简介",
+    expandDetail: "展开简介",
     loggedIn: "已登录",
     notLogged: "未登录",
     guest: "游客访问",
@@ -375,6 +378,9 @@ const i18n = {
     goAdminLogin: "Admin Login",
     goAdminRegister: "Register Admin",
     switchAccount: "Switch",
+    logout: "Log out",
+    collapseDetail: "Hide summary",
+    expandDetail: "Show summary",
     loggedIn: "Logged in",
     notLogged: "Not logged in",
     guest: "Guest",
@@ -2225,6 +2231,7 @@ const chatPreviewImg = document.querySelector("#chatPreviewImg");
 const chatImageRemove = document.querySelector("#chatImageRemove");
 const sidebarSummary = document.querySelector("#sidebarSummary");
 let chatPendingImage = null;
+let mobileDetailCollapsed = false;
 const sidebarControls = document.querySelector(".controls");
 const sidebarStats = document.querySelector(".stats");
 const routeSpotList = document.querySelector("#routeSpotList");
@@ -2243,6 +2250,7 @@ const imageCount = document.querySelector("#imageCount");
 const authStatus = document.querySelector("#authStatus");
 const authUser = document.querySelector("#authUser");
 const authOpenBtn = document.querySelector("#authOpenBtn");
+const authLogoutBtn = document.querySelector("#authLogoutBtn");
 const authModal = document.querySelector("#authModal");
 const authCloseBtn = document.querySelector("#authCloseBtn");
 const loginTab = document.querySelector("#loginTab");
@@ -2304,6 +2312,26 @@ async function apiRequest(path, options = {}) {
   }
 
   return data;
+}
+
+async function storeLocationRecord(payload) {
+  try {
+    const token = getAuthToken();
+    const headers = { "Content-Type": "application/json" };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(apiUrl("/location-records"), {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+    return await response.json().catch(() => null);
+  } catch (error) {
+    console.error("Failed to store location record:", error);
+    return null;
+  }
 }
 
 const detailProfiles = {
@@ -2574,7 +2602,7 @@ function renderList(filteredSpots) {
   spotList.innerHTML = filteredSpots.map((spot) => `
     <article class="spot-card ${spot.id === selectedId ? "active" : ""}" data-id="${spot.id}">
       <img src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
-      <div>
+      <div class="spot-card-body">
         <h3>${spotT(spot, 'name')}</h3>
         <div class="tag-row">
           <span class="tag">${spotT(spot, 'type')}</span>
@@ -2612,6 +2640,7 @@ function renderDetailPanel(spot) {
   }
 
   detailPanel.classList.remove("empty");
+  detailPanel.classList.toggle("collapsed", mobileDetailCollapsed && window.innerWidth <= 980);
   const liked = isLiked(spot.id);
   const likesCount = getSpotLikes(spot.id).length;
   const favorited = isFavorited(spot.id);
@@ -2639,6 +2668,10 @@ function renderDetailPanel(spot) {
         <button type="button" class="nav-btn" data-navigate="${spot.id}" data-lat="${spot.lat}" data-lng="${spot.lng}" data-name="${spotT(spot, 'name')}">${t("navigate")}</button>
         <button type="button" data-open-info="${spot.id}">${t("enterInfo")}</button>
       </div>
+      <button type="button" class="detail-toggle-btn" data-detail-toggle aria-expanded="${mobileDetailCollapsed ? "false" : "true"}">
+        ${mobileDetailCollapsed ? t("expandDetail") : t("collapseDetail")}
+      </button>
+      <div class="detail-extra">
       <div class="detail-meta expanded-detail-meta">
         <div>
           <span>${t("address")}</span>
@@ -2713,6 +2746,7 @@ function renderDetailPanel(spot) {
           ${renderCommentItems(spot.id)}
         </div>
       </section>
+      </div>
     </div>
   `;
 }
@@ -2885,15 +2919,36 @@ function updateAuthView(user) {
     authStatus.textContent = t("administrator");
     authUser.textContent = admin.username || admin.email;
     authOpenBtn.textContent = t("switchAccount");
+    if (authLogoutBtn) {
+      authLogoutBtn.textContent = t("logout");
+      authLogoutBtn.style.display = "";
+    }
   } else if (user) {
     authStatus.textContent = t("loggedIn");
     authUser.textContent = user.username || user.email;
     authOpenBtn.textContent = t("switchAccount");
+    if (authLogoutBtn) {
+      authLogoutBtn.textContent = t("logout");
+      authLogoutBtn.style.display = "";
+    }
   } else {
     authStatus.textContent = t("notLogged");
     authUser.textContent = t("guest");
     authOpenBtn.textContent = t("loginRegister");
+    if (authLogoutBtn) authLogoutBtn.style.display = "none";
   }
+}
+
+function logout() {
+  localStorage.removeItem("landscapeUser");
+  localStorage.removeItem("landscapeToken");
+  localStorage.removeItem("landscapeAdmin");
+  localStorage.removeItem("landscapeAdminToken");
+  if (adminModuleBtn) adminModuleBtn.style.display = "none";
+  profileLoaded = false;
+  closeAuthModal();
+  updateAuthView(null);
+  switchModule("map");
 }
 
 function saveAuth(data) {
@@ -2962,10 +3017,8 @@ function selectSpot(id, options = {}) {
   selectedId = id;
   render();
 
-  // Record visit
-  try { fetch(apiUrl(`/visits/${id}`), { method: "POST" }); } catch {}
-
   if (options.module === "info") {
+    recordVisit(id);
     switchModule("info");
     infoModule.scrollTo({ top: 0, behavior: "smooth" });
     return;
@@ -2980,6 +3033,13 @@ function selectSpot(id, options = {}) {
   if (options.openPopup !== false) {
     setTimeout(() => markerById.get(id)?.openPopup(), 250);
   }
+}
+
+function recordVisit(spotId) {
+  if (!spotId) return;
+  try {
+    fetch(apiUrl(`/visits/${spotId}`), { method: "POST" });
+  } catch {}
 }
 
 typeFilters.addEventListener("click", (event) => {
@@ -3016,6 +3076,14 @@ spotList.addEventListener("click", (event) => {
 });
 
 detailPanel.addEventListener("click", (event) => {
+  const toggleBtn = event.target.closest("button[data-detail-toggle]");
+  if (toggleBtn) {
+    mobileDetailCollapsed = !mobileDetailCollapsed;
+    detailPanel.classList.toggle("collapsed", mobileDetailCollapsed && window.innerWidth <= 980);
+    toggleBtn.textContent = mobileDetailCollapsed ? t("expandDetail") : t("collapseDetail");
+    toggleBtn.setAttribute("aria-expanded", mobileDetailCollapsed ? "false" : "true");
+    return;
+  }
   const navBtn = event.target.closest("button[data-navigate]");
   if (navBtn) {
     const { lat, lng, name } = navBtn.dataset;
@@ -3249,12 +3317,31 @@ function handleRouteResult(status, result, fallbackDistanceKm) {
 }
 
 function useCurrentLocationAsOrigin() {
+  if (!isLoggedIn()) {
+    setNavInfo("请先登录后再使用当前位置导航。");
+    openAuthModal("login");
+    return;
+  }
   if (!navGeolocation) return;
   clearNavMapClickMode();
   setNavInfo("正在获取当前位置...");
   navGeolocation.getCurrentPosition((status, result) => {
     if (status === "complete" && result?.position) {
       const origin = [result.position.getLng(), result.position.getLat()];
+      storeLocationRecord({
+        feature: "navigation",
+        action: "origin-locate",
+        latitude: origin[1],
+        longitude: origin[0],
+        destination: currentNavDest ? {
+          name: currentNavDest.name,
+          latitude: currentNavDest.lat,
+          longitude: currentNavDest.lng
+        } : null,
+        meta: {
+          source: "amap-geolocation"
+        }
+      });
       navEl("navOriginInput").value = "当前位置";
       planRoute(origin);
       return;
@@ -3365,6 +3452,16 @@ function updateImmersiveUserPosition(lng, lat, heading) {
   updateImmersiveInfo(lng, lat);
 }
 
+function focusNavOnOrigin(origin, heading = 0) {
+  if (!navMap || !origin || origin.length < 2) return;
+  const lng = Number(origin[0]);
+  const lat = Number(origin[1]);
+  if (!Number.isFinite(lng) || !Number.isFinite(lat)) return;
+  updateImmersiveUserPosition(lng, lat, heading);
+  navMap.setZoom(17, false);
+  navMap.setCenter([lng, lat], false, 200);
+}
+
 function startImmersiveNav() {
   if (!currentNavDest || !currentNavOrigin || !navRouteReady) {
     setNavInfo("请先设置起点并成功规划路线。");
@@ -3383,8 +3480,8 @@ function startImmersiveNav() {
 
   navEl("navLockOverlay").style.display = "block";
 
-  navMap.setZoom(17, false);
-  navMap.setCenter(currentNavOrigin, false);
+  // Start by forcing the map onto the planned origin so every spot behaves the same.
+  focusNavOnOrigin(currentNavOrigin, 0);
 
   immersiveWatchId = navigator.geolocation.watchPosition(
     (pos) => {
@@ -3633,12 +3730,21 @@ mapModuleBtn.addEventListener("click", () => {
   switchModule("map");
 });
 
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 980) {
+    setTimeout(closeSidebar, 100);
+  }
+}
+
 infoModuleBtn.addEventListener("click", () => {
+  recordVisit(selectedId);
   switchModule("info");
+  closeSidebarOnMobile();
 });
 
 profileModuleBtn.addEventListener("click", () => {
   switchModule("profile");
+  closeSidebarOnMobile();
 });
 
 routeModuleBtn.addEventListener("click", () => {
@@ -3652,6 +3758,7 @@ chatModuleBtn.addEventListener("click", () => {
 if (statsModuleBtn) {
   statsModuleBtn.addEventListener("click", () => {
     switchModule("stats");
+    closeSidebarOnMobile();
   });
 }
 
@@ -3787,6 +3894,11 @@ async function queryWeatherByCity(city) {
 async function queryWeatherByLocation() {
   const result = document.getElementById("weatherResult");
   if (!result) return;
+  if (!isLoggedIn()) {
+    result.innerHTML = `<p class="weather-empty">请先登录后再使用定位天气。</p>`;
+    openAuthModal("login");
+    return;
+  }
   result.innerHTML = `<p class="weather-loading">${t("weatherLocating")}</p>`;
   try {
     const pos = await new Promise((resolve, reject) => {
@@ -3796,10 +3908,37 @@ async function queryWeatherByLocation() {
     const lat = pos.coords.latitude;
     const address = await getAmapAddress(lng, lat);
     const city = address.adcode || address.city || address.province;
-    const weather = await loadWeather(city);
+    const liveCity = Array.isArray(address.city) ? address.city.join("") : address.city;
+    const liveProvince = Array.isArray(address.province) ? address.province.join("") : address.province;
+    const weather = await loadWeather(city).catch((error) => {
+      console.error("Failed to load weather after location:", error);
+      return { live: null, forecast: null };
+    });
+    const storedRecord = await storeLocationRecord({
+      feature: "weather",
+      action: "current-location",
+      latitude: lat,
+      longitude: lng,
+      accuracy: pos.coords.accuracy,
+      altitude: pos.coords.altitude,
+      heading: pos.coords.heading,
+      speed: pos.coords.speed,
+      city: liveCity || liveProvince || "",
+      adcode: address.adcode || "",
+      weather: {
+        live: weather.live,
+        forecast: weather.forecast
+      },
+      meta: {
+        source: "browser-geolocation"
+      }
+    });
     if (!weather.live && !weather.forecast?.casts?.length) {
       result.innerHTML = `<p class="weather-empty">${t("weatherFail")}</p>`;
       return;
+    }
+    if (storedRecord?.record) {
+      weather.lastLocationRecord = storedRecord.record;
     }
     renderWeather(weather, result);
   } catch (e) {
@@ -3852,7 +3991,8 @@ function renderWeather(weatherData, container) {
 
 function openWeatherPopover() {
   if (!weatherPopover) return;
-  weatherPopover.style.display = "";
+  weatherPopover.style.display = "block";
+  weatherPopover.dataset.open = "true";
   weatherPanelBtn?.classList.add("active");
   setTimeout(() => document.getElementById("weatherSearchInput")?.focus(), 0);
 }
@@ -3860,12 +4000,14 @@ function openWeatherPopover() {
 function closeWeatherPopover() {
   if (!weatherPopover) return;
   weatherPopover.style.display = "none";
+  weatherPopover.dataset.open = "false";
   weatherPanelBtn?.classList.remove("active");
 }
 
 function toggleWeatherPopover() {
   if (!weatherPopover) return;
-  if (weatherPopover.style.display === "none") {
+  const isOpen = weatherPopover.dataset.open === "true";
+  if (!isOpen) {
     openWeatherPopover();
   } else {
     closeWeatherPopover();
@@ -3899,8 +4041,10 @@ weatherPopover?.addEventListener("click", (event) => {
   event.stopPropagation();
 });
 
-document.addEventListener("click", () => {
-  if (weatherPopover?.style.display !== "none") closeWeatherPopover();
+document.addEventListener("click", (event) => {
+  if (!weatherPopover || weatherPopover.dataset.open !== "true") return;
+  if (event.target.closest("#weatherPopover") || event.target.closest("#weatherPanelBtn")) return;
+  closeWeatherPopover();
 });
 
 document.addEventListener("keydown", (event) => {
@@ -3940,6 +4084,7 @@ if (backToMapFromStats) {
 }
 
 authOpenBtn.addEventListener("click", () => openAuthModal("login"));
+authLogoutBtn?.addEventListener("click", logout);
 authCloseBtn.addEventListener("click", closeAuthModal);
 loginTab.addEventListener("click", () => setAuthMode("login"));
 registerTab.addEventListener("click", () => setAuthMode("register"));
@@ -5834,31 +5979,13 @@ if (sidebarOverlay) {
   sidebarOverlay.addEventListener("click", closeSidebar);
 }
 
-// Close sidebar on module switch (mobile)
-const origSwitchModule = typeof switchModule === "function" ? switchModule : null;
-function switchModuleMobile(name) {
-  if (window.innerWidth <= 980) closeSidebar();
-}
-
-document.querySelectorAll(".module-tabs button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    setTimeout(() => {
-      if (window.innerWidth <= 980) closeSidebar();
-    }, 50);
-  });
-});
-
-// Close sidebar when clicking a spot card on mobile
-document.addEventListener("click", (e) => {
-  if (window.innerWidth > 980) return;
-  if (e.target.closest(".spot-card") || e.target.closest("[data-detail]") || e.target.closest("[data-map]")) {
-    setTimeout(closeSidebar, 100);
-  }
-});
-
 // Recalculate map size when sidebar closes
 if (typeof map !== "undefined") {
   window.addEventListener("resize", () => {
+    if (window.innerWidth > 980) {
+      mobileDetailCollapsed = false;
+      detailPanel.classList.remove("collapsed");
+    }
     setTimeout(() => map.invalidateSize(), 350);
   });
 }

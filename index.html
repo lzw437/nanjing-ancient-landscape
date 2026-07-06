@@ -163,24 +163,53 @@
       </section>
 
       <section class="sidebar-admin-content" id="sidebarAdminContent" style="display:none;">
-        <h3 data-i18n="adminTitle">管理后台</h3>
+        <div class="admin-head">
+          <h3 data-i18n="adminTitle">管理后台</h3>
+          <button id="adminRefreshBtn" type="button">刷新</button>
+        </div>
         <div class="admin-tabs">
-          <button type="button" class="admin-tab-btn active" data-panel="adminUsers" data-i18n="userMgmt">用户管理</button>
+          <button type="button" class="admin-tab-btn active" data-panel="adminDashboard">仪表盘</button>
+          <button type="button" class="admin-tab-btn" data-panel="adminUsers" data-i18n="userMgmt">用户管理</button>
           <button type="button" class="admin-tab-btn" data-panel="adminComments" data-i18n="commentMgmt">评论管理</button>
           <button type="button" class="admin-tab-btn" data-panel="adminImages" data-i18n="imageMgmt">图片管理</button>
           <button type="button" class="admin-tab-btn" data-panel="adminRatings" data-i18n="ratingMgmt">评分管理</button>
           <button type="button" class="admin-tab-btn" data-panel="adminChat" data-i18n="chatMgmt">聊天管理</button>
         </div>
-        <div id="adminUsers" class="admin-panel">
+        <div id="adminDashboard" class="admin-panel">
+          <div id="adminDashboardContent" class="admin-dashboard"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
+        </div>
+        <div id="adminUsers" class="admin-panel" style="display:none;">
+          <div class="admin-filter-bar">
+            <input id="adminUserSearch" type="search" placeholder="搜索用户/邮箱">
+          </div>
           <div id="adminUserList" class="admin-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
         </div>
         <div id="adminComments" class="admin-panel" style="display:none;">
+          <div class="admin-filter-bar">
+            <select id="adminCommentSpotFilter">
+              <option value="">全部景点评论</option>
+            </select>
+          </div>
           <div id="adminCommentList" class="admin-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
         </div>
         <div id="adminImages" class="admin-panel" style="display:none;">
+          <div class="admin-filter-bar">
+            <select id="adminImageSpotFilter">
+              <option value="">全部景点图片</option>
+            </select>
+          </div>
           <div id="adminImageList" class="admin-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
         </div>
         <div id="adminRatings" class="admin-panel" style="display:none;">
+          <div class="admin-filter-bar">
+            <select id="adminRatingFilter">
+              <option value="">全部评分</option>
+              <option value="5">5 分</option>
+              <option value="4">4 分及以上</option>
+              <option value="3">3 分及以上</option>
+              <option value="2">2 分及以下</option>
+            </select>
+          </div>
           <div id="adminRatingList" class="admin-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
         </div>
         <div id="adminChat" class="admin-panel" style="display:none;">
@@ -264,6 +293,10 @@
             <div id="favoritesList" class="favorites-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
           </div>
           <div class="profile-section">
+            <h3>最近浏览</h3>
+            <div id="recentHistoryList" class="recent-history-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
+          </div>
+          <div class="profile-section">
             <h3 data-i18n="myComments">我的评论</h3>
             <div id="myCommentsList" class="my-comments-list"><div class="profile-loading" data-i18n="loading">加载中...</div></div>
           </div>
@@ -306,6 +339,28 @@
     </main>
   </div>
 
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="移动端快捷导航">
+    <button type="button" class="mobile-bottom-btn active" data-mobile-nav="map" aria-label="地图">
+      <span class="mobile-bottom-icon" aria-hidden="true">🗺️</span>
+      <strong>地图</strong>
+    </button>
+    <button type="button" class="mobile-bottom-btn" data-mobile-nav="route" aria-label="路线">
+      <span class="mobile-bottom-icon" aria-hidden="true">🧭</span>
+      <strong>路线</strong>
+    </button>
+    <button type="button" class="mobile-bottom-btn" data-mobile-nav="weather" aria-label="天气">
+      <span class="mobile-bottom-icon" aria-hidden="true">☁️</span>
+      <strong>天气</strong>
+    </button>
+    <button type="button" class="mobile-bottom-btn" data-mobile-nav="chat" aria-label="聊天">
+      <span class="mobile-bottom-icon" aria-hidden="true">💬</span>
+      <strong>聊天</strong>
+    </button>
+    <button type="button" class="mobile-bottom-btn" data-mobile-nav="profile" aria-label="我的">
+      <span class="mobile-bottom-icon" aria-hidden="true">👤</span>
+      <strong>我的</strong>
+    </button>
+  </nav>
 
 <div class="auth-modal" id="authModal" aria-hidden="true">
     <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">

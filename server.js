@@ -490,7 +490,7 @@ app.delete("/api/admin/chat/:messageId", requireAdmin, async (req, res) => {
 app.get("/api/admin/comments", requireAdmin, async (req, res) => {
   try {
     const comments = await commentsCollection.find({}).sort({ createdAtTimestamp: -1 }).limit(100).toArray();
-    res.json({ comments: comments.map(c => ({ id: String(c._id), spotId: c.spotId, userId: c.userId, username: c.username, content: c.content, createdAt: c.createdAt })) });
+    res.json({ comments: comments.map(c => ({ id: String(c._id), spotId: c.spotId, userId: c.userId, username: c.username, content: c.content, image: c.image || "", createdAt: c.createdAt })) });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "获取评论列表失败" });
@@ -501,7 +501,7 @@ app.get("/api/admin/comments", requireAdmin, async (req, res) => {
 app.get("/api/admin/images", requireAdmin, async (req, res) => {
   try {
     const images = await userImagesCollection.find({}).sort({ createdAt: -1 }).limit(100).toArray();
-    res.json({ images: images.map(img => ({ id: String(img._id), spotId: img.spotId, userId: img.userId, username: img.username, createdAt: img.createdAt })) });
+    res.json({ images: images.map(img => ({ id: String(img._id), spotId: img.spotId, userId: img.userId, username: img.username, url: img.url, createdAt: img.createdAt })) });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "获取图片列表失败" });
@@ -531,6 +531,41 @@ app.get("/api/admin/ratings", requireAdmin, async (req, res) => {
 });
 
 // 管理员：删除任意评分
+app.get("/api/admin/dashboard", requireAdmin, async (_req, res) => {
+  try {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const [userCount, commentCount, imageCount, todayVisitTotal, topVisits] = await Promise.all([
+      usersCollection.countDocuments({}),
+      commentsCollection.countDocuments({}),
+      userImagesCollection.countDocuments({}),
+      visitsCollection ? visitsCollection.countDocuments({ timestamp: { $gte: startOfDay } }) : 0,
+      visitsCollection ? visitsCollection.aggregate([
+        { $match: { timestamp: { $gte: startOfDay } } },
+        { $group: { _id: "$spotId", count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 5 }
+      ]).toArray() : []
+    ]);
+
+    res.json({
+      totals: {
+        users: userCount,
+        comments: commentCount,
+        images: imageCount,
+        todayVisits: todayVisitTotal
+      },
+      topSpots: topVisits.map((item) => ({
+        spotId: item._id,
+        count: item.count
+      }))
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "获取仪表盘数据失败" });
+  }
+});
+
 app.delete("/api/admin/ratings/:ratingId", requireAdmin, async (req, res) => {
   try {
     const ratingId = req.params.ratingId;
@@ -571,6 +606,7 @@ app.get("/api/interactions/:spotId", async (req, res) => {
         userId: c.userId,
         username: c.username,
         content: c.content,
+        image: c.image || "",
         createdAt: c.createdAt
       }))
     });
@@ -653,10 +689,12 @@ app.delete("/api/interactions/:spotId/like", requireAuth, async (req, res) => {
 
 app.post("/api/comments", requireAuth, async (req, res) => {
   try {
-    const { spotId, content } = req.body;
+    const { spotId, content, image } = req.body;
     const user = req.user;
+    const trimmedContent = String(content || "").trim();
+    const imageData = typeof image === "string" && image.startsWith("data:image/") ? image : "";
 
-    if (!spotId || !content.trim()) {
+    if (!spotId || (!trimmedContent && !imageData)) {
       return res.status(400).json({ message: "景点 ID 和评论内容不能为空" });
     }
 
@@ -664,7 +702,8 @@ app.post("/api/comments", requireAuth, async (req, res) => {
       spotId,
       userId: user.id,
       username: user.username,
-      content: content.trim(),
+      content: trimmedContent,
+      image: imageData,
       createdAt: new Date().toLocaleString("zh-CN"),
       createdAtTimestamp: new Date()
     };
@@ -774,6 +813,7 @@ app.get("/api/user/comments", requireAuth, async (req, res) => {
         id: String(c._id),
         spotId: c.spotId,
         content: c.content,
+        image: c.image || "",
         createdAt: c.createdAt
       }))
     });
@@ -806,6 +846,33 @@ app.get("/api/user/images", requireAuth, async (req, res) => {
 });
 
 // 收藏相关接口
+app.get("/api/user/history", requireAuth, async (req, res) => {
+  try {
+    if (!visitsCollection) return res.json({ history: [] });
+    const user = req.user;
+    const visits = await visitsCollection
+      .find({ userId: user.id })
+      .sort({ timestamp: -1 })
+      .limit(100)
+      .toArray();
+    const seen = new Set();
+    const history = [];
+    for (const visit of visits) {
+      if (!visit.spotId || seen.has(visit.spotId)) continue;
+      seen.add(visit.spotId);
+      history.push({
+        spotId: visit.spotId,
+        visitedAt: visit.timestamp
+      });
+      if (history.length >= 20) break;
+    }
+    res.json({ history });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "获取最近浏览失败" });
+  }
+});
+
 app.get("/api/profile", requireAuth, async (req, res) => {
   try {
     const user = req.user;
@@ -1133,8 +1200,10 @@ let visitsCollection;
 app.post("/api/visits/:spotId", async (req, res) => {
   try {
     if (!visitsCollection) return res.json({ ok: true });
+    const user = await getOptionalRequestUser(req);
     await visitsCollection.insertOne({
       spotId: req.params.spotId,
+      userId: user?.id || null,
       timestamp: new Date()
     });
     res.json({ ok: true });

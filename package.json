@@ -6,6 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "start:watch": "node --watch --watch-path=server.js --watch-path=app.js server.js",
     "seed:landscapes": "node seed-landscapes.js"
   },
   "dependencies": {

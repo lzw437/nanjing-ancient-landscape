@@ -2232,6 +2232,7 @@ const chatImageRemove = document.querySelector("#chatImageRemove");
 const sidebarSummary = document.querySelector("#sidebarSummary");
 let chatPendingImage = null;
 let mobileDetailCollapsed = false;
+let latestVisitRequest = Promise.resolve();
 const sidebarControls = document.querySelector(".controls");
 const sidebarStats = document.querySelector(".stats");
 const routeSpotList = document.querySelector("#routeSpotList");
@@ -2242,6 +2243,7 @@ const infoArticle = document.querySelector("#infoArticle");
 const infoIndexList = document.querySelector("#infoIndexList");
 const profileModule = document.querySelector("#profileModule");
 const favoritesList = document.querySelector("#favoritesList");
+const recentHistoryList = document.querySelector("#recentHistoryList");
 const myCommentsList = document.querySelector("#myCommentsList");
 const myImagesList = document.querySelector("#myImagesList");
 const favCount = document.querySelector("#favCount");
@@ -2271,6 +2273,7 @@ const statsModule = document.querySelector("#statsModule");
 const weatherPanelBtn = document.querySelector("#weatherPanelBtn");
 const weatherPopover = document.querySelector("#weatherPopover");
 const weatherCloseBtn = document.querySelector("#weatherCloseBtn");
+const mobileBottomNav = document.querySelector("#mobileBottomNav");
 const authMessage = document.querySelector("#authMessage");
 const apiBase = location.protocol === "file:" ? "http://localhost:3000/api" : "/api";
 
@@ -2394,6 +2397,10 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function escapeJsString(value) {
+  return String(value || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
 function getDetailProfile(spot) {
   const fallbackByType = {
     "寺": { hours: "通常为日间开放，宗教活动或节假日可能调整", ticket: "可能收取门票或香花券，以现场公告为准" },
@@ -2429,6 +2436,11 @@ function renderCommentItems(spotId) {
 
   return comments.map((comment) => {
     const canDelete = user && (user.id || user.username) === comment.userId;
+    const imageHtml = comment.image ? `
+      <button type="button" class="comment-image" onclick="openChatImageModal('${escapeJsString(comment.image)}')">
+        <img src="${escapeHtml(comment.image)}" alt="评论配图" loading="lazy">
+      </button>
+    ` : "";
     return `
       <div class="comment-item">
         <div class="comment-header">
@@ -2436,7 +2448,8 @@ function renderCommentItems(spotId) {
           <span>${escapeHtml(comment.createdAt)}</span>
           ${canDelete ? `<button type="button" class="comment-delete" data-comment="${escapeHtml(comment.id)}" data-spot="${escapeHtml(spotId)}">删除</button>` : ""}
         </div>
-        <p>${escapeHtml(comment.content)}</p>
+        ${comment.content ? `<p>${escapeHtml(comment.content)}</p>` : ""}
+        ${imageHtml}
       </div>
     `;
   }).join("");
@@ -2506,6 +2519,13 @@ function popupHtml(spot) {
   `;
 }
 
+function setMobileBottomActive(navName) {
+  if (!mobileBottomNav) return;
+  mobileBottomNav.querySelectorAll(".mobile-bottom-btn").forEach((button) => {
+    button.classList.toggle("active", button.dataset.mobileNav === navName);
+  });
+}
+
 function switchModule(moduleName) {
   activeModule = moduleName;
   const showInfo = moduleName === "info";
@@ -2526,6 +2546,7 @@ function switchModule(moduleName) {
   chatModuleBtn.classList.toggle("active", showChat);
   if (statsModuleBtn) statsModuleBtn.classList.toggle("active", showStats);
   if (adminModuleBtn) adminModuleBtn.classList.toggle("active", showAdmin);
+  setMobileBottomActive(showRoute ? "route" : showChat ? "chat" : showProfile ? "profile" : "map");
 
   if (sidebarRouteContent) sidebarRouteContent.style.display = showRoute ? "" : "none";
   if (sidebarChatContent) sidebarChatContent.style.display = showChat ? "" : "none";
@@ -2542,7 +2563,11 @@ function switchModule(moduleName) {
       if (spot) map.setView([spot.lat, spot.lng], Math.max(map.getZoom(), 12));
     }, 50);
   } else if (showProfile) {
-    if (!profileLoaded) loadUserProfile();
+    if (!profileLoaded) {
+      loadUserProfile();
+    } else {
+      loadRecentHistoryAfterPendingVisit();
+    }
   }
 
   if (showRoute) {
@@ -2740,7 +2765,13 @@ function renderDetailPanel(spot) {
         </div>
         <div class="comment-input compact-comment-input">
           <textarea placeholder="${t("commentPlaceholder")}" rows="3" data-spot="${spot.id}"></textarea>
-          <button type="button" class="submit-comment" data-spot="${spot.id}">${t("postComment")}</button>
+          <div class="comment-actions">
+            <label class="comment-image-btn">
+              📷 配图
+              <input type="file" class="comment-image-input" accept="image/*" data-spot="${spot.id}">
+            </label>
+            <button type="button" class="submit-comment" data-spot="${spot.id}">${t("postComment")}</button>
+          </div>
         </div>
         <div class="comments-list panel-comments-list">
           ${renderCommentItems(spot.id)}
@@ -2813,6 +2844,10 @@ function renderInfoArticle(spot) {
           <div class="comment-input">
             <textarea placeholder="${t("commentPlaceholder")}" rows="3" data-spot="${spot.id}"></textarea>
             <div class="comment-actions">
+              <label class="comment-image-btn">
+                📷 配图
+                <input type="file" class="comment-image-input" accept="image/*" data-spot="${spot.id}">
+              </label>
               <label class="submit-comment" for="image-upload-${spot.id}">
                 ${t("uploadImage")}
                 <input type="file" id="image-upload-${spot.id}" class="image-upload-input" accept="image/*" data-spot="${spot.id}">
@@ -2822,23 +2857,7 @@ function renderInfoArticle(spot) {
           </div>
 
           <div class="comments-list" id="comments-${spot.id}">
-            ${comments.length === 0 ? `
-              <div class="comments-empty">
-                <p>${t("noComments")}</p>
-              </div>
-            ` : comments.map(comment => {
-              const canDelete = user && (user.id || user.username) === comment.userId;
-              return `
-                <div class="comment-item">
-                  <div class="comment-header">
-                    <strong>${comment.username}</strong>
-                    <span>${comment.createdAt}</span>
-                    ${canDelete ? `<button type="button" class="comment-delete" data-comment="${comment.id}" data-spot="${spot.id}">${t("delete")}</button>` : ""}
-                  </div>
-                  <p>${comment.content}</p>
-                </div>
-              `;
-            }).join("")}
+            ${renderCommentItems(spot.id)}
           </div>
         </div>
       </div>
@@ -2946,6 +2965,8 @@ function logout() {
   localStorage.removeItem("landscapeAdminToken");
   if (adminModuleBtn) adminModuleBtn.style.display = "none";
   profileLoaded = false;
+  adminDataLoaded = false;
+  adminDataLoadingPromise = null;
   closeAuthModal();
   updateAuthView(null);
   switchModule("map");
@@ -2957,6 +2978,8 @@ function saveAuth(data) {
   localStorage.setItem("landscapeUser", JSON.stringify(data.user));
   localStorage.setItem("landscapeToken", data.token);
   if (adminModuleBtn) adminModuleBtn.style.display = "none";
+  adminDataLoaded = false;
+  adminDataLoadingPromise = null;
   updateAuthView(data.user);
   loadFavorites();
 }
@@ -2967,9 +2990,12 @@ function saveAdminAuth(data) {
   localStorage.setItem("landscapeAdmin", JSON.stringify(data.admin));
   localStorage.setItem("landscapeAdminToken", data.token);
   profileLoaded = false;
+  adminDataLoaded = false;
+  adminDataLoadingPromise = null;
   updateAuthView(null);
   loadUserProfile();
   if (adminModuleBtn) adminModuleBtn.style.display = "";
+  preloadAdminData();
 }
 
 async function submitAuth(path, body) {
@@ -3038,8 +3064,20 @@ function selectSpot(id, options = {}) {
 function recordVisit(spotId) {
   if (!spotId) return;
   try {
-    fetch(apiUrl(`/visits/${spotId}`), { method: "POST" });
-  } catch {}
+    const token = getAuthToken();
+    const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+    latestVisitRequest = fetch(apiUrl(`/visits/${spotId}`), { method: "POST", headers })
+      .then((response) => response.ok)
+      .catch(() => false);
+    if (token) profileLoaded = false;
+    latestVisitRequest.finally(() => {
+      if (activeModule === "profile") loadAndRenderRecentHistory();
+    });
+    return latestVisitRequest;
+  } catch {
+    latestVisitRequest = Promise.resolve(false);
+    return latestVisitRequest;
+  }
 }
 
 typeFilters.addEventListener("click", (event) => {
@@ -3755,6 +3793,21 @@ chatModuleBtn.addEventListener("click", () => {
   switchModule("chat");
 });
 
+mobileBottomNav?.addEventListener("click", (event) => {
+  const button = event.target.closest(".mobile-bottom-btn[data-mobile-nav]");
+  if (!button) return;
+  const navName = button.dataset.mobileNav;
+
+  closeSidebarOnMobile();
+  if (navName === "weather") {
+    switchModule("map");
+    openWeatherPopover();
+    return;
+  }
+  closeWeatherPopover();
+  switchModule(navName);
+});
+
 if (statsModuleBtn) {
   statsModuleBtn.addEventListener("click", () => {
     switchModule("stats");
@@ -3947,6 +4000,35 @@ async function queryWeatherByLocation() {
   }
 }
 
+function getWeatherTravelAdvice(weatherText) {
+  const text = String(weatherText || "");
+  const isRainy = /雨|雷|阵雨|暴雨|rain|shower|storm/i.test(text);
+  const isSunny = /晴|sunny|clear/i.test(text);
+
+  if (currentLang === "zh") {
+    if (isRainy) return "出行建议：下雨推荐博物馆、纪念馆、江宁织造府等室内景点，减少长时间户外步行。";
+    if (isSunny) return "出行建议：晴天推荐城墙、紫金山、玄武湖和湖区路线，适合拍照与慢行。";
+    return "出行建议：可结合实时天气选择路线；雨天优先室内景点，晴天优先城墙、紫金山和湖区路线。";
+  }
+
+  if (isRainy) return "Travel tip: rainy weather is better for museums, memorial halls, and other indoor sites.";
+  if (isSunny) return "Travel tip: sunny weather suits the city wall, Purple Mountain, Xuanwu Lake, and lakeside routes.";
+  return "Travel tip: choose indoor sites on rainy days, and city wall, mountain, or lakeside routes on sunny days.";
+}
+
+function formatForecastLabel(day, index) {
+  if (index === 0) return currentLang === "zh" ? "今天" : "Today";
+  if (index === 1) return currentLang === "zh" ? "明天" : "Tomorrow";
+  if (index === 2) return currentLang === "zh" ? "后天" : "Day After";
+
+  const weekdayMap = currentLang === "zh"
+    ? ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+    : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const weekdayNumber = Number(day.weekday);
+  if (weekdayNumber >= 1 && weekdayNumber <= 7) return weekdayMap[weekdayNumber - 1];
+  return day.weekday || day.date || "";
+}
+
 function renderWeather(weatherData, container) {
   const forecast = weatherData.forecast || {};
   const live = weatherData.live || {};
@@ -3954,15 +4036,14 @@ function renderWeather(weatherData, container) {
   const casts = forecast.casts || [];
   const today = casts[0] || {};
   const currentWeather = live.weather || today.dayweather || "";
+  const travelAdvice = getWeatherTravelAdvice(currentWeather || today.dayweather || today.nightweather);
   const icon = getWeatherIcon(currentWeather);
   const windText = [live.winddirection || today.winddirection, live.windpower || today.windpower].filter(Boolean).join(" ");
   const reportTime = live.reporttime || forecast.reporttime || "";
 
   let forecastHTML = "";
   casts.forEach((c, i) => {
-    const label = i === 0 ? (currentLang === "zh" ? "今天" : "Today") :
-                  i === 1 ? (currentLang === "zh" ? "明天" : "Tomorrow") :
-                  i === 2 ? (currentLang === "zh" ? "后天" : "Day After") : c.weekday || "";
+    const label = formatForecastLabel(c, i);
     const fIcon = getWeatherIcon(c.dayweather || "");
     forecastHTML += `
       <div class="weather-forecast-day">
@@ -3984,6 +4065,7 @@ function renderWeather(weatherData, container) {
         ${live.humidity ? `<span>${t("weatherHumidity")}：${live.humidity}%</span>` : ""}
       </div>
     </div>
+    <div class="weather-travel-advice">${travelAdvice}</div>
     ${forecastHTML ? `<div class="weather-section-label weather-forecast-title">${t("weatherForecast")}</div><div class="weather-forecast">${forecastHTML}</div>` : ""}
     ${reportTime ? `<div class="weather-report-time">${t("weatherReportTime")}：${reportTime}</div>` : ""}
   `;
@@ -3994,6 +4076,7 @@ function openWeatherPopover() {
   weatherPopover.style.display = "block";
   weatherPopover.dataset.open = "true";
   weatherPanelBtn?.classList.add("active");
+  setMobileBottomActive("weather");
   setTimeout(() => document.getElementById("weatherSearchInput")?.focus(), 0);
 }
 
@@ -4002,6 +4085,7 @@ function closeWeatherPopover() {
   weatherPopover.style.display = "none";
   weatherPopover.dataset.open = "false";
   weatherPanelBtn?.classList.remove("active");
+  setMobileBottomActive(activeModule === "route" ? "route" : activeModule === "chat" ? "chat" : activeModule === "profile" ? "profile" : "map");
 }
 
 function toggleWeatherPopover() {
@@ -4043,7 +4127,7 @@ weatherPopover?.addEventListener("click", (event) => {
 
 document.addEventListener("click", (event) => {
   if (!weatherPopover || weatherPopover.dataset.open !== "true") return;
-  if (event.target.closest("#weatherPopover") || event.target.closest("#weatherPanelBtn")) return;
+  if (event.target.closest("#weatherPopover") || event.target.closest("#weatherPanelBtn") || event.target.closest("#mobileBottomNav")) return;
   closeWeatherPopover();
 });
 
@@ -4230,9 +4314,15 @@ document.addEventListener("click", async (event) => {
     const spotId = submitComment.dataset.spot;
     const commentInput = submitComment.closest(".comment-input");
     const textarea = commentInput?.querySelector(`textarea[data-spot="${spotId}"]`);
-    if (textarea && textarea.value.trim()) {
-      if (await addComment(spotId, textarea.value)) {
+    const imageInput = commentInput?.querySelector(`.comment-image-input[data-spot="${spotId}"]`);
+    const imageFile = imageInput?.files?.[0] || null;
+    if ((textarea && textarea.value.trim()) || imageFile) {
+      if (await addComment(spotId, textarea.value, imageFile)) {
         textarea.value = "";
+        if (imageInput) {
+          imageInput.value = "";
+          imageInput.closest(".comment-image-btn")?.removeAttribute("data-selected");
+        }
         const spot = spots.find(s => s.id === spotId);
         renderInfoArticle(spot);
         renderDetailPanel(spot);
@@ -4293,9 +4383,28 @@ document.addEventListener("click", async (event) => {
     expandImage(imageThumb.dataset.full);
     return;
   }
+
+  const recentHistorySpot = event.target.closest(".recent-history-name[data-spot], .recent-history-item[data-spot]");
+  if (recentHistorySpot) {
+    selectSpot(recentHistorySpot.dataset.spot, { module: "info" });
+    return;
+  }
 });
 
 document.addEventListener("change", (event) => {
+  const commentImageInput = event.target.closest(".comment-image-input[data-spot]");
+  if (commentImageInput) {
+    const label = commentImageInput.closest(".comment-image-btn");
+    if (label) {
+      if (commentImageInput.files.length > 0) {
+        label.dataset.selected = commentImageInput.files[0].name;
+      } else {
+        label.removeAttribute("data-selected");
+      }
+    }
+    return;
+  }
+
   const imageUploadInput = event.target.closest(".image-upload-input[data-spot]");
   if (imageUploadInput && imageUploadInput.files.length > 0) {
     const spotId = imageUploadInput.dataset.spot;
@@ -4393,7 +4502,7 @@ async function removeLike(spotId) {
   return false;
 }
 
-async function addComment(spotId, content) {
+async function addComment(spotId, content, imageFile = null) {
   const user = getCurrentUser();
   const token = getAuthToken();
   
@@ -4403,6 +4512,7 @@ async function addComment(spotId, content) {
   }
   
   try {
+    const image = imageFile ? await resizeAndConvertToBase64(imageFile, 900, 900) : "";
     await apiRequest("/comments", {
       method: "POST",
       headers: {
@@ -4411,30 +4521,10 @@ async function addComment(spotId, content) {
       },
       body: JSON.stringify({
         spotId,
-        content: content.trim()
+        content: String(content || "").trim(),
+        image
       })
     });
-    await loadCommentsFromServer(spotId);
-    return true;
-
-    const response = await fetch("/api/comments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        spotId,
-        content: content.trim()
-      })
-    });
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.message || "评论失败");
-    }
-    
     await loadCommentsFromServer(spotId);
     return true;
   } catch (error) {
@@ -4451,12 +4541,6 @@ async function loadUserImages(spotId) {
   try {
     const serverImages = await apiRequest(`/images/${spotId}`);
     renderUserImages(spotId, serverImages);
-    return;
-
-    const response = await fetch(`/api/images/${spotId}`);
-    if (!response.ok) throw new Error("加载图片失败");
-    const images = await response.json();
-    renderUserImages(spotId, images);
   } catch (error) {
     console.error("Failed to load user images:", error);
     container.innerHTML = '<p class="gallery-error">无法加载图片库</p>';
@@ -4522,24 +4606,6 @@ async function uploadImage(spotId, file) {
     alert(t("imgUploadSuccess"));
     loadUserImages(spotId);
     if (activeModule === "profile") loadUserProfile();
-    return;
-
-    const response = await fetch("/api/images/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ spotId, imageData })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "上传失败");
-    }
-
-    alert(t("imgUploadSuccess"));
-    loadUserImages(spotId);
   } catch (error) {
     console.error("Upload error:", error);
     alert(error.message || "上传图片时发生错误");
@@ -4591,17 +4657,6 @@ async function loadCommentsFromServer(spotId) {
     
     spotInteractions[spotId].likes = serverInteraction.likes || [];
     spotInteractions[spotId].comments = serverInteraction.comments || [];
-    saveSpotInteractions();
-    return;
-
-    const response = await fetch(`/api/interactions/${spotId}`);
-    const data = await response.json();
-    
-    if (!spotInteractions[spotId]) {
-      spotInteractions[spotId] = { likes: [], comments: [] };
-    }
-    
-    spotInteractions[spotId].comments = data.comments || [];
     saveSpotInteractions();
   } catch (error) {
     console.error("Failed to load comments:", error);
@@ -4660,45 +4715,6 @@ function isLiked(spotId) {
   return likes.includes(userId);
 }
 
-function renderLikeButton(spotId, container) {
-  const liked = isLiked(spotId);
-  const likesCount = getSpotLikes(spotId).length;
-  
-  container.innerHTML = `
-    <button type="button" class="like-btn ${liked ? "liked" : ""}" data-spot="${spotId}">
-      <span class="like-icon">${liked ? "♥" : "♡"}</span>
-      <span class="like-count">${likesCount}</span>
-    </button>
-  `;
-}
-
-function renderComments(spotId, container) {
-  const comments = getSpotComments(spotId);
-  const user = getCurrentUser();
-  
-  if (comments.length === 0) {
-    container.innerHTML = `
-      <div class="comments-empty">
-        <p>暂无评论，快来发表第一条评论吧！</p>
-      </div>
-    `;
-  } else {
-    container.innerHTML = comments.map(comment => {
-      const canDelete = user && (user.id || user.username) === comment.userId;
-      return `
-        <div class="comment-item">
-          <div class="comment-header">
-            <strong>${comment.username}</strong>
-            <span>${comment.createdAt}</span>
-            ${canDelete ? `<button type="button" class="comment-delete" data-comment="${comment.id}" data-spot="${spotId}">删除</button>` : ""}
-          </div>
-          <p>${comment.content}</p>
-        </div>
-      `;
-    }).join("");
-  }
-}
-
 // 收藏功能
 async function loadFavorites() {
   const token = getAuthToken();
@@ -4714,18 +4730,6 @@ async function loadFavorites() {
       }
     });
     userFavorites = favoritesPayload.favorites || [];
-    return;
-
-    const response = await fetch("/api/favorites", {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    if (!response.ok) throw new Error("加载收藏失败");
-
-    const data = await response.json();
-    userFavorites = data.favorites || [];
   } catch (error) {
     console.error("Failed to load favorites:", error);
     userFavorites = [];
@@ -4843,13 +4847,19 @@ async function loadAndRenderUserComments() {
     myCommentsList.innerHTML = comments.map(comment => {
       const spot = spots.find(s => s.id === comment.spotId);
       const spotName = spot ? spotT(spot, 'name') : t("unknownSpot");
+      const imageHtml = comment.image ? `
+        <button type="button" class="comment-image profile-comment-image" onclick="openChatImageModal('${escapeJsString(comment.image)}')">
+          <img src="${escapeHtml(comment.image)}" alt="评论配图" loading="lazy">
+        </button>
+      ` : "";
       return `
         <div class="comment-item">
           <div class="comment-spot">
             <span class="comment-spot-label">${t("spotLabel")}</span>
             <span class="comment-spot-name" data-spot="${comment.spotId}">${escapeHtml(spotName)}</span>
           </div>
-          <p class="comment-content">${escapeHtml(comment.content)}</p>
+          ${comment.content ? `<p class="comment-content">${escapeHtml(comment.content)}</p>` : ""}
+          ${imageHtml}
           <span class="comment-time">${comment.createdAt || ""}</span>
         </div>
       `;
@@ -4894,6 +4904,51 @@ async function loadAndRenderUserImages() {
   }
 }
 
+async function loadAndRenderRecentHistory() {
+  if (!recentHistoryList) return;
+  const token = getAuthToken();
+  if (!token) {
+    recentHistoryList.innerHTML = `<div class="profile-empty"><p>请先登录后查看最近浏览。</p></div>`;
+    return;
+  }
+
+  try {
+    const data = await apiRequest("/user/history", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const history = data.history || [];
+    if (!history.length) {
+      recentHistoryList.innerHTML = `<div class="profile-empty"><p>暂无最近浏览记录。</p></div>`;
+      return;
+    }
+
+    recentHistoryList.innerHTML = history.map((item) => {
+      const spot = spots.find((s) => s.id === item.spotId);
+      if (!spot) return "";
+      const time = item.visitedAt ? new Date(item.visitedAt).toLocaleString(currentLang === "zh" ? "zh-CN" : "en-US") : "";
+      return `
+        <div class="recent-history-item" data-spot="${spot.id}">
+          <img src="${spot.image}" alt="${escapeHtml(spotT(spot, "name"))}" loading="lazy" onerror="imageFallback(this)">
+          <div class="recent-history-info">
+            <button type="button" class="recent-history-name" data-spot="${spot.id}">${escapeHtml(spotT(spot, "name"))}</button>
+            <span>${escapeHtml(time)}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error("Failed to load recent history:", error);
+    recentHistoryList.innerHTML = `<div class="profile-empty"><p>加载最近浏览失败</p></div>`;
+  }
+}
+
+async function loadRecentHistoryAfterPendingVisit() {
+  try {
+    await latestVisitRequest;
+  } catch {}
+  return loadAndRenderRecentHistory();
+}
+
 async function loadUserProfile() {
   const user = getCurrentUser();
   const token = getAuthToken();
@@ -4915,6 +4970,7 @@ async function loadUserProfile() {
     imageCount.textContent = "0";
     myCommentsList.innerHTML = `<div class="profile-empty"><p>${t("noCommentLogin")}</p></div>`;
     myImagesList.innerHTML = `<div class="profile-empty"><p>${t("noImageLogin")}</p></div>`;
+    if (recentHistoryList) recentHistoryList.innerHTML = `<div class="profile-empty"><p>请先登录后查看最近浏览。</p></div>`;
     return;
   }
 
@@ -4948,6 +5004,7 @@ async function loadUserProfile() {
   commentCount.textContent = profileStats.commentsCount;
   imageCount.textContent = profileStats.imagesCount;
   renderProfileFavorites();
+  await loadRecentHistoryAfterPendingVisit();
   loadAndRenderUserComments();
   loadAndRenderUserImages();
   profileLoaded = true;
@@ -4994,6 +5051,7 @@ async function init() {
     if (admin && adminModuleBtn) {
       adminModuleBtn.style.display = "";
       updateAuthView(null);
+      preloadAdminData();
     } else {
       updateAuthView(JSON.parse(localStorage.getItem("landscapeUser")));
     }
@@ -5015,10 +5073,8 @@ async function init() {
   // 后台预加载个人中心、聊天室和管理后台数据
   setTimeout(() => {
     const user = JSON.parse(localStorage.getItem("landscapeUser"));
-    const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
     if (user) loadUserProfile();
     loadChatMessages();
-    if (admin) loadAdminData();
   }, 2000);
 }
 
@@ -5165,38 +5221,6 @@ function haversineDistance(a, b) {
   return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
 }
 
-function groupSpotsIntoRoutes(selectedSpots) {
-  if (selectedSpots.length === 0) return [];
-
-  const threshold = 5;
-  const visited = new Set();
-  const groups = [];
-
-  for (const spot of selectedSpots) {
-    if (visited.has(spot.id)) continue;
-    const group = [spot];
-    visited.add(spot.id);
-    let changed = true;
-    while (changed) {
-      changed = false;
-      for (const candidate of selectedSpots) {
-        if (visited.has(candidate.id)) continue;
-        for (const member of group) {
-          if (haversineDistance(member, candidate) < threshold) {
-            group.push(candidate);
-            visited.add(candidate.id);
-            changed = true;
-            break;
-          }
-        }
-      }
-    }
-    groups.push(group);
-  }
-
-  return groups;
-}
-
 function sortSpotsInRoute(group) {
   if (group.length <= 2) return group;
   const sorted = [group[0]];
@@ -5323,6 +5347,15 @@ let profileLoaded = false;
 let chatLoaded = false;
 let chatMessagesLoaded = false;
 let adminDataLoaded = false;
+let adminDataLoadingPromise = null;
+const adminDataCache = {
+  dashboard: null,
+  users: [],
+  comments: [],
+  images: [],
+  chat: [],
+  ratings: []
+};
 
 async function loadChatMessages() {
   if (!chatMessages) return;
@@ -5669,29 +5702,159 @@ adminTabBtns.forEach(btn => {
     document.querySelectorAll(".admin-panel").forEach(p => p.style.display = "none");
     const panel = document.getElementById(btn.dataset.panel);
     if (panel) panel.style.display = "";
+    applyAdminFilters();
   });
 });
 
-async function loadAdminData() {
+function getSpotDisplayName(spotId) {
+  const spot = spots.find((item) => item.id === spotId);
+  return spot ? spotT(spot, "name") : spotId;
+}
+
+function populateAdminSpotFilters() {
+  const options = spots
+    .map((spot) => `<option value="${escapeHtml(spot.id)}">${escapeHtml(spotT(spot, "name"))}</option>`)
+    .join("");
+  const commentFilter = document.querySelector("#adminCommentSpotFilter");
+  const imageFilter = document.querySelector("#adminImageSpotFilter");
+  if (commentFilter && commentFilter.options.length <= 1) commentFilter.insertAdjacentHTML("beforeend", options);
+  if (imageFilter && imageFilter.options.length <= 1) imageFilter.insertAdjacentHTML("beforeend", options);
+}
+
+function filterAdminUsers(users) {
+  const keyword = document.querySelector("#adminUserSearch")?.value.trim().toLowerCase() || "";
+  if (!keyword) return users;
+  return users.filter((user) => {
+    const haystack = `${user.username || ""} ${user.email || ""}`.toLowerCase();
+    return haystack.includes(keyword);
+  });
+}
+
+function filterAdminBySpot(items, selector) {
+  const spotId = document.querySelector(selector)?.value || "";
+  if (!spotId) return items;
+  return items.filter((item) => item.spotId === spotId);
+}
+
+function filterAdminRatings(ratings) {
+  const value = document.querySelector("#adminRatingFilter")?.value || "";
+  if (!value) return ratings;
+  const threshold = Number(value);
+  if (threshold === 5) return ratings.filter((rating) => Number(rating.rating) === 5);
+  if (threshold === 2) return ratings.filter((rating) => Number(rating.rating) <= 2);
+  return ratings.filter((rating) => Number(rating.rating) >= threshold);
+}
+
+function applyAdminFilters() {
+  renderAdminDashboard(adminDataCache.dashboard);
+  renderAdminUsers(filterAdminUsers(adminDataCache.users));
+  renderAdminComments(filterAdminBySpot(adminDataCache.comments, "#adminCommentSpotFilter"));
+  renderAdminImages(filterAdminBySpot(adminDataCache.images, "#adminImageSpotFilter"));
+  renderAdminChat(adminDataCache.chat);
+  renderAdminRatings(filterAdminRatings(adminDataCache.ratings));
+}
+
+function setAdminRefreshLoading(isLoading) {
+  const button = document.querySelector("#adminRefreshBtn");
+  if (!button) return;
+  button.disabled = isLoading;
+  button.textContent = isLoading ? "刷新中..." : "刷新";
+}
+
+document.querySelector("#adminUserSearch")?.addEventListener("input", applyAdminFilters);
+document.querySelector("#adminCommentSpotFilter")?.addEventListener("change", applyAdminFilters);
+document.querySelector("#adminImageSpotFilter")?.addEventListener("change", applyAdminFilters);
+document.querySelector("#adminRatingFilter")?.addEventListener("change", applyAdminFilters);
+document.querySelector("#adminRefreshBtn")?.addEventListener("click", () => {
+  loadAdminData({ force: true, showLoading: true });
+});
+
+async function loadAdminData(options = {}) {
+  const { force = false, showLoading = false } = options;
   const admin = JSON.parse(localStorage.getItem("landscapeAdmin"));
   if (!admin) return;
-  try {
-    const [usersData, commentsData, imagesData, chatData, ratingsData] = await Promise.all([
-      adminRequest("/admin/users"),
-      adminRequest("/admin/comments"),
-      adminRequest("/admin/images"),
-      adminRequest("/admin/chat"),
-      adminRequest("/admin/ratings")
-    ]);
-    renderAdminUsers(usersData.users);
-    renderAdminComments(commentsData.comments);
-    renderAdminImages(imagesData.images);
-    renderAdminChat(chatData.messages);
-    renderAdminRatings(ratingsData.ratings);
-    adminDataLoaded = true;
-  } catch (err) {
-    console.error("Failed to load admin data:", err);
+  if (adminDataLoaded && !force) return;
+  if (adminDataLoadingPromise) return adminDataLoadingPromise;
+
+  adminDataLoadingPromise = (async () => {
+    try {
+      if (showLoading) setAdminRefreshLoading(true);
+      const [dashboardData, usersData, commentsData, imagesData, chatData, ratingsData] = await Promise.all([
+        adminRequest("/admin/dashboard"),
+        adminRequest("/admin/users"),
+        adminRequest("/admin/comments"),
+        adminRequest("/admin/images"),
+        adminRequest("/admin/chat"),
+        adminRequest("/admin/ratings")
+      ]);
+      adminDataCache.dashboard = dashboardData;
+      adminDataCache.users = usersData.users || [];
+      adminDataCache.comments = commentsData.comments || [];
+      adminDataCache.images = imagesData.images || [];
+      adminDataCache.chat = chatData.messages || [];
+      adminDataCache.ratings = ratingsData.ratings || [];
+      populateAdminSpotFilters();
+      applyAdminFilters();
+      adminDataLoaded = true;
+    } catch (err) {
+      console.error("Failed to load admin data:", err);
+      if (showLoading) alert(err.message || "刷新失败");
+    } finally {
+      if (showLoading) setAdminRefreshLoading(false);
+      adminDataLoadingPromise = null;
+    }
+  })();
+
+  return adminDataLoadingPromise;
+}
+
+function preloadAdminData() {
+  if (!getAdminToken()) return;
+  loadAdminData();
+}
+
+function renderAdminDashboard(data) {
+  const el = document.querySelector("#adminDashboardContent");
+  if (!el) return;
+  if (!data) {
+    el.innerHTML = `<div class="profile-loading">${t("loading")}</div>`;
+    return;
   }
+
+  const totals = data.totals || {};
+  const topSpots = data.topSpots || [];
+  const topHtml = topSpots.length ? topSpots.map((item, index) => `
+    <div class="admin-top-spot">
+      <span class="admin-top-rank">#${index + 1}</span>
+      <span class="admin-top-name">${escapeHtml(getSpotDisplayName(item.spotId))}</span>
+      <strong>${Number(item.count || 0)}</strong>
+    </div>
+  `).join("") : `<div class="profile-empty"><p>暂无今日访问数据</p></div>`;
+
+  el.innerHTML = `
+    <div class="admin-metric-grid">
+      <div class="admin-metric-card">
+        <span>用户数</span>
+        <strong>${Number(totals.users || 0)}</strong>
+      </div>
+      <div class="admin-metric-card">
+        <span>评论数</span>
+        <strong>${Number(totals.comments || 0)}</strong>
+      </div>
+      <div class="admin-metric-card">
+        <span>图片数</span>
+        <strong>${Number(totals.images || 0)}</strong>
+      </div>
+      <div class="admin-metric-card">
+        <span>今日访问</span>
+        <strong>${Number(totals.todayVisits || 0)}</strong>
+      </div>
+    </div>
+    <div class="admin-dashboard-section">
+      <h4>热门景点 Top 5</h4>
+      <div class="admin-top-list">${topHtml}</div>
+    </div>
+  `;
 }
 
 function renderAdminUsers(users) {
@@ -5713,30 +5876,46 @@ function renderAdminComments(comments) {
   const el = document.querySelector("#adminCommentList");
   if (!el) return;
   if (!comments.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noCommentsAdmin")}</p></div>`; return; }
-  el.innerHTML = comments.map(c => `
+  el.innerHTML = comments.map(c => {
+    const imageHtml = c.image ? `
+      <button type="button" class="comment-image admin-comment-image" onclick="openChatImageModal('${escapeJsString(c.image)}')">
+        <img src="${escapeHtml(c.image)}" alt="评论配图" loading="lazy">
+      </button>
+    ` : "";
+    return `
     <div class="admin-item">
       <div class="admin-item-info">
-        <div class="admin-item-name">${escapeHtml(c.username || t("unknownUser"))} · ${escapeHtml(c.spotId)}</div>
-        <div class="admin-item-meta">${escapeHtml(c.content)}</div>
+        <div class="admin-item-name">${escapeHtml(c.username || t("unknownUser"))} · ${escapeHtml(getSpotDisplayName(c.spotId))}</div>
+        ${c.content ? `<div class="admin-item-meta">${escapeHtml(c.content)}</div>` : ""}
+        ${imageHtml}
       </div>
       <button type="button" class="admin-delete-btn" data-admin-delete-comment="${c.id}">${t("delete")}</button>
     </div>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderAdminImages(images) {
   const el = document.querySelector("#adminImageList");
   if (!el) return;
   if (!images.length) { el.innerHTML = `<div class="profile-empty"><p>${t("noImagesAdmin")}</p></div>`; return; }
-  el.innerHTML = images.map(img => `
-    <div class="admin-item">
+  el.innerHTML = images.map(img => {
+    const imageUrl = img.url || "";
+    const safeImageUrl = escapeHtml(imageUrl);
+    const openImage = imageUrl.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    return `
+    <div class="admin-item admin-image-item">
+      <button type="button" class="admin-image-thumb" ${imageUrl ? `onclick="openChatImageModal('${openImage}')"` : "disabled"}>
+        ${imageUrl ? `<img src="${safeImageUrl}" alt="${escapeHtml(getSpotDisplayName(img.spotId))}" loading="lazy" onerror="imageFallback(this)">` : `<span>${t("noImagesAdmin")}</span>`}
+      </button>
       <div class="admin-item-info">
-        <div class="admin-item-name">${escapeHtml(img.username || t("unknownUser"))} · ${escapeHtml(img.spotId)}</div>
+        <div class="admin-item-name">${escapeHtml(img.username || t("unknownUser"))} · ${escapeHtml(getSpotDisplayName(img.spotId))}</div>
         <div class="admin-item-meta">${img.createdAt ? new Date(img.createdAt).toLocaleDateString(currentLang === "zh" ? "zh-CN" : "en-US") : ""}</div>
       </div>
       <button type="button" class="admin-delete-btn" data-admin-delete-image="${img.id}">${t("delete")}</button>
     </div>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderAdminChat(messages) {
@@ -5769,7 +5948,7 @@ function renderAdminRatings(ratings) {
       <div class="admin-item">
         <div class="admin-item-info">
           <div class="admin-item-name">${escapeHtml(r.username || t("unknownUser"))} · <span style="color:#f5a623">${r.rating}${currentLang === "zh" ? "分" : ""}</span></div>
-          <div class="admin-item-meta">${t("spotLabelShort")} ${escapeHtml(r.spotId)} · ${time}</div>
+          <div class="admin-item-meta">${t("spotLabelShort")} ${escapeHtml(getSpotDisplayName(r.spotId))} · ${time}</div>
         </div>
         <button type="button" class="admin-delete-btn" data-admin-delete-rating="${r.id}">${t("delete")}</button>
       </div>
@@ -5783,46 +5962,46 @@ document.addEventListener("click", async (e) => {
 
   const userId = e.target.closest("[data-admin-delete-user]")?.dataset.adminDeleteUser;
   if (userId && confirm(t("confirmDeleteUser"))) {
-    const el = e.target.closest("[data-admin-delete-user]").parentElement;
     try {
       await adminRequest(`/admin/users/${userId}`, { method: "DELETE" });
-      el.remove();
+      adminDataCache.users = adminDataCache.users.filter((user) => user.id !== userId);
+      applyAdminFilters();
     } catch (err) { alert(err.message); }
   }
 
   const commentId = e.target.closest("[data-admin-delete-comment]")?.dataset.adminDeleteComment;
   if (commentId && confirm(t("confirmDeleteComment"))) {
-    const el = e.target.closest("[data-admin-delete-comment]").parentElement;
     try {
       await adminRequest(`/admin/comments/${commentId}`, { method: "DELETE" });
-      el.remove();
+      adminDataCache.comments = adminDataCache.comments.filter((comment) => comment.id !== commentId);
+      applyAdminFilters();
     } catch (err) { alert(err.message); }
   }
 
   const imageId = e.target.closest("[data-admin-delete-image]")?.dataset.adminDeleteImage;
   if (imageId && confirm(t("confirmDeleteImage"))) {
-    const el = e.target.closest("[data-admin-delete-image]").parentElement;
     try {
       await adminRequest(`/admin/images/${imageId}`, { method: "DELETE" });
-      el.remove();
+      adminDataCache.images = adminDataCache.images.filter((image) => image.id !== imageId);
+      applyAdminFilters();
     } catch (err) { alert(err.message); }
   }
 
   const chatId = e.target.closest("[data-admin-delete-chat]")?.dataset.adminDeleteChat;
   if (chatId && confirm(t("confirmDeleteChat"))) {
-    const el = e.target.closest("[data-admin-delete-chat]").parentElement;
     try {
       await adminRequest(`/admin/chat/${chatId}`, { method: "DELETE" });
-      el.remove();
+      adminDataCache.chat = adminDataCache.chat.filter((message) => message.id !== chatId);
+      applyAdminFilters();
     } catch (err) { alert(err.message); }
   }
 
   const ratingId = e.target.closest("[data-admin-delete-rating]")?.dataset.adminDeleteRating;
   if (ratingId && confirm(t("confirmDeleteRating"))) {
-    const el = e.target.closest("[data-admin-delete-rating]").parentElement;
     try {
       await adminRequest(`/admin/ratings/${ratingId}`, { method: "DELETE" });
-      el.remove();
+      adminDataCache.ratings = adminDataCache.ratings.filter((rating) => rating.id !== ratingId);
+      applyAdminFilters();
     } catch (err) { alert(err.message); }
   }
 });

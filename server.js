@@ -1335,6 +1335,235 @@ function diffDaysInclusive(startDayKey, endDayKey) {
   return Math.floor((end - start) / 86400000) + 1;
 }
 
+function buildAchievement(id, icon, title, description, unlocked, progress, target, hint) {
+  const current = Math.max(0, Number(progress || 0));
+  const goal = Math.max(1, Number(target || 1));
+  return {
+    id,
+    icon,
+    title,
+    description,
+    unlocked: Boolean(unlocked),
+    progress: Math.min(current, goal),
+    target: goal,
+    percent: Math.min(100, Math.round((current / goal) * 100)),
+    hint
+  };
+}
+
+const ACHIEVEMENT_COPY_ZH = {
+  "first-cultivation": {
+    icon: "\ud83c\udf31",
+    title: "\u9996\u6b21\u5f00\u57a6",
+    description: "\u5b8c\u6210\u7b2c\u4e00\u6b21\u666f\u70b9\u8bbf\u95ee\u8bb0\u5f55\u3002",
+    hint: "\u8bbf\u95ee\u4efb\u610f\u666f\u70b9\u5373\u53ef\u89e3\u9501"
+  },
+  "seven-day-streak": {
+    icon: "\ud83d\udd25",
+    title: "\u8fde\u7eed 7 \u5929",
+    description: "\u8fde\u7eed 7 \u5929\u90fd\u6709\u8bbf\u95ee\u8bb0\u5f55\u3002",
+    hint: "\u4fdd\u6301\u6bcf\u65e5\u8bbf\u95ee\uff0c\u519c\u573a\u4f1a\u66f4\u70ed\u95f9"
+  },
+  "night-walker": {
+    icon: "\ud83c\udf19",
+    title: "\u591c\u6e38\u8fbe\u4eba",
+    description: "18:00 \u540e\u6216\u6e05\u6668 5:00 \u524d\u8bbf\u95ee 3 \u6b21\u3002",
+    hint: "\u591c\u95f4\u6253\u5f00\u666f\u70b9\u8be6\u60c5\u4f1a\u7d2f\u8ba1"
+  },
+  "heritage-collector": {
+    icon: "\ud83c\udfdb\ufe0f",
+    title: "\u53e4\u8ff9\u6536\u85cf\u5bb6",
+    description: "\u6536\u85cf 5 \u4e2a\u53e4\u8ff9\u3001\u9057\u5740\u6216\u7eaa\u5ff5\u7c7b\u666f\u70b9\u3002",
+    hint: "\u6536\u85cf\u5e26\u6709\u53e4\u8ff9\u6c14\u8d28\u7684\u666f\u70b9"
+  },
+  "route-planner": {
+    icon: "\ud83e\udded",
+    title: "\u8def\u7ebf\u89c4\u5212\u5e08",
+    description: "\u70b9\u8d5e\u6216\u53c2\u4e0e 1 \u6761\u7cfb\u7edf\u63a8\u8350\u8def\u7ebf\u3002",
+    hint: "\u5728\u63a8\u8350\u8def\u7ebf\u91cc\u70b9\u8d5e\u4e00\u6761\u8def\u7ebf"
+  },
+  "popular-farmer": {
+    icon: "\ud83c\udfc6",
+    title: "\u4eba\u6c14\u519c\u592b",
+    description: "\u7d2f\u8ba1\u8bbf\u95ee 30 \u6b21\uff0c\u6210\u4e3a\u519c\u573a\u5e38\u9a7b\u73a9\u5bb6\u3002",
+    hint: "\u591a\u63a2\u7d22\u666f\u70b9\u53ef\u4ee5\u66f4\u5feb\u89e3\u9501"
+  }
+};
+
+function normalizeAchievementCopy(badges) {
+  return badges.map((badge) => ({
+    ...badge,
+    ...(ACHIEVEMENT_COPY_ZH[badge.id] || {})
+  }));
+}
+
+async function getUserVisitAchievementStats(userId) {
+  if (!visitsCollection) {
+    return {
+      totalVisits: 0,
+      uniqueSpots: 0,
+      nightVisits: 0,
+      activeDays: 0,
+      longestStreak: 0
+    };
+  }
+
+  const [summary] = await visitsCollection.aggregate([
+    { $match: { userId } },
+    {
+      $group: {
+        _id: null,
+        totalVisits: { $sum: 1 },
+        uniqueSpots: { $addToSet: "$spotId" },
+        days: {
+          $addToSet: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$timestamp",
+              timezone: "Asia/Shanghai"
+            }
+          }
+        },
+        nightVisits: {
+          $sum: {
+            $cond: [
+              {
+                $or: [
+                  { $gte: [{ $hour: { date: "$timestamp", timezone: "Asia/Shanghai" } }, 18] },
+                  { $lte: [{ $hour: { date: "$timestamp", timezone: "Asia/Shanghai" } }, 5] }
+                ]
+              },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]).toArray();
+
+  const days = (summary?.days || []).sort();
+  let longestStreak = 0;
+  let streak = 0;
+  let prev = null;
+  for (const day of days) {
+    if (prev && Math.floor((parseDayKey(day) - parseDayKey(prev)) / 86400000) === 1) {
+      streak += 1;
+    } else {
+      streak = 1;
+    }
+    if (streak > longestStreak) longestStreak = streak;
+    prev = day;
+  }
+
+  return {
+    totalVisits: Number(summary?.totalVisits || 0),
+    uniqueSpots: Array.isArray(summary?.uniqueSpots) ? summary.uniqueSpots.filter(Boolean).length : 0,
+    nightVisits: Number(summary?.nightVisits || 0),
+    activeDays: days.length,
+    longestStreak
+  };
+}
+
+app.get("/api/stats/achievements", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const [visitStats, favorites, likedRoutes] = await Promise.all([
+      getUserVisitAchievementStats(userId),
+      favoritesCollection.find({ userId }).toArray(),
+      routeLikesCollection.find({ userIds: userId }).toArray()
+    ]);
+
+    const heritagePattern = /(陵|寺|宫|城|门|塔|遗址|故居|纪念馆|古|庙|祠|楼)/;
+    const heritageKeywords = ["ling", "temple", "gate", "palace", "tower", "mausoleum", "memorial", "ruins", "city", "old", "house", "tomb", "historic", "heritage", "museum"];
+    const heritageFavorites = favorites.filter((item) => {
+      const text = String(`${item.spotId || ""} ${item.spotName || ""}`).toLowerCase();
+      return heritageKeywords.some((keyword) => text.includes(keyword));
+    }).length;
+    const likedRouteCount = likedRoutes.length;
+
+    const badges = [
+      buildAchievement(
+        "first-cultivation",
+        "🌱",
+        "首次开垦",
+        "完成第一次景点访问记录。",
+        visitStats.totalVisits >= 1,
+        visitStats.totalVisits,
+        1,
+        "访问任意景点即可解锁"
+      ),
+      buildAchievement(
+        "seven-day-streak",
+        "🔥",
+        "连续 7 天",
+        "连续 7 天都有访问记录。",
+        visitStats.longestStreak >= 7,
+        visitStats.longestStreak,
+        7,
+        "保持每日访问，农场会更热闹"
+      ),
+      buildAchievement(
+        "night-walker",
+        "🌙",
+        "夜游达人",
+        "18:00 后或清晨 5:00 前访问 3 次。",
+        visitStats.nightVisits >= 3,
+        visitStats.nightVisits,
+        3,
+        "夜间打开景点详情会累计"
+      ),
+      buildAchievement(
+        "heritage-collector",
+        "🏛️",
+        "古迹收藏家",
+        "收藏 5 个古迹/遗址/纪念类景点。",
+        heritageFavorites >= 5,
+        heritageFavorites,
+        5,
+        "收藏带有古迹气质的景点"
+      ),
+      buildAchievement(
+        "route-planner",
+        "🧭",
+        "路线规划师",
+        "点赞或参与 1 条系统推荐路线。",
+        likedRouteCount >= 1,
+        likedRouteCount,
+        1,
+        "在推荐路线里点赞一条路线"
+      ),
+      buildAchievement(
+        "popular-farmer",
+        "🏆",
+        "人气农夫",
+        "累计访问 30 次，成为农场常驻玩家。",
+        visitStats.totalVisits >= 30,
+        visitStats.totalVisits,
+        30,
+        "多探索景点可以更快解锁"
+      )
+    ];
+
+    const normalizedBadges = normalizeAchievementCopy(badges);
+
+    res.json({
+      summary: {
+        unlocked: normalizedBadges.filter((item) => item.unlocked).length,
+        total: normalizedBadges.length,
+        totalVisits: visitStats.totalVisits,
+        uniqueSpots: visitStats.uniqueSpots,
+        activeDays: visitStats.activeDays,
+        longestStreak: visitStats.longestStreak
+      },
+      badges: normalizedBadges
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ summary: { unlocked: 0, total: 0 }, badges: [] });
+  }
+});
+
 app.get("/api/stats/farm-almanac", requireAuth, async (req, res) => {
   try {
     if (!visitsCollection) {

@@ -6288,6 +6288,9 @@ const PIE_COLORS = ["#e74c3c","#e67e22","#f1c40f","#2ecc71","#1abc9c","#3498db",
 let currentStatsMode = "day";
 let statsFarmAlmanacData = null;
 let lastStatsVisits = [];
+let statsFarmReplayTimer = null;
+let statsFarmReplayFrame = null;
+let statsAchievementsData = null;
 
 function cleanupBrokenStatsArtifacts() {
   const routeBottom = document.querySelector("#sidebarRouteContent .route-bottom-fixed");
@@ -6330,8 +6333,10 @@ function ensureSidebarStatsPanel() {
 function loadStatsData() {
   ensureStatsFarmMounted();
   syncStatsFarmCopy();
+  ensureStatsAchievementsVisible();
   fetchStatsPie(currentStatsMode);
   fetchStatsFarmAlmanac();
+  fetchStatsAchievements();
 }
 
 function getStatsFarmText() {
@@ -6501,6 +6506,64 @@ function syncStatsFarmCopy() {
   if (statsFarmAlmanacData) renderStatsAlmanac(statsFarmAlmanacData);
 }
 
+function syncStatsAchievementsCopy() {
+  const section = document.getElementById("statsAchievements");
+  if (!section) return;
+  const eyebrow = section.querySelector(".stats-achievements-eyebrow");
+  const title = section.querySelector(".stats-achievements-head h3");
+  const hint = section.querySelector(".stats-achievements-head p");
+  if (currentLang === "zh") {
+    if (eyebrow) eyebrow.textContent = "BADGES · 景点成就";
+    if (title) title.textContent = "景点成就徽章";
+    if (hint) hint.textContent = "根据访问、收藏、路线和连续打卡自动解锁。";
+  } else {
+    if (eyebrow) eyebrow.textContent = "BADGES · Site Achievements";
+    if (title) title.textContent = "Achievement Badges";
+    if (hint) hint.textContent = "Unlocked automatically from visits, favorites, routes, and streaks.";
+  }
+}
+
+function ensureStatsAchievementsVisible() {
+  const dashboard = document.querySelector("#statsModule .stats-dashboard");
+  const farmCard = document.getElementById("statsFarmCard");
+  if (!dashboard) return;
+
+  let section = document.getElementById("statsAchievements");
+  if (!section) {
+    section = document.createElement("section");
+    section.id = "statsAchievements";
+    section.className = "stats-achievements";
+    section.innerHTML = `
+      <div class="stats-achievements-head">
+        <p class="stats-achievements-eyebrow"></p>
+        <h3></h3>
+        <p></p>
+      </div>
+      <div class="stats-achievements-progress" id="statsAchievementsProgress"></div>
+      <div class="stats-achievements-grid" id="statsAchievementsGrid"></div>
+    `;
+  }
+
+  if (farmCard && farmCard.parentElement === dashboard) {
+    farmCard.insertAdjacentElement("afterend", section);
+  } else if (section.parentElement !== dashboard) {
+    dashboard.prepend(section);
+  }
+
+  const eyebrow = section.querySelector(".stats-achievements-eyebrow");
+  const title = section.querySelector(".stats-achievements-head h3");
+  const hint = section.querySelector(".stats-achievements-head p");
+  if (currentLang === "zh") {
+    if (eyebrow) eyebrow.textContent = "BADGES · 景点成就";
+    if (title) title.textContent = "景点成就徽章";
+    if (hint) hint.textContent = "根据访问、收藏、路线和连续打卡自动解锁。";
+  } else {
+    if (eyebrow) eyebrow.textContent = "BADGES · Site Achievements";
+    if (title) title.textContent = "Achievement Badges";
+    if (hint) hint.textContent = "Unlocked automatically from visits, favorites, routes, and streaks.";
+  }
+}
+
 function fetchStatsPie(mode) {
   currentStatsMode = mode;
   document.querySelectorAll(".stats-mode-btn").forEach(btn => {
@@ -6546,6 +6609,29 @@ function fetchStatsFarmAlmanac() {
     .catch(() => {
       statsFarmAlmanacData = { summary: null, days: [] };
       renderStatsAlmanac(statsFarmAlmanacData);
+    });
+}
+
+function fetchStatsAchievements() {
+  ensureStatsAchievementsVisible();
+  const token = getAuthToken();
+  if (!token) {
+    statsAchievementsData = null;
+    renderStatsAchievementsView(null);
+    return;
+  }
+
+  fetch(apiUrl("/stats/achievements"), {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(r => r.json())
+    .then(data => {
+      statsAchievementsData = data;
+      renderStatsAchievementsView(data);
+    })
+    .catch(() => {
+      statsAchievementsData = { summary: { unlocked: 0, total: 0 }, badges: [] };
+      renderStatsAchievementsView(statsAchievementsData);
     });
 }
 
@@ -6657,6 +6743,20 @@ function renderStatsFarm(visits) {
   badge.textContent = `${copy.leader}${leaderName}`;
   badge.dataset.hasLeader = "true";
 
+  const farmCard = track.closest(".stats-farm-card");
+  if (statsFarmReplayTimer) {
+    clearTimeout(statsFarmReplayTimer);
+    statsFarmReplayTimer = null;
+  }
+  if (statsFarmReplayFrame) {
+    cancelAnimationFrame(statsFarmReplayFrame);
+    statsFarmReplayFrame = null;
+  }
+  if (farmCard) {
+    farmCard.classList.remove("is-finished");
+    farmCard.classList.add("is-running");
+  }
+
   track.innerHTML = visits.slice(0, 5).map((item, index) => {
     const spot = spots.find((entry) => entry.id === item._id);
     const name = spot ? spotT(spot, "name") : item._id;
@@ -6665,10 +6765,10 @@ function renderStatsFarm(visits) {
     const laneTone = index % 2 === 0 ? "is-soil" : "is-wheat";
     const icon = laneGlyphs[index % laneGlyphs.length];
     return `
-      <div class="stats-farm-lane ${laneTone}" style="--lane-delay:${index * 90}ms; --lane-progress:${progress}%;">
+      <div class="stats-farm-lane ${laneTone}" style="--lane-progress:${progress}%; --run-duration:${3200 + index * 360}ms;">
         <div class="stats-farm-finish">${copy.finish}</div>
         <div class="stats-farm-lane-line"></div>
-        <div class="stats-farm-runner" style="left: calc(${progress}% - 28px); --runner-delay:${index * 120}ms;">
+        <div class="stats-farm-runner" style="--runner-left: calc(${progress}% - 28px);">
           <div class="stats-farm-nameplate">
             <span class="stats-farm-rank">#${index + 1}</span>
             <strong>${escapeHtml(name)}</strong>
@@ -6679,6 +6779,14 @@ function renderStatsFarm(visits) {
       </div>
     `;
   }).join("");
+
+  if (farmCard) {
+    statsFarmReplayFrame = requestAnimationFrame(() => {
+      statsFarmReplayTimer = setTimeout(() => {
+        farmCard.classList.add("is-finished");
+      }, 30);
+    });
+  }
 }
 
 function formatStatsFarmDate(dateString) {
@@ -6782,6 +6890,273 @@ function renderStatsAlmanac(data) {
       </div>
     </div>
   `).join("");
+}
+
+function renderStatsAchievements(data) {
+  const progressEl = document.getElementById("statsAchievementsProgress");
+  const gridEl = document.getElementById("statsAchievementsGrid");
+  if (!progressEl || !gridEl) return;
+
+  const user = getCurrentUser();
+  if (!user) {
+    progressEl.innerHTML = `<div class="stats-achievements-login">登录后可查看你的专属景点成就徽章</div>`;
+    gridEl.innerHTML = "";
+    return;
+  }
+
+  const badges = Array.isArray(data?.badges) ? data.badges : [];
+  const summary = data?.summary || {};
+  const total = Number(summary.total || badges.length || 0);
+  const unlocked = Number(summary.unlocked || badges.filter((item) => item.unlocked).length || 0);
+  const percent = total ? Math.round((unlocked / total) * 100) : 0;
+
+  progressEl.innerHTML = `
+    <div class="stats-achievements-meter">
+      <div>
+        <strong>${unlocked}/${total}</strong>
+        <span>已解锁</span>
+      </div>
+      <div class="stats-achievements-meter-bar"><span style="width:${percent}%"></span></div>
+      <em>${percent}%</em>
+    </div>
+  `;
+
+  if (!badges.length) {
+    gridEl.innerHTML = `<div class="stats-achievements-empty">暂无成就数据</div>`;
+    return;
+  }
+
+  gridEl.innerHTML = badges.map((badge) => {
+    const progress = Number(badge.progress || 0);
+    const target = Number(badge.target || 1);
+    const badgePercent = Math.min(100, Number(badge.percent || Math.round((progress / target) * 100)));
+    return `
+      <article class="stats-achievement-card ${badge.unlocked ? "is-unlocked" : "is-locked"}">
+        <div class="stats-achievement-icon">${badge.icon || "◇"}</div>
+        <div class="stats-achievement-body">
+          <div class="stats-achievement-title-row">
+            <h4>${escapeHtml(badge.title || "")}</h4>
+            <span>${badge.unlocked ? "已解锁" : "未解锁"}</span>
+          </div>
+          <p>${escapeHtml(badge.description || "")}</p>
+          <div class="stats-achievement-progress">
+            <span style="width:${badgePercent}%"></span>
+          </div>
+          <small>${progress}/${target} · ${escapeHtml(badge.hint || "")}</small>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function renderStatsAchievementsView(data) {
+  const progressEl = document.getElementById("statsAchievementsProgress");
+  const gridEl = document.getElementById("statsAchievementsGrid");
+  if (!progressEl || !gridEl) return;
+
+  const copy = currentLang === "zh"
+    ? {
+        login: "\u767b\u5f55\u540e\u53ef\u67e5\u770b\u4f60\u7684\u4e13\u5c5e\u666f\u70b9\u6210\u5c31\u5fbd\u7ae0",
+        unlockedCount: "\u5df2\u89e3\u9501",
+        unlocked: "\u5df2\u89e3\u9501",
+        locked: "\u672a\u89e3\u9501",
+        empty: "\u6682\u65e0\u6210\u5c31\u6570\u636e",
+        condition: "\u83b7\u5f97\u6761\u4ef6"
+      }
+    : {
+        login: "Log in to view your personal site achievement badges",
+        unlockedCount: "Unlocked",
+        unlocked: "Unlocked",
+        locked: "Locked",
+        empty: "No achievement data yet",
+        condition: "Condition"
+      };
+
+  if (!getCurrentUser()) {
+    progressEl.innerHTML = `<div class="stats-achievements-login">${copy.login}</div>`;
+    gridEl.innerHTML = "";
+    return;
+  }
+
+  const badges = Array.isArray(data?.badges) ? data.badges : [];
+  const summary = data?.summary || {};
+  const total = Number(summary.total || badges.length || 0);
+  const unlocked = Number(summary.unlocked || badges.filter((item) => item.unlocked).length || 0);
+  const percent = total ? Math.round((unlocked / total) * 100) : 0;
+
+  progressEl.innerHTML = `
+    <div class="stats-achievements-meter">
+      <div>
+        <strong>${unlocked}/${total}</strong>
+        <span>${copy.unlockedCount}</span>
+      </div>
+      <div class="stats-achievements-meter-bar"><span style="width:${percent}%"></span></div>
+      <em>${percent}%</em>
+    </div>
+  `;
+
+  if (!badges.length) {
+    gridEl.innerHTML = `<div class="stats-achievements-empty">${copy.empty}</div>`;
+    return;
+  }
+
+  gridEl.innerHTML = badges.map((badge) => {
+    const progress = Number(badge.progress || 0);
+    const target = Number(badge.target || 1);
+    const badgePercent = Math.min(100, Number(badge.percent || Math.round((progress / target) * 100)));
+    return `
+      <article class="stats-achievement-card ${badge.unlocked ? "is-unlocked" : "is-locked"}">
+        <div class="stats-achievement-icon">${badge.icon || "\u25c7"}</div>
+        <div class="stats-achievement-body">
+          <div class="stats-achievement-title-row">
+            <h4>${escapeHtml(badge.title || "")}</h4>
+            <span>${badge.unlocked ? copy.unlocked : copy.locked}</span>
+          </div>
+          <p>${escapeHtml(badge.description || "")}</p>
+          <div class="stats-achievement-progress">
+            <span style="width:${badgePercent}%"></span>
+          </div>
+          <small><strong>${copy.condition}：</strong>${escapeHtml(badge.hint || "")}</small>
+          <small>${progress}/${target}</small>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function getStatsAchievementsCopy() {
+  return currentLang === "zh"
+    ? {
+        eyebrow: "BADGES \u00b7 \u666f\u70b9\u6210\u5c31",
+        title: "\u666f\u70b9\u6210\u5c31\u5fbd\u7ae0",
+        hint: "\u6839\u636e\u8bbf\u95ee\u3001\u6536\u85cf\u3001\u8def\u7ebf\u548c\u8fde\u7eed\u6253\u5361\u81ea\u52a8\u89e3\u9501\u3002",
+        loading: "\u6b63\u5728\u51c6\u5907\u4f60\u7684\u666f\u70b9\u6210\u5c31\u5fbd\u7ae0...",
+        login: "\u767b\u5f55\u540e\u53ef\u67e5\u770b\u4f60\u7684\u4e13\u5c5e\u666f\u70b9\u6210\u5c31\u5fbd\u7ae0",
+        unlockedCount: "\u5df2\u89e3\u9501",
+        unlocked: "\u5df2\u89e3\u9501",
+        locked: "\u672a\u89e3\u9501",
+        empty: "\u6682\u65e0\u6210\u5c31\u6570\u636e",
+        condition: "\u83b7\u5f97\u6761\u4ef6"
+      }
+    : {
+        eyebrow: "BADGES \u00b7 Site Achievements",
+        title: "Achievement Badges",
+        hint: "Unlocked automatically from visits, favorites, routes, and streaks.",
+        loading: "Preparing your achievement badges...",
+        login: "Log in to view your personal site achievement badges",
+        unlockedCount: "Unlocked",
+        unlocked: "Unlocked",
+        locked: "Locked",
+        empty: "No achievement data yet",
+        condition: "Condition"
+      };
+}
+
+function syncStatsAchievementsCopy() {
+  const section = document.getElementById("statsAchievements");
+  if (!section) return;
+  const copy = getStatsAchievementsCopy();
+  const eyebrow = section.querySelector(".stats-achievements-eyebrow");
+  const title = section.querySelector(".stats-achievements-head h3");
+  const hint = section.querySelector(".stats-achievements-head p");
+  if (eyebrow) eyebrow.textContent = copy.eyebrow;
+  if (title) title.textContent = copy.title;
+  if (hint) hint.textContent = copy.hint;
+}
+
+function ensureStatsAchievementsVisible() {
+  const dashboard = document.querySelector("#statsModule .stats-dashboard");
+  const farmCard = document.getElementById("statsFarmCard");
+  if (!dashboard) return;
+
+  let section = document.getElementById("statsAchievements");
+  if (!section) {
+    section = document.createElement("section");
+    section.id = "statsAchievements";
+    section.className = "stats-achievements";
+    section.innerHTML = `
+      <div class="stats-achievements-head">
+        <p class="stats-achievements-eyebrow"></p>
+        <h3></h3>
+        <p></p>
+      </div>
+      <div class="stats-achievements-progress" id="statsAchievementsProgress"></div>
+      <div class="stats-achievements-grid" id="statsAchievementsGrid"></div>
+    `;
+  }
+
+  if (farmCard && farmCard.parentElement === dashboard && farmCard.nextElementSibling !== section) {
+    farmCard.insertAdjacentElement("afterend", section);
+  } else if (section.parentElement !== dashboard) {
+    dashboard.prepend(section);
+  }
+
+  syncStatsAchievementsCopy();
+
+  const progressEl = document.getElementById("statsAchievementsProgress");
+  if (progressEl && !progressEl.innerHTML.trim()) {
+    progressEl.innerHTML = `<div class="stats-achievements-login">${getStatsAchievementsCopy().loading}</div>`;
+  }
+}
+
+function renderStatsAchievementsView(data) {
+  ensureStatsAchievementsVisible();
+  const progressEl = document.getElementById("statsAchievementsProgress");
+  const gridEl = document.getElementById("statsAchievementsGrid");
+  if (!progressEl || !gridEl) return;
+
+  const copy = getStatsAchievementsCopy();
+
+  if (!getCurrentUser()) {
+    progressEl.innerHTML = `<div class="stats-achievements-login">${copy.login}</div>`;
+    gridEl.innerHTML = "";
+    return;
+  }
+
+  const badges = Array.isArray(data?.badges) ? data.badges : [];
+  const summary = data?.summary || {};
+  const total = Number(summary.total || badges.length || 0);
+  const unlocked = Number(summary.unlocked || badges.filter((item) => item.unlocked).length || 0);
+  const percent = total ? Math.round((unlocked / total) * 100) : 0;
+
+  progressEl.innerHTML = `
+    <div class="stats-achievements-meter">
+      <div>
+        <strong>${unlocked}/${total}</strong>
+        <span>${copy.unlockedCount}</span>
+      </div>
+      <div class="stats-achievements-meter-bar"><span style="width:${percent}%"></span></div>
+      <em>${percent}%</em>
+    </div>
+  `;
+
+  if (!badges.length) {
+    gridEl.innerHTML = `<div class="stats-achievements-empty">${copy.empty}</div>`;
+    return;
+  }
+
+  gridEl.innerHTML = badges.map((badge) => {
+    const progress = Number(badge.progress || 0);
+    const target = Number(badge.target || 1);
+    const badgePercent = Math.min(100, Number(badge.percent || Math.round((progress / target) * 100)));
+    return `
+      <article class="stats-achievement-card ${badge.unlocked ? "is-unlocked" : "is-locked"}">
+        <div class="stats-achievement-icon">${badge.icon || "\u25c7"}</div>
+        <div class="stats-achievement-body">
+          <div class="stats-achievement-title-row">
+            <h4>${escapeHtml(badge.title || "")}</h4>
+            <span>${badge.unlocked ? copy.unlocked : copy.locked}</span>
+          </div>
+          <p>${escapeHtml(badge.description || "")}</p>
+          <div class="stats-achievement-progress">
+            <span style="width:${badgePercent}%"></span>
+          </div>
+          <small><strong>${copy.condition}:</strong> ${escapeHtml(badge.hint || "")}</small>
+          <small>${progress}/${target}</small>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
 
 // Stats mode button listeners

@@ -73,6 +73,10 @@ const i18n = {
     viewDetail2: "查看详情",
     unfavorite: "取消收藏",
     spotLabel: "景点：",
+    recentHistory: "最近浏览",
+    noRecentHistory: "暂无最近浏览记录。",
+    loginForHistory: "请先登录后查看最近浏览。",
+    loadHistoryFailed: "加载最近浏览失败",
     // 推荐路线
     customRoute: "自定义路线",
     customHint: "点击景点右侧 + 添加到路线规划",
@@ -170,6 +174,7 @@ const i18n = {
     loginFirstAlert: "请先登录后再上传图片。",
     imgSizeLimit: "图片大小不能超过 3MB",
     imgUploadSuccess: "图片上传成功",
+    loadFailed: "加载失败",
     favSuccess: "收藏成功",
     unfavSuccess: "已取消收藏",
     commentPosted: "评论发表成功",
@@ -316,6 +321,10 @@ const i18n = {
     viewDetail2: "View Details",
     unfavorite: "Unfavorite",
     spotLabel: "Site: ",
+    recentHistory: "Recent History",
+    noRecentHistory: "No recent history.",
+    loginForHistory: "Please log in to view history.",
+    loadHistoryFailed: "Failed to load history",
     customRoute: "Custom Route",
     customHint: "Tap + on a site to add it to your route",
     sysRoutes: "Recommended Routes",
@@ -402,6 +411,7 @@ const i18n = {
     loginFirstAlert: "Please log in before uploading.",
     imgSizeLimit: "Image must be under 3MB",
     imgUploadSuccess: "Image uploaded successfully",
+    loadFailed: "Failed to load",
     favSuccess: "Favorited",
     unfavSuccess: "Unfavorited",
     commentPosted: "Comment posted",
@@ -493,6 +503,13 @@ function setLang(lang) {
   render();
   const langBtn = document.getElementById("langToggle");
   if (langBtn) langBtn.textContent = lang === "zh" ? "EN" : "中";
+  // Re-render profile content when on profile module
+  if (activeModule === "profile") {
+    renderProfileFavorites();
+    loadAndRenderUserComments();
+    loadAndRenderUserImages();
+    loadAndRenderRecentHistory();
+  }
 }
 
 function updateUI() {
@@ -4900,7 +4917,7 @@ async function loadAndRenderUserImages() {
     }).join("");
   } catch (error) {
     console.error("Failed to load images:", error);
-    myImagesList.innerHTML = `<div class="profile-empty"><p>加载图片失败</p></div>`;
+    myImagesList.innerHTML = `<div class="profile-empty"><p>${t("loadFailed")}</p></div>`;
   }
 }
 
@@ -4908,7 +4925,7 @@ async function loadAndRenderRecentHistory() {
   if (!recentHistoryList) return;
   const token = getAuthToken();
   if (!token) {
-    recentHistoryList.innerHTML = `<div class="profile-empty"><p>请先登录后查看最近浏览。</p></div>`;
+    recentHistoryList.innerHTML = `<div class="profile-empty"><p>${t("loginForHistory")}</p></div>`;
     return;
   }
 
@@ -4918,7 +4935,7 @@ async function loadAndRenderRecentHistory() {
     });
     const history = data.history || [];
     if (!history.length) {
-      recentHistoryList.innerHTML = `<div class="profile-empty"><p>暂无最近浏览记录。</p></div>`;
+      recentHistoryList.innerHTML = `<div class="profile-empty"><p>${t("noRecentHistory")}</p></div>`;
       return;
     }
 
@@ -4938,7 +4955,7 @@ async function loadAndRenderRecentHistory() {
     }).join("");
   } catch (error) {
     console.error("Failed to load recent history:", error);
-    recentHistoryList.innerHTML = `<div class="profile-empty"><p>加载最近浏览失败</p></div>`;
+    recentHistoryList.innerHTML = `<div class="profile-empty"><p>${t("loadHistoryFailed")}</p></div>`;
   }
 }
 
@@ -4970,7 +4987,7 @@ async function loadUserProfile() {
     imageCount.textContent = "0";
     myCommentsList.innerHTML = `<div class="profile-empty"><p>${t("noCommentLogin")}</p></div>`;
     myImagesList.innerHTML = `<div class="profile-empty"><p>${t("noImageLogin")}</p></div>`;
-    if (recentHistoryList) recentHistoryList.innerHTML = `<div class="profile-empty"><p>请先登录后查看最近浏览。</p></div>`;
+    if (recentHistoryList) recentHistoryList.innerHTML = `<div class="profile-empty"><p>${t("loginForHistory")}</p></div>`;
     return;
   }
 

@@ -242,6 +242,26 @@ const i18n = {
     statsRank: "排名",
     statsVisits: "次访问",
     statsNoData: "暂无访问数据",
+    petTitle: "景点宠物养成",
+    petHint: "每个景点都绑定了一只专属小动物，访问越多，幼崽会成长为冠军坐骑！",
+    petStageBaby: "幼崽",
+    petStageGrowing: "成长期",
+    petStageChampion: "冠军坐骑",
+    petFamily: "伙伴",
+    petProgress: "距离冠军坐骑",
+    petMaxed: "已是冠军坐骑",
+    petEmpty: "暂无景点数据，去地图里逛逛吧～",
+    // 每日任务
+    dailyTasks: "每日任务",
+    dailyTasksHint: "每天完成 3 个小任务，给农场解锁新装饰！",
+    taskVisit: "访问一处新景点",
+    taskFavorite: "收藏一个景点",
+    taskRoute: "生成一条推荐路线",
+    taskComment: "发表一条评论",
+    taskDone: "已完成",
+    tasksDoneAll: "今日任务全部完成，农场更美啦！",
+    tasksProgress: "已完成 {n}/3",
+    loginToTasks: "登录后任务进度会保存到你的账号",
     statsTotal: "总访问",
     farmRaceTitle: "景点大农场",
     farmRaceSubtitle: "景点大农场 —— 谁是人气之王？",
@@ -487,6 +507,26 @@ const i18n = {
     statsVisits: "visits",
     statsNoData: "No visit data yet",
     statsTotal: "Total visits",
+    petTitle: "Spot Pet Nursery",
+    petHint: "Every spot is bound to its own little animal. The more visits it gets, the more its baby grows into a champion mount!",
+    petStageBaby: "Baby",
+    petStageGrowing: "Growing",
+    petStageChampion: "Champion Mount",
+    petFamily: "Buddy",
+    petProgress: "To champion mount",
+    petMaxed: "Champion mount achieved",
+    petEmpty: "No spot data yet — go explore the map!",
+    // Daily tasks
+    dailyTasks: "Daily Tasks",
+    dailyTasksHint: "Finish 3 small tasks each day to unlock new farm decorations!",
+    taskVisit: "Visit a spot you haven't been to",
+    taskFavorite: "Favorite a spot",
+    taskRoute: "Generate a recommended route",
+    taskComment: "Post a comment",
+    taskDone: "Done",
+    tasksDoneAll: "All tasks done today — your farm looks better!",
+    tasksProgress: "Done {n}/3",
+    loginToTasks: "Log in to save your task progress to your account",
     farmRaceTitle: "Spot Farm",
     farmRaceSubtitle: "Spot Farm — Who's the People's Champion?",
     farmRaceVisits: "visits",
@@ -3037,6 +3077,9 @@ function updateAuthView(user) {
     authOpenBtn.textContent = t("loginRegister");
     if (authLogoutBtn) authLogoutBtn.style.display = "none";
   }
+  updateDailyTasksButton();
+  const pop = document.getElementById("dailyTasksPopover");
+  if (pop && pop.dataset.open === "true") renderDailyTasksPopover();
 }
 
 function logout() {
@@ -3144,12 +3187,15 @@ function selectSpot(id, options = {}) {
 
 function recordVisit(spotId) {
   if (!spotId) return;
+  const wasNewVisit = !getVisitedSpots().includes(spotId);
   try {
     const token = getAuthToken();
     const headers = token ? { "Authorization": `Bearer ${token}` } : {};
     latestVisitRequest = fetch(apiUrl(`/visits/${spotId}`), { method: "POST", headers })
       .then((response) => response.ok)
       .catch(() => false);
+    addVisitedSpot(spotId);
+    if (wasNewVisit) completeDailyTask("visit");
     if (token) profileLoaded = false;
     latestVisitRequest.finally(() => {
       if (activeModule === "profile") loadAndRenderRecentHistory();
@@ -4792,6 +4838,7 @@ async function addComment(spotId, content, imageFile = null) {
       })
     });
     await loadCommentsFromServer(spotId);
+    completeDailyTask("comment");
     return true;
   } catch (error) {
     console.error("Failed to add comment:", error);
@@ -5026,6 +5073,7 @@ async function addFavorite(spotId, spotName) {
     });
     await loadFavorites();
     if (activeModule === "profile") loadUserProfile();
+    completeDailyTask("favorite");
     return true;
 
     const response = await fetch("/api/favorites", {
@@ -5573,6 +5621,7 @@ function generateRoutes() {
   `;
 
   map.fitBounds(L.latLngBounds(points).pad(0.15), { animate: true });
+  completeDailyTask("route");
 }
 
 generateRoutesBtn.addEventListener("click", generateRoutes);
@@ -6365,6 +6414,7 @@ function ensureStatsFarmMounted() {
 
   cleanupBrokenStatsArtifacts();
   setupStatsFarmCard();
+  renderFarmDecorations();
 }
 
 function getStatsFarmLocale() {
@@ -6398,7 +6448,7 @@ function getStatsFarmLocale() {
   return currentLang === "zh"
     ? {
         title: "景点农场竞赛",
-        hint: "上方看前 5 名竞赛，下面按账户开垦以来的每日访问冠军生成农事历。",
+        hint: "看前 5 名景点在跑道里赛跑，每个景点都带着自己的专属小动物。访问越多，幼崽越可能长成冠军坐骑！",
         empty: "等待数据加载",
         leader: "当前领先：",
         finish: "终点",
@@ -6423,7 +6473,7 @@ function getStatsFarmLocale() {
       }
     : {
         title: "Site Farm Race",
-        hint: "Top 5 race above. Below is an almanac built from your daily visit champion since account creation.",
+        hint: "Top 5 spots race above, each with its own bound animal. The more visits, the closer its baby grows into a champion mount!",
         empty: "Waiting for data",
         leader: "Current leader:",
         finish: "Finish",
@@ -6481,6 +6531,7 @@ function setupStatsFarmCard() {
         <span class="stats-windmill"><i></i><i></i><i></i><i></i></span>
       </div>
       <div class="stats-farm-track" id="statsFarmTrackStats"></div>
+      <div class="stats-farm-decorations" id="statsFarmDecorations"></div>
     </div>
   `;
 
@@ -6732,12 +6783,11 @@ function renderStatsFarm(visits) {
     badge.textContent = copy.empty;
     badge.dataset.hasLeader = "";
     track.innerHTML = `<div class="stats-farm-empty">${t("statsNoData")}</div>`;
+    renderSpotPets([], 1);
     return;
   }
 
   const topVisits = Math.max(...visits.map((item) => Number(item.count || 0)), 1);
-  const laneGlyphs = ["🐎", "🦌", "🐤", "🐖", "🐇"];
-  const laneIcons = ["🐎", "🦌", "🐤", "🐖", "🐇", "🦊"];
   const leaderSpot = spots.find((spot) => spot.id === visits[0]._id);
   const leaderName = leaderSpot ? spotT(leaderSpot, "name") : visits[0]._id;
   badge.textContent = `${copy.leader}${leaderName}`;
@@ -6763,7 +6813,8 @@ function renderStatsFarm(visits) {
     const count = Number(item.count || 0);
     const progress = Math.max(12, Math.round((count / topVisits) * 88));
     const laneTone = index % 2 === 0 ? "is-soil" : "is-wheat";
-    const icon = laneGlyphs[index % laneGlyphs.length];
+    const pet = getPetForSpot(spot, count, topVisits, index);
+    const icon = pet.emoji;
     return `
       <div class="stats-farm-lane ${laneTone}" style="--lane-progress:${progress}%; --run-duration:${3200 + index * 360}ms;">
         <div class="stats-farm-finish">${copy.finish}</div>
@@ -6773,6 +6824,7 @@ function renderStatsFarm(visits) {
             <span class="stats-farm-rank">#${index + 1}</span>
             <strong>${escapeHtml(name)}</strong>
             <em>${count} ${copy.visits}</em>
+            <span class="stats-farm-pet-stage stage-${pet.stage}">${pet.stageName}</span>
           </div>
           <span class="stats-farm-animal" aria-hidden="true">${icon}</span>
         </div>
@@ -6787,6 +6839,59 @@ function renderStatsFarm(visits) {
       }, 30);
     });
   }
+
+  renderSpotPets(visits, topVisits);
+}
+
+function renderSpotPets(visits, topVisits) {
+  const container = document.getElementById("statsPetNursery");
+  if (!container) return;
+
+  if (!visits || !visits.length) {
+    container.innerHTML = `
+      <div class="stats-pets-head">
+        <h3>${t("petTitle")}</h3>
+      </div>
+      <div class="stats-pets-empty">${t("petEmpty")}</div>
+    `;
+    return;
+  }
+
+  const cards = visits.slice(0, 8).map((item, index) => {
+    const spot = spots.find((entry) => entry.id === item._id);
+    const name = spot ? spotT(spot, "name") : item._id;
+    const count = Number(item.count || 0);
+    const pet = getPetForSpot(spot, count, topVisits, index);
+    const pct = topVisits > 0 ? Math.min(100, Math.round((count / topVisits) * 100)) : 0;
+    const nextLabel = pet.stage === 2 ? t("petMaxed") : t("petProgress");
+    return `
+      <article class="stats-pet-card stage-${pet.stage}">
+        <div class="stats-pet-emoji" aria-hidden="true">${pet.emoji}</div>
+        <div class="stats-pet-body">
+          <div class="stats-pet-top">
+            <strong class="stats-pet-name">${escapeHtml(name)}</strong>
+            <span class="stats-pet-stage stage-${pet.stage}">${pet.stageName}</span>
+          </div>
+          <div class="stats-pet-meta">
+            <span class="stats-pet-family">${t("petFamily")}：${escapeHtml(pet.familyName)}</span>
+            <span class="stats-pet-count">${count} ${t("statsVisits")}</span>
+          </div>
+          <div class="stats-pet-bar">
+            <span class="stats-pet-bar-fill" style="width:${pct}%"></span>
+          </div>
+          <div class="stats-pet-next">${nextLabel}</div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <div class="stats-pets-head">
+      <h3>${t("petTitle")}</h3>
+      <p>${t("petHint")}</p>
+    </div>
+    <div class="stats-pet-grid">${cards}</div>
+  `;
 }
 
 function formatStatsFarmDate(dateString) {
@@ -7209,6 +7314,50 @@ if (typeof map !== "undefined") {
   });
 }
 
+// ===== 景点宠物养成 =====
+// 每个景点按类型绑定一只专属小动物，随访问次数从幼崽进化到冠军坐骑。
+const PET_FAMILIES = {
+  "陵寝遗址": { nameZh: "灵龙", nameEn: "Spirit Dragon", stages: ["🐣", "🐉", "🐲"] },
+  "文化街区": { nameZh: "街猫", nameEn: "Street Cat",   stages: ["🐱", "🐈", "🐯"] },
+  "城墙遗址": { nameZh: "城犬", nameEn: "Wall Hound",   stages: ["🐶", "🐕", "🐺"] },
+  "寺庙":     { nameZh: "守寺狮", nameEn: "Temple Lion", stages: ["🐱", "🦁", "🐯"] },
+  "园林":     { nameZh: "园鹿", nameEn: "Garden Deer",  stages: ["🐰", "🦌", "🦢"] },
+  "文化古建": { nameZh: "镇宅虎", nameEn: "House Tiger", stages: ["🐯", "🐅", "🦁"] },
+  "近代史迹": { nameZh: "工熊", nameEn: "Works Bear",   stages: ["🐻", "🐼", "🐨"] },
+  "宫城遗址": { nameZh: "宫凤", nameEn: "Palace Phoenix", stages: ["🐤", "🦅", "🦚"] },
+  "遗址":     { nameZh: "守护龙", nameEn: "Guard Dragon", stages: ["🥚", "🦖", "🐉"] }
+};
+const PET_DEFAULT_FAMILY = { nameZh: "小跟班", nameEn: "Sidekick", stages: ["🐣", "🐾", "🏆"] };
+
+const PET_STAGE_LABELS = {
+  zh: ["幼崽", "成长期", "冠军坐骑"],
+  en: ["Baby", "Growing", "Champion Mount"]
+};
+
+// 根据访问次数与排名计算宠物成长阶段：0=幼崽 1=成长期 2=冠军坐骑
+function getPetStage(count, topVisits, rank) {
+  count = Number(count || 0);
+  if (count <= 0) return 0;
+  const pct = topVisits > 0 ? count / topVisits : 0;
+  if (rank === 0) return 2;                 // 领跑者直接是冠军坐骑
+  if (count >= 3 && pct >= 0.6) return 2;   // 接近榜首且有一定人气
+  return 1;                                 // 只要有访问就是成长期
+}
+
+function getPetForSpot(spot, count, topVisits, rank) {
+  const type = spot ? spot.type : "";
+  const family = PET_FAMILIES[type] || PET_DEFAULT_FAMILY;
+  const stage = getPetStage(count, topVisits, rank);
+  const labels = currentLang === "en" ? PET_STAGE_LABELS.en : PET_STAGE_LABELS.zh;
+  return {
+    family,
+    stage,
+    emoji: family.stages[stage],
+    stageName: labels[stage],
+    familyName: currentLang === "en" ? family.nameEn : family.nameZh
+  };
+}
+
 // ===== 景点大农场 =====
 const FARM_EMOJIS = ["🧑‍🌾","🐔","🐷","🐮","🐑","🐰","🐴","🐶"];
 const CROP_CLASSES = ["farm-race-crop-1","farm-race-crop-2","farm-race-crop-3","farm-race-crop-4","farm-race-crop-5","farm-race-crop-6","farm-race-crop-7","farm-race-crop-8"];
@@ -7402,5 +7551,183 @@ function startFarmRaceAutoRefresh() {
     if (activeModule === "stats") loadStatsData();
   }, 30000);
 }
+
+// ===== 每日任务 =====
+const DAILY_TASK_TYPES = {
+  visit:    { icon: "🗺️", key: "taskVisit" },
+  favorite: { icon: "⭐", key: "taskFavorite" },
+  route:    { icon: "🧭", key: "taskRoute" },
+  comment:  { icon: "💬", key: "taskComment" }
+};
+const DAILY_DECO_POOL = ["🌻","🌷","🍀","🪴","🌳","🎋","🏮","🪺","🧚","⛲","🌿","🍄"];
+
+function dailyTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function dailyUserId() {
+  const u = getCurrentUser();
+  if (u && u.id) return String(u.id);
+  return getAuthToken() ? "user" : "guest";
+}
+function dailyStorageKey() {
+  return `landscapeDailyTasks:${dailyTodayStr()}:${dailyUserId()}`;
+}
+function getVisitedSpots() {
+  try { return JSON.parse(localStorage.getItem("landscapeVisitedSpots") || "[]"); } catch { return []; }
+}
+function addVisitedSpot(id) {
+  try {
+    const v = getVisitedSpots();
+    if (!v.includes(id)) { v.push(id); localStorage.setItem("landscapeVisitedSpots", JSON.stringify(v)); }
+  } catch {}
+}
+function getFarmDecorations() {
+  try { return JSON.parse(localStorage.getItem("landscapeFarmDecorations") || "[]"); } catch { return []; }
+}
+function addFarmDecoration() {
+  try {
+    const deco = getFarmDecorations();
+    const next = DAILY_DECO_POOL[deco.length % DAILY_DECO_POOL.length];
+    deco.push(next);
+    localStorage.setItem("landscapeFarmDecorations", JSON.stringify(deco));
+    return next;
+  } catch { return null; }
+}
+function dailySeededPick(types, n, seedStr) {
+  let seed = 0;
+  for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) >>> 0;
+  const arr = types.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    seed = (seed * 1103515245 + 12345) >>> 0;
+    const j = seed % (i + 1);
+    const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr.slice(0, n);
+}
+function loadDailyTasksState() {
+  let state = null;
+  try { state = JSON.parse(localStorage.getItem(dailyStorageKey()) || "null"); } catch { state = null; }
+  const today = dailyTodayStr();
+  const uid = dailyUserId();
+  if (!state || state.date !== today || state.userId !== uid || !Array.isArray(state.tasks) || state.tasks.length !== 3) {
+    const all = Object.keys(DAILY_TASK_TYPES);
+    const picked = dailySeededPick(all, 3, today + ":" + uid);
+    state = {
+      date: today,
+      userId: uid,
+      visitedSnapshot: getVisitedSpots(),
+      tasks: picked.map(type => ({ type, done: false }))
+    };
+    try { localStorage.setItem(dailyStorageKey(), JSON.stringify(state)); } catch {}
+  }
+  return state;
+}
+function saveDailyTasksState(state) {
+  try { localStorage.setItem(dailyStorageKey(), JSON.stringify(state)); } catch {}
+}
+function dailyTasksDoneCount(state) {
+  return state.tasks.filter(t => t.done).length;
+}
+function completeDailyTask(type) {
+  const state = loadDailyTasksState();
+  const task = state.tasks.find(t => t.type === type && !t.done);
+  if (!task) return false;
+  task.done = true;
+  saveDailyTasksState(state);
+  addFarmDecoration();
+  updateDailyTasksButton();
+  const pop = document.getElementById("dailyTasksPopover");
+  if (pop && pop.dataset.open === "true") renderDailyTasksPopover();
+  renderFarmDecorations();
+  return true;
+}
+function updateDailyTasksButton() {
+  const btn = document.getElementById("dailyTasksBtn");
+  const countEl = document.getElementById("dailyTasksBtnCount");
+  if (!btn || !countEl) return;
+  const state = loadDailyTasksState();
+  const done = dailyTasksDoneCount(state);
+  countEl.textContent = `${done}/3`;
+  const icon = btn.querySelector(".daily-tasks-btn-icon");
+  if (done >= 3) {
+    btn.classList.add("is-done");
+    if (icon) icon.textContent = "✅";
+  } else {
+    btn.classList.remove("is-done");
+    if (icon) icon.textContent = "📝";
+  }
+}
+function renderDailyTasksPopover() {
+  const list = document.getElementById("dailyTasksList");
+  const progress = document.getElementById("dailyTasksProgressBar");
+  const loginNote = document.getElementById("dailyTasksLoginNote");
+  if (!list) return;
+  const state = loadDailyTasksState();
+  const done = dailyTasksDoneCount(state);
+  if (progress) {
+    progress.innerHTML = `<span>${t("tasksProgress").replace("{n}", done)}</span><span class="bar"><span style="width:${Math.round(done/3*100)}%"></span></span>`;
+  }
+  list.innerHTML = state.tasks.map(task => {
+    const meta = DAILY_TASK_TYPES[task.type];
+    return `
+      <li class="daily-task-item ${task.done ? "done" : ""}">
+        <span class="dt-icon">${meta.icon}</span>
+        <div class="dt-body">
+          <div class="dt-name">${t(meta.key)}</div>
+          <div class="dt-state">${task.done ? t("taskDone") : ""}</div>
+        </div>
+        <span class="dt-check">${task.done ? "✓" : ""}</span>
+      </li>`;
+  }).join("");
+  if (loginNote) loginNote.textContent = dailyUserId() === "guest" ? t("loginToTasks") : "";
+}
+function renderFarmDecorations() {
+  const wrap = document.getElementById("statsFarmDecorations");
+  if (!wrap) return;
+  const deco = getFarmDecorations();
+  if (!deco.length) {
+    wrap.innerHTML = `<span class="farm-deco-empty">🪴 完成任务装扮农场</span>`;
+    return;
+  }
+  wrap.innerHTML = deco.map(d => `<span class="farm-deco">${d}</span>`).join("");
+}
+function openDailyTasksPopover() {
+  const pop = document.getElementById("dailyTasksPopover");
+  if (!pop) return;
+  renderDailyTasksPopover();
+  pop.style.display = "block";
+  pop.dataset.open = "true";
+}
+function closeDailyTasksPopover() {
+  const pop = document.getElementById("dailyTasksPopover");
+  if (!pop) return;
+  pop.style.display = "none";
+  pop.dataset.open = "false";
+}
+function toggleDailyTasksPopover() {
+  const pop = document.getElementById("dailyTasksPopover");
+  if (!pop) return;
+  if (pop.dataset.open === "true") closeDailyTasksPopover();
+  else openDailyTasksPopover();
+}
+function initDailyTasksUI() {
+  const btn = document.getElementById("dailyTasksBtn");
+  const pop = document.getElementById("dailyTasksPopover");
+  const closeBtn = document.getElementById("dailyTasksCloseBtn");
+  if (btn) btn.addEventListener("click", (e) => { e.stopPropagation(); toggleDailyTasksPopover(); });
+  if (closeBtn) closeBtn.addEventListener("click", closeDailyTasksPopover);
+  if (pop) {
+    pop.addEventListener("click", (e) => e.stopPropagation());
+    document.addEventListener("click", (e) => {
+      if (pop.dataset.open !== "true") return;
+      if (e.target.closest("#dailyTasksPopover") || e.target.closest("#dailyTasksBtn") || e.target.closest("#mobileBottomNav")) return;
+      closeDailyTasksPopover();
+    });
+  }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDailyTasksPopover(); });
+  updateDailyTasksButton();
+}
+initDailyTasksUI();
 
 init();

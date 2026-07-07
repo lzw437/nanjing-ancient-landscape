@@ -19,6 +19,10 @@
       <header class="brand">
         <h1 id="appTitle">南京古景点地图</h1>
         <div class="brand-actions">
+          <button id="dailyTasksBtn" type="button" class="daily-tasks-btn" title="每日任务" aria-label="每日任务">
+            <span class="daily-tasks-btn-icon">📝</span>
+            <span class="daily-tasks-btn-count" id="dailyTasksBtnCount">0/3</span>
+          </button>
           <button id="langToggle" type="button" class="lang-btn" title="切换语言">EN</button>
           <button id="weatherPanelBtn" type="button" class="weather-tool-btn" data-i18n="weatherTab">天气</button>
         </div>
@@ -256,6 +260,17 @@
         </div>
         <div id="weatherResult" class="weather-result"></div>
       </div>
+
+      <div class="daily-tasks-popover" id="dailyTasksPopover" style="display:none;">
+        <div class="daily-tasks-popover-head">
+          <h3 data-i18n="dailyTasks">每日任务</h3>
+          <button id="dailyTasksCloseBtn" type="button" class="daily-tasks-close-btn" aria-label="关闭">×</button>
+        </div>
+        <p class="daily-tasks-hint" data-i18n="dailyTasksHint">每天完成 3 个小任务，给农场解锁新装饰！</p>
+        <div class="daily-tasks-progress" id="dailyTasksProgressBar"></div>
+        <ul class="daily-tasks-list" id="dailyTasksList"></ul>
+        <p class="daily-tasks-login" id="dailyTasksLoginNote"></p>
+      </div>
       <section class="map-stage module-view active" id="mapModule" aria-label="地图总览模块">
         <div id="map" aria-label="南京古景点分布地图"></div>
         <article class="detail-panel" id="detailPanel" aria-live="polite"></article>
@@ -377,6 +392,7 @@
               <div class="stats-farm-track" id="statsFarmTrackStats"></div>
             </div>
           </div>
+          <section class="stats-pets" id="statsPetNursery" aria-label="景点宠物养成"></section>
           <section class="stats-achievements" id="statsAchievements">
             <div class="stats-achievements-head">
               <p class="stats-achievements-eyebrow">BADGES &#183; &#26223;&#28857;&#25104;&#23601;</p>

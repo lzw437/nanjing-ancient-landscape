@@ -272,6 +272,7 @@
         <div class="info-header">
           <div class="profile-header-left">
             <span id="profileAvatar" class="profile-avatar"></span>
+            <button id="changeAvatarBtn" type="button" class="change-avatar-btn" data-i18n="changeAvatar">更换头像</button>
             <div>
               <p data-i18n="profile">个人中心</p>
               <h2 id="profileTitle" data-i18n="myFavorites">我的收藏</h2>
@@ -312,6 +313,22 @@
           </div>
         </div>
       </section>
+
+      <div id="avatarModal" class="modal-overlay" style="display:none;" aria-hidden="true">
+        <div class="modal-content avatar-modal-content">
+          <h3 data-i18n="chooseAvatar">选择头像</h3>
+          <div class="avatar-preview" id="profileAvatarPreview"></div>
+          <div class="avatar-grid" id="profileAvatarGrid"></div>
+          <label class="avatar-upload-label">
+            <input type="file" id="profileAvatarUpload" accept="image/*" hidden>
+            <span data-i18n="uploadAvatar">上传自定义头像</span>
+          </label>
+          <div class="avatar-modal-actions">
+            <button id="saveAvatarBtn" type="button" class="save-avatar-btn" data-i18n="saveAvatar">保存</button>
+            <button id="cancelAvatarBtn" type="button" class="cancel-avatar-btn" data-i18n="cancel">取消</button>
+          </div>
+        </div>
+      </div>
 
       <section class="stats-module module-view" id="statsModule" aria-label="数据统计模块">
         <div class="info-header">

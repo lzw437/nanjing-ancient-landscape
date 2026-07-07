@@ -80,6 +80,9 @@ const i18n = {
     chooseAvatar: "选择头像",
     uploadAvatar: "上传自定义头像",
     defaultAvatar: "默认",
+    changeAvatar: "更换头像",
+    saveAvatar: "保存",
+    avatarUpdated: "头像已更新",
     // 推荐路线
     customRoute: "自定义路线",
     customHint: "点击景点右侧 + 添加到路线规划",
@@ -331,6 +334,9 @@ const i18n = {
     chooseAvatar: "Choose Avatar",
     uploadAvatar: "Upload Custom Avatar",
     defaultAvatar: "Default",
+    changeAvatar: "Change Avatar",
+    saveAvatar: "Save",
+    avatarUpdated: "Avatar updated",
     customRoute: "Custom Route",
     customHint: "Tap + on a site to add it to your route",
     sysRoutes: "Recommended Routes",
@@ -4295,6 +4301,132 @@ if (avatarUploadInput) {
 }
 
 renderAvatarGrid();
+
+// ===== 个人中心更换头像 =====
+const changeAvatarBtn = document.getElementById("changeAvatarBtn");
+const avatarModal = document.getElementById("avatarModal");
+const profileAvatarGrid = document.getElementById("profileAvatarGrid");
+const profileAvatarPreview = document.getElementById("profileAvatarPreview");
+const profileAvatarUpload = document.getElementById("profileAvatarUpload");
+const saveAvatarBtn = document.getElementById("saveAvatarBtn");
+const cancelAvatarBtn = document.getElementById("cancelAvatarBtn");
+let profileSelectedAvatar = "";
+
+function renderProfileAvatarGrid() {
+  if (!profileAvatarGrid) return;
+  profileAvatarGrid.innerHTML = "";
+  SYSTEM_AVATARS.forEach(av => {
+    const div = document.createElement("div");
+    div.className = "avatar-option" + (profileSelectedAvatar === av.key ? " selected" : "");
+    div.innerHTML = `<img src="${generateAvatarSVG(av.color, av.emoji)}" alt="${av.key}">`;
+    div.addEventListener("click", () => {
+      profileSelectedAvatar = av.key;
+      renderProfileAvatarGrid();
+      renderProfileAvatarPreview();
+    });
+    profileAvatarGrid.appendChild(div);
+  });
+}
+
+function renderProfileAvatarPreview() {
+  if (!profileAvatarPreview) return;
+  if (profileSelectedAvatar && profileSelectedAvatar.startsWith("data:")) {
+    profileAvatarPreview.innerHTML = `<img src="${profileSelectedAvatar}" alt="avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">`;
+  } else if (profileSelectedAvatar) {
+    const url = getAvatarURL(profileSelectedAvatar);
+    profileAvatarPreview.innerHTML = `<img src="${url}" alt="avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">`;
+  } else {
+    const user = getCurrentUser();
+    const currentAvatar = user ? user.avatar : "";
+    if (currentAvatar) {
+      const url = getAvatarURL(currentAvatar);
+      if (url) {
+        profileAvatarPreview.innerHTML = `<img src="${url}" alt="avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">`;
+      } else {
+        profileAvatarPreview.innerHTML = `<img src="${currentAvatar}" alt="avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">`;
+      }
+    } else {
+      profileAvatarPreview.innerHTML = `<div class="avatar-default" style="width:64px;height:64px;font-size:28px;">${(user?.username || "U").charAt(0).toUpperCase()}</div>`;
+    }
+  }
+}
+
+if (changeAvatarBtn) {
+  changeAvatarBtn.addEventListener("click", () => {
+    const user = getCurrentUser();
+    profileSelectedAvatar = user ? (user.avatar || "") : "";
+    renderProfileAvatarGrid();
+    renderProfileAvatarPreview();
+    avatarModal.style.display = "flex";
+    avatarModal.setAttribute("aria-hidden", "false");
+  });
+}
+
+if (cancelAvatarBtn) {
+  cancelAvatarBtn.addEventListener("click", () => {
+    avatarModal.style.display = "none";
+    avatarModal.setAttribute("aria-hidden", "true");
+  });
+}
+
+if (avatarModal) {
+  avatarModal.addEventListener("click", (e) => {
+    if (e.target === avatarModal) {
+      avatarModal.style.display = "none";
+      avatarModal.setAttribute("aria-hidden", "true");
+    }
+  });
+}
+
+if (profileAvatarUpload) {
+  profileAvatarUpload.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 300000) {
+      alert(currentLang === "zh" ? "图片不能超过300KB" : "Image must be under 300KB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      profileSelectedAvatar = reader.result;
+      renderProfileAvatarGrid();
+      renderProfileAvatarPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+if (saveAvatarBtn) {
+  saveAvatarBtn.addEventListener("click", async () => {
+    if (!profileSelectedAvatar) return;
+    const token = getAuthToken();
+    if (!token) return;
+    try {
+      const res = await fetch(apiUrl("/user/avatar"), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ avatar: profileSelectedAvatar })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const user = getCurrentUser();
+        if (user) {
+          user.avatar = profileSelectedAvatar;
+          localStorage.setItem("landscapeUser", JSON.stringify(user));
+          updateAuthView(user);
+        }
+        const profileAvatarEl = document.querySelector("#profileAvatar");
+        if (profileAvatarEl) profileAvatarEl.innerHTML = getAvatarHTML(profileSelectedAvatar, user?.username, 48);
+        avatarModal.style.display = "none";
+        avatarModal.setAttribute("aria-hidden", "true");
+      } else {
+        alert(data.message || "Failed");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+}
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();

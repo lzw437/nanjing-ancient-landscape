@@ -2597,6 +2597,84 @@ button {
   color: #333;
 }
 
+/* Avatar modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(30, 37, 34, 0.38);
+  z-index: 2000;
+}
+
+.avatar-modal-content {
+  width: min(380px, 100%);
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.avatar-modal-content h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.avatar-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.save-avatar-btn {
+  padding: 8px 24px;
+  color: #fff;
+  background: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-avatar-btn:hover {
+  background: #3a9e7a;
+}
+
+.cancel-avatar-btn {
+  padding: 8px 24px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cancel-avatar-btn:hover {
+  background: #f5f5f5;
+}
+
+.change-avatar-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--green);
+  background: transparent;
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.change-avatar-btn:hover {
+  background: var(--green);
+  color: #fff;
+}
+
 /* ===== 表情面板 ===== */
 .chat-emoji-panel {
   padding: 8px;

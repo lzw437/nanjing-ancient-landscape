@@ -159,6 +159,33 @@ button {
   border-radius: 8px;
 }
 
+.auth-strip-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#authAvatar {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-default-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--green);
+  color: white;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
 .auth-strip span {
   display: block;
   color: var(--muted);
@@ -202,6 +229,161 @@ button {
 #authLogoutBtn:hover {
   color: #fff;
   background: var(--red);
+}
+
+/* Avatar styles */
+.avatar-select-section {
+  margin: 12px 0;
+  text-align: center;
+}
+
+.avatar-select-section > span {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.avatar-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.avatar-default {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.avatar-option {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.avatar-option:hover {
+  transform: scale(1.1);
+}
+
+.avatar-option.selected {
+  border-color: var(--green);
+  transform: scale(1.1);
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-upload-label {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.avatar-upload-label:hover {
+  background: var(--green);
+  color: white;
+}
+
+/* Profile avatar */
+.profile-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+}
+
+/* Chat message avatar */
+.chat-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chat-msg.self {
+  flex-direction: row-reverse;
+}
+
+.chat-msg-avatar {
+  flex-shrink: 0;
+}
+
+.chat-msg-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.chat-msg.self .chat-msg-header {
+  flex-direction: row-reverse;
+}
+
+.chat-msg-user {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.chat-msg-time {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.chat-msg-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+/* Comment avatar */
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comment-avatar {
+  display: flex;
+  align-items: center;
 }
 
 .controls {

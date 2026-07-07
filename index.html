@@ -25,9 +25,12 @@
       </header>
 
       <section class="auth-strip" aria-label="用户登录状态">
-        <div>
-          <span id="authStatus" data-i18n="notLogged">未登录</span>
-          <strong id="authUser" data-i18n="guest">游客访问</strong>
+        <div class="auth-strip-left">
+          <span id="authAvatar"></span>
+          <div>
+            <span id="authStatus" data-i18n="notLogged">未登录</span>
+            <strong id="authUser" data-i18n="guest">游客访问</strong>
+          </div>
         </div>
         <div class="auth-strip-actions">
           <button id="authLogoutBtn" type="button" style="display:none;">退出登录</button>
@@ -267,9 +270,12 @@
 
       <section class="profile-module module-view" id="profileModule" aria-label="个人中心模块">
         <div class="info-header">
-          <div>
-            <p data-i18n="profile">个人中心</p>
-            <h2 id="profileTitle" data-i18n="myFavorites">我的收藏</h2>
+          <div class="profile-header-left">
+            <span id="profileAvatar" class="profile-avatar"></span>
+            <div>
+              <p data-i18n="profile">个人中心</p>
+              <h2 id="profileTitle" data-i18n="myFavorites">我的收藏</h2>
+            </div>
           </div>
           <button id="backToMapFromProfile" type="button" data-i18n="backToMap">返回地图</button>
         </div>
@@ -396,6 +402,17 @@
           <span data-i18n="password">密码</span>
           <input name="password" type="password" autocomplete="new-password" minlength="6" required>
         </label>
+        <div class="avatar-select-section">
+          <span data-i18n="chooseAvatar">选择头像</span>
+          <div class="avatar-preview" id="avatarPreview">
+            <div class="avatar-default" id="avatarDefaultPreview">U</div>
+          </div>
+          <div class="avatar-grid" id="avatarGrid"></div>
+          <label class="avatar-upload-label">
+            <input type="file" id="avatarUploadInput" accept="image/*" hidden>
+            <span data-i18n="uploadAvatar">上传自定义头像</span>
+          </label>
+        </div>
         <button type="submit" data-i18n="registerBtn">注册并登录</button>
       </form>
       <form id="adminLoginForm" class="auth-form">

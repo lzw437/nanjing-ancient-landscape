@@ -106,6 +106,7 @@ function createToken(user) {
     sub: String(user._id),
     username: user.username,
     email: user.email,
+    avatar: user.avatar || "",
     exp: Date.now() + 1000 * 60 * 60 * 24
   })).toString("base64url");
   const signature = crypto
@@ -120,6 +121,7 @@ function publicUser(user) {
     id: String(user._id),
     username: user.username,
     email: user.email,
+    avatar: user.avatar || "",
     createdAt: user.createdAt
   };
 }
@@ -240,6 +242,7 @@ app.post("/api/auth/register", async (req, res) => {
       email: data.email,
       salt,
       passwordHash,
+      avatar: req.body.avatar || "",
       createdAt: now,
       updatedAt: now,
       lastLoginAt: now
@@ -598,6 +601,17 @@ app.get("/api/interactions/:spotId", async (req, res) => {
       .sort({ createdAtTimestamp: -1 })
       .toArray();
 
+    // Look up user avatars for comments
+    const commentUserIds = [...new Set(comments.map(c => c.userId).filter(Boolean))];
+    let avatarMap = {};
+    if (commentUserIds.length > 0) {
+      try {
+        const { ObjectId } = require("mongodb");
+        const users = await usersCollection.find({ _id: { $in: commentUserIds.map(id => { try { return new ObjectId(id); } catch(e) { return null; } }).filter(Boolean) } }).toArray();
+        users.forEach(u => { avatarMap[String(u._id)] = u.avatar || ""; });
+      } catch(e) {}
+    }
+
     res.json({
       spotId,
       likes: interaction?.likes || [],
@@ -605,6 +619,7 @@ app.get("/api/interactions/:spotId", async (req, res) => {
         id: String(c._id),
         userId: c.userId,
         username: c.username,
+        avatar: avatarMap[c.userId] || "",
         content: c.content,
         image: c.image || "",
         createdAt: c.createdAt
@@ -766,6 +781,25 @@ app.get("/api/images/:spotId", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "获取图片失败" });
+  }
+});
+
+app.put("/api/user/avatar", requireAuth, async (req, res) => {
+  try {
+    const { avatar } = req.body;
+    if (!avatar || typeof avatar !== "string") {
+      return res.status(400).json({ message: "请提供头像" });
+    }
+    // Validate: must be a system avatar key or a valid data URL (max 500KB)
+    const systemAvatars = ["av1","av2","av3","av4","av5","av6","av7","av8"];
+    if (!systemAvatars.includes(avatar) && (!avatar.startsWith("data:image/") || avatar.length > 500000)) {
+      return res.status(400).json({ message: "头像格式无效" });
+    }
+    await usersCollection.updateOne({ _id: new (require("mongodb").ObjectId)(req.user.id) }, { $set: { avatar } });
+    res.json({ message: "头像已更新", avatar });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "更新头像失败" });
   }
 });
 
@@ -1123,11 +1157,22 @@ app.get("/api/chat/messages", async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(limit)
       .toArray();
+    // Look up user avatars
+    const userIds = [...new Set(messages.map(m => m.userId).filter(Boolean))];
+    let avatarMap = {};
+    if (userIds.length > 0) {
+      try {
+        const { ObjectId } = require("mongodb");
+        const users = await usersCollection.find({ _id: { $in: userIds.map(id => { try { return new ObjectId(id); } catch(e) { return null; } }).filter(Boolean) } }).toArray();
+        users.forEach(u => { avatarMap[String(u._id)] = u.avatar || ""; });
+      } catch(e) {}
+    }
     res.json({
       messages: messages.reverse().map(m => ({
         id: String(m._id),
         userId: m.userId,
         username: m.username,
+        avatar: avatarMap[m.userId] || "",
         content: m.content,
         image: m.image || null,
         createdAt: m.createdAt
@@ -1161,9 +1206,18 @@ app.post("/api/chat/messages", requireAuth, async (req, res) => {
 
     const result = await chatMessagesCollection.insertOne(message);
 
+    // Look up user avatar
+    let userAvatar = "";
+    try {
+      const { ObjectId } = require("mongodb");
+      const userDoc = await usersCollection.findOne({ _id: new ObjectId(user.id) });
+      if (userDoc) userAvatar = userDoc.avatar || "";
+    } catch(e) {}
+
     const saved = {
       id: String(result.insertedId),
       ...message,
+      avatar: userAvatar,
       createdAt: message.createdAt
     };
 

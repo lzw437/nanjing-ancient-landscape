@@ -77,6 +77,9 @@ const i18n = {
     noRecentHistory: "暂无最近浏览记录。",
     loginForHistory: "请先登录后查看最近浏览。",
     loadHistoryFailed: "加载最近浏览失败",
+    chooseAvatar: "选择头像",
+    uploadAvatar: "上传自定义头像",
+    defaultAvatar: "默认",
     // 推荐路线
     customRoute: "自定义路线",
     customHint: "点击景点右侧 + 添加到路线规划",
@@ -325,6 +328,9 @@ const i18n = {
     noRecentHistory: "No recent history.",
     loginForHistory: "Please log in to view history.",
     loadHistoryFailed: "Failed to load history",
+    chooseAvatar: "Choose Avatar",
+    uploadAvatar: "Upload Custom Avatar",
+    defaultAvatar: "Default",
     customRoute: "Custom Route",
     customHint: "Tap + on a site to add it to your route",
     sysRoutes: "Recommended Routes",
@@ -548,6 +554,38 @@ function spotT(spot, field) {
   if (!tr) return spot[field];
   const enField = field + "En";
   return tr[enField] || tr[field] || spot[field];
+}
+
+// ===== 系统头像 =====
+const SYSTEM_AVATARS = [
+  { key: "av1", color: "#FF6B6B", emoji: "😊" },
+  { key: "av2", color: "#4ECDC4", emoji: "🎉" },
+  { key: "av3", color: "#45B7D1", emoji: "🌸" },
+  { key: "av4", color: "#96CEB4", emoji: "🍀" },
+  { key: "av5", color: "#FFEAA7", emoji: "🌟" },
+  { key: "av6", color: "#DDA0DD", emoji: "🦋" },
+  { key: "av7", color: "#98D8C8", emoji: "🎵" },
+  { key: "av8", color: "#F7DC6F", emoji: "🎯" }
+];
+
+function generateAvatarSVG(color, emoji) {
+  return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle cx="40" cy="40" r="40" fill="${color}"/><text x="40" y="46" font-size="32" text-anchor="middle" fill="white">${emoji}</text></svg>`)}`;
+}
+
+function getAvatarURL(avatar) {
+  if (!avatar || avatar === "") return null;
+  if (avatar.startsWith("data:")) return avatar;
+  const sys = SYSTEM_AVATARS.find(a => a.key === avatar);
+  if (sys) return generateAvatarSVG(sys.color, sys.emoji);
+  return null;
+}
+
+function getAvatarHTML(avatar, username, size) {
+  size = size || 36;
+  const url = getAvatarURL(avatar);
+  if (url) return `<img src="${url}" alt="avatar" class="avatar-img" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;">`;
+  const initial = (username || "U").charAt(0).toUpperCase();
+  return `<div class="avatar-default-circle" style="width:${size}px;height:${size}px;font-size:${size*0.45}px;">${initial}</div>`;
 }
 
 const spotTranslations = {
@@ -2268,6 +2306,7 @@ const commentCount = document.querySelector("#commentCount");
 const imageCount = document.querySelector("#imageCount");
 const authStatus = document.querySelector("#authStatus");
 const authUser = document.querySelector("#authUser");
+const authAvatar = document.querySelector("#authAvatar");
 const authOpenBtn = document.querySelector("#authOpenBtn");
 const authLogoutBtn = document.querySelector("#authLogoutBtn");
 const authModal = document.querySelector("#authModal");
@@ -2458,9 +2497,11 @@ function renderCommentItems(spotId) {
         <img src="${escapeHtml(comment.image)}" alt="评论配图" loading="lazy">
       </button>
     ` : "";
+    const avatarHtml = getAvatarHTML(comment.avatar || "", comment.username, 28);
     return `
       <div class="comment-item">
         <div class="comment-header">
+          <span class="comment-avatar">${avatarHtml}</span>
           <strong>${escapeHtml(comment.username)}</strong>
           <span>${escapeHtml(comment.createdAt)}</span>
           ${canDelete ? `<button type="button" class="comment-delete" data-comment="${escapeHtml(comment.id)}" data-spot="${escapeHtml(spotId)}">删除</button>` : ""}
@@ -2954,6 +2995,7 @@ function updateAuthView(user) {
   if (admin) {
     authStatus.textContent = t("administrator");
     authUser.textContent = admin.username || admin.email;
+    if (authAvatar) authAvatar.innerHTML = getAvatarHTML(admin.avatar, admin.username, 32);
     authOpenBtn.textContent = t("switchAccount");
     if (authLogoutBtn) {
       authLogoutBtn.textContent = t("logout");
@@ -2962,6 +3004,7 @@ function updateAuthView(user) {
   } else if (user) {
     authStatus.textContent = t("loggedIn");
     authUser.textContent = user.username || user.email;
+    if (authAvatar) authAvatar.innerHTML = getAvatarHTML(user.avatar, user.username, 32);
     authOpenBtn.textContent = t("switchAccount");
     if (authLogoutBtn) {
       authLogoutBtn.textContent = t("logout");
@@ -2970,6 +3013,7 @@ function updateAuthView(user) {
   } else {
     authStatus.textContent = t("notLogged");
     authUser.textContent = t("guest");
+    if (authAvatar) authAvatar.innerHTML = "";
     authOpenBtn.textContent = t("loginRegister");
     if (authLogoutBtn) authLogoutBtn.style.display = "none";
   }
@@ -4197,6 +4241,61 @@ authModal.addEventListener("click", (event) => {
   if (event.target === authModal) closeAuthModal();
 });
 
+// ===== 头像选择逻辑 =====
+let selectedAvatar = "";
+const avatarGrid = document.getElementById("avatarGrid");
+const avatarPreview = document.getElementById("avatarPreview");
+const avatarDefaultPreview = document.getElementById("avatarDefaultPreview");
+const avatarUploadInput = document.getElementById("avatarUploadInput");
+
+function renderAvatarGrid() {
+  if (!avatarGrid) return;
+  avatarGrid.innerHTML = "";
+  SYSTEM_AVATARS.forEach(av => {
+    const div = document.createElement("div");
+    div.className = "avatar-option" + (selectedAvatar === av.key ? " selected" : "");
+    div.innerHTML = `<img src="${generateAvatarSVG(av.color, av.emoji)}" alt="${av.key}">`;
+    div.addEventListener("click", () => {
+      selectedAvatar = av.key;
+      renderAvatarGrid();
+      renderAvatarPreview();
+    });
+    avatarGrid.appendChild(div);
+  });
+}
+
+function renderAvatarPreview() {
+  if (!avatarPreview) return;
+  if (selectedAvatar && selectedAvatar.startsWith("data:")) {
+    avatarPreview.innerHTML = `<img src="${selectedAvatar}" alt="avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">`;
+  } else if (selectedAvatar) {
+    const url = getAvatarURL(selectedAvatar);
+    avatarPreview.innerHTML = `<img src="${url}" alt="avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">`;
+  } else {
+    avatarPreview.innerHTML = `<div class="avatar-default" id="avatarDefaultPreview" style="width:64px;height:64px;font-size:28px;">U</div>`;
+  }
+}
+
+if (avatarUploadInput) {
+  avatarUploadInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 300000) {
+      alert(currentLang === "zh" ? "图片不能超过300KB" : "Image must be under 300KB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      selectedAvatar = reader.result;
+      renderAvatarGrid();
+      renderAvatarPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+renderAvatarGrid();
+
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(loginForm);
@@ -4217,16 +4316,20 @@ loginForm.addEventListener("submit", async (event) => {
 registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(registerForm);
-  setAuthMessage("正在注册...");
+  setAuthMessage(currentLang === "zh" ? "正在注册..." : "Registering...");
   try {
     const data = await submitAuth("/auth/register", {
       username: formData.get("username"),
       email: formData.get("email"),
-      password: formData.get("password")
+      password: formData.get("password"),
+      avatar: selectedAvatar || ""
     });
     saveAuth(data);
-    setAuthMessage(data.message || "注册成功。", "success");
+    setAuthMessage(data.message || (currentLang === "zh" ? "注册成功。" : "Registered."), "success");
     registerForm.reset();
+    selectedAvatar = "";
+    renderAvatarGrid();
+    renderAvatarPreview();
     setTimeout(closeAuthModal, 500);
   } catch (error) {
     setAuthMessage(error.message, "error");
@@ -5020,6 +5123,11 @@ async function loadUserProfile() {
   favCount.textContent = profileStats.favoritesCount;
   commentCount.textContent = profileStats.commentsCount;
   imageCount.textContent = profileStats.imagesCount;
+  // 显示用户头像
+  const profileAvatarEl = document.querySelector("#profileAvatar");
+  if (profileAvatarEl && user) {
+    profileAvatarEl.innerHTML = getAvatarHTML(user.avatar, user.username, 48);
+  }
   renderProfileFavorites();
   await loadRecentHistoryAfterPendingVisit();
   loadAndRenderUserComments();
@@ -5399,17 +5507,21 @@ function appendChatMessage(msg) {
   const myId = currentUser ? currentUser.id : null;
   const isSelf = myId && msg.userId === myId;
   const time = new Date(msg.createdAt).toLocaleTimeString(currentLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit" });
+  const avatarHtml = getAvatarHTML(msg.avatar || "", msg.username, 32);
 
   const div = document.createElement("div");
   div.className = `chat-msg${isSelf ? " self" : ""}`;
   const imageHtml = msg.image ? `<div class="chat-msg-image"><img src="${msg.image}" alt="image" loading="lazy" onclick="openChatImageModal('${msg.image.replace(/'/g, "\\'")}')"></div>` : "";
   div.innerHTML = `
-    <div class="chat-msg-header">
-      <span class="chat-msg-user">${escapeHtml(msg.username)}</span>
-      <span class="chat-msg-time">${time}</span>
+    <div class="chat-msg-avatar">${avatarHtml}</div>
+    <div class="chat-msg-body">
+      <div class="chat-msg-header">
+        <span class="chat-msg-user">${escapeHtml(msg.username)}</span>
+        <span class="chat-msg-time">${time}</span>
+      </div>
+      ${msg.content ? `<div class="chat-msg-content">${escapeHtml(msg.content)}</div>` : ""}
+      ${imageHtml}
     </div>
-    ${msg.content ? `<div class="chat-msg-content">${escapeHtml(msg.content)}</div>` : ""}
-    ${imageHtml}
   `;
   chatMessages.appendChild(div);
   chatMessages.scrollTop = chatMessages.scrollHeight;

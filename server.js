@@ -1315,6 +1315,150 @@ app.get("/api/stats/ranking", async (req, res) => {
   }
 });
 
+function formatChinaDayKey(date) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date(date));
+}
+
+function parseDayKey(dayKey) {
+  const [year, month, day] = String(dayKey).split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function diffDaysInclusive(startDayKey, endDayKey) {
+  const start = parseDayKey(startDayKey);
+  const end = parseDayKey(endDayKey);
+  return Math.floor((end - start) / 86400000) + 1;
+}
+
+app.get("/api/stats/farm-almanac", requireAuth, async (req, res) => {
+  try {
+    if (!visitsCollection) {
+      return res.json({
+        summary: {
+          cultivationDays: 0,
+          activeDays: 0,
+          bestDay: null,
+          currentStreak: 0,
+          longestStreak: 0
+        },
+        days: []
+      });
+    }
+
+    const userDoc = await usersCollection.findOne({ _id: new ObjectId(req.user.id) });
+    if (!userDoc) {
+      return res.status(404).json({ message: "用户不存在" });
+    }
+
+    const createdAt = userDoc.createdAt ? new Date(userDoc.createdAt) : new Date();
+    const createdDayKey = formatChinaDayKey(createdAt);
+    const todayKey = formatChinaDayKey(new Date());
+
+    const results = await visitsCollection.aggregate([
+      {
+        $match: {
+          userId: req.user.id,
+          timestamp: { $gte: createdAt }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            day: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: "$timestamp",
+                timezone: "Asia/Shanghai"
+              }
+            },
+            spotId: "$spotId"
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.day": 1, count: -1, "_id.spotId": 1 } }
+    ]).toArray();
+
+    const dayChampionMap = new Map();
+    for (const item of results) {
+      const dayKey = item?._id?.day;
+      if (!dayKey || dayChampionMap.has(dayKey)) continue;
+      dayChampionMap.set(dayKey, {
+        date: dayKey,
+        spotId: item._id.spotId,
+        count: Number(item.count || 0)
+      });
+    }
+
+    const days = [];
+    let cursor = parseDayKey(createdDayKey);
+    const end = parseDayKey(todayKey);
+    while (cursor <= end) {
+      const dayKey = cursor.toISOString().slice(0, 10);
+      const champion = dayChampionMap.get(dayKey);
+      days.push({
+        date: dayKey,
+        spotId: champion?.spotId || "",
+        count: champion?.count || 0
+      });
+      cursor = new Date(cursor.getTime() + 86400000);
+    }
+
+    const activeDays = days.filter((item) => item.count > 0).length;
+    let bestDay = null;
+    for (const item of days) {
+      if (!item.count) continue;
+      if (!bestDay || item.count > bestDay.count) bestDay = item;
+    }
+
+    let currentStreak = 0;
+    for (let i = days.length - 1; i >= 0; i -= 1) {
+      if (days[i].count > 0) currentStreak += 1;
+      else break;
+    }
+
+    let longestStreak = 0;
+    let streak = 0;
+    for (const item of days) {
+      if (item.count > 0) {
+        streak += 1;
+        if (streak > longestStreak) longestStreak = streak;
+      } else {
+        streak = 0;
+      }
+    }
+
+    res.json({
+      summary: {
+        cultivationDays: diffDaysInclusive(createdDayKey, todayKey),
+        activeDays,
+        bestDay,
+        currentStreak,
+        longestStreak,
+        createdAt: userDoc.createdAt
+      },
+      days
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      summary: {
+        cultivationDays: 0,
+        activeDays: 0,
+        bestDay: null,
+        currentStreak: 0,
+        longestStreak: 0
+      },
+      days: []
+    });
+  }
+});
+
 app.post("/api/location-records", async (req, res) => {
   try {
     if (!locationRecordsCollection) {

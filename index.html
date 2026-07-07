@@ -102,7 +102,10 @@
             <div id="routeSelectedList" class="route-selected-list"></div>
             <button id="generateRoutes" type="button" class="route-generate-btn" disabled data-i18n="generateRoute">生成推荐路线</button>
           </div>
+          
+          
         </div>
+        
       </section>
 
       <section class="sidebar-chat-content" id="sidebarChatContent" style="display:none;">
@@ -162,7 +165,22 @@
 
       <section class="sidebar-stats-content" id="sidebarStatsContent" style="display:none;">
         <h3 data-i18n="statsTitle">数据统计</h3>
-        <p class="route-hint" data-i18n="statsHint">查看景点访问数据与排行</p>
+        <div class="sidebar-stats-mode-bar">
+          <button type="button" class="stats-mode-btn active" data-mode="day" data-i18n="statsDay">今日</button>
+          <button type="button" class="stats-mode-btn" data-mode="month" data-i18n="statsMonth">本月</button>
+          <button type="button" class="stats-mode-btn" data-mode="year" data-i18n="statsYear">本年</button>
+        </div>
+        <div class="sidebar-stats-card">
+          <h4 data-i18n="statsPieTitle">访问分布</h4>
+          <div class="sidebar-stats-pie-wrap">
+            <canvas id="sidebarStatsPieCanvas" width="200" height="200"></canvas>
+            <div id="sidebarStatsPieLegend" class="sidebar-stats-pie-legend"></div>
+          </div>
+        </div>
+        <div class="sidebar-stats-card">
+          <h4 data-i18n="statsRankTitle">访问排行</h4>
+          <div id="sidebarStatsRankList" class="sidebar-stats-rank-list"></div>
+        </div>
       </section>
 
       <section class="sidebar-admin-content" id="sidebarAdminContent" style="display:none;">
@@ -333,30 +351,41 @@
       <section class="stats-module module-view" id="statsModule" aria-label="数据统计模块">
         <div class="info-header">
           <div>
-            <p data-i18n="statsTitle">数据统计</p>
-            <h2 data-i18n="statsTitle">景点访问统计</h2>
+            <p data-i18n="farmRaceTitle">景点大农场</p>
+            <h2 data-i18n="farmRaceSubtitle">景点大农场 —— 谁是人气之王？</h2>
           </div>
           <button id="backToMapFromStats" type="button" data-i18n="backToMap">返回地图</button>
         </div>
         <div class="stats-dashboard">
-          <div class="stats-mode-bar">
-            <button type="button" class="stats-mode-btn active" data-mode="day" data-i18n="statsDay">今日</button>
-            <button type="button" class="stats-mode-btn" data-mode="month" data-i18n="statsMonth">本月</button>
-            <button type="button" class="stats-mode-btn" data-mode="year" data-i18n="statsYear">本年</button>
-          </div>
-          <div class="stats-charts-row">
-            <div class="stats-card">
-              <h3 data-i18n="statsPieTitle">访问分布</h3>
-              <div class="stats-pie-wrap">
-                <canvas id="statsPieCanvas" width="320" height="320"></canvas>
-                <div id="statsPieLegend" class="stats-pie-legend"></div>
+          <div class="stats-card stats-farm-card" id="statsFarmCard">
+            <div class="stats-farm-head">
+              <div>
+                <h3 id="statsFarmTitleStats">景点农场竞赛</h3>
+                <p id="statsFarmHintStats">前 5 名景点在农场跑道里竞赛，访问次数越高越靠近终点。</p>
               </div>
+              <div class="stats-farm-badge" id="statsFarmBadgeStats">等待数据加载</div>
             </div>
-            <div class="stats-card">
-              <h3 data-i18n="statsRankTitle">访问排行</h3>
-              <div id="statsRankList" class="stats-rank-list"></div>
+            <div class="stats-farm-scene">
+              <div class="stats-farm-sky">
+                <span class="stats-cloud stats-cloud-left"></span>
+                <span class="stats-cloud stats-cloud-right"></span>
+                <span class="stats-sun"></span>
+                <span class="stats-windmill">
+                  <i></i><i></i><i></i><i></i>
+                </span>
+              </div>
+              <div class="stats-farm-track" id="statsFarmTrackStats"></div>
             </div>
           </div>
+          <section class="stats-almanac">
+            <div class="stats-almanac-head">
+              <p class="stats-almanac-eyebrow" id="statsAlmanacEyebrow">ALMANAC · 景点农事历</p>
+              <h3 id="statsAlmanacTitle">农事历</h3>
+              <p id="statsAlmanacHint">开垦天数来自账户注册时间，单日最高统计当天访问最多的景点。</p>
+            </div>
+            <div class="stats-almanac-summary" id="statsAlmanacSummary"></div>
+            <div class="stats-almanac-grid" id="statsAlmanacGrid"></div>
+          </section>
         </div>
       </section>
     </main>

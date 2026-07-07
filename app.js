@@ -243,6 +243,11 @@ const i18n = {
     statsVisits: "次访问",
     statsNoData: "暂无访问数据",
     statsTotal: "总访问",
+    farmRaceTitle: "景点大农场",
+    farmRaceSubtitle: "景点大农场 —— 谁是人气之王？",
+    farmRaceVisits: "次访问",
+    farmRaceLeader: "领跑",
+    farmRaceGo: "冲啊！",
     // 天气
     weatherTab: "天气",
     weatherTitle: "天气查询",
@@ -482,6 +487,11 @@ const i18n = {
     statsVisits: "visits",
     statsNoData: "No visit data yet",
     statsTotal: "Total visits",
+    farmRaceTitle: "Spot Farm",
+    farmRaceSubtitle: "Spot Farm — Who's the People's Champion?",
+    farmRaceVisits: "visits",
+    farmRaceLeader: "Leading",
+    farmRaceGo: "Go!",
     // Weather
     weatherTab: "Weather",
     weatherTitle: "Weather",
@@ -521,6 +531,10 @@ function setLang(lang) {
     loadAndRenderUserComments();
     loadAndRenderUserImages();
     loadAndRenderRecentHistory();
+  }
+  // Re-render stats when on stats module
+  if (activeModule === "stats") {
+    loadStatsData();
   }
 }
 
@@ -5319,6 +5333,8 @@ async function init() {
   await loadFavorites();
 
   render();
+  ensureStatsFarmMounted();
+  syncStatsFarmCopy();
   renderRouteSelectedList();
   fitToSpots(spots);
   selectSpot(spots[0].id, { openPopup: true, pan: false, module: "map" });
@@ -6270,10 +6286,219 @@ document.addEventListener("click", async (e) => {
 // ===== Statistics Charts =====
 const PIE_COLORS = ["#e74c3c","#e67e22","#f1c40f","#2ecc71","#1abc9c","#3498db","#9b59b6","#34495e","#e91e63","#00bcd4","#8bc34a","#ff9800"];
 let currentStatsMode = "day";
+let statsFarmAlmanacData = null;
+let lastStatsVisits = [];
+
+function cleanupBrokenStatsArtifacts() {
+  const routeBottom = document.querySelector("#sidebarRouteContent .route-bottom-fixed");
+  if (routeBottom) {
+    routeBottom.querySelectorAll(".stats-farm-card").forEach((node) => node.remove());
+  }
+
+  const routeSection = document.querySelector("#sidebarRouteContent .sidebar-stats-panel");
+  if (routeSection) routeSection.remove();
+
+  const statsContent = document.getElementById("sidebarStatsContent");
+  if (statsContent) {
+    const duplicatePanels = statsContent.querySelectorAll("#sidebarStatsRankList");
+    duplicatePanels.forEach((panel, index) => {
+      if (index > 0) {
+        const wrapper = panel.closest(".sidebar-stats-card, .sidebar-stats-panel");
+        if (wrapper) wrapper.remove();
+      }
+    });
+  }
+}
+
+function ensureSidebarStatsPanel() {
+  cleanupBrokenStatsArtifacts();
+  const container = document.getElementById("sidebarStatsContent");
+  if (!container) return null;
+  let panel = document.getElementById("sidebarStatsRankList");
+  if (panel) return panel;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "sidebar-stats-panel";
+  wrapper.innerHTML = `
+    <h4>访问排行</h4>
+    <div id="sidebarStatsRankList" class="sidebar-stats-rank-list"></div>
+  `;
+  container.appendChild(wrapper);
+  return wrapper.querySelector("#sidebarStatsRankList");
+}
 
 function loadStatsData() {
+  ensureStatsFarmMounted();
+  syncStatsFarmCopy();
   fetchStatsPie(currentStatsMode);
-  fetchStatsRanking();
+  fetchStatsFarmAlmanac();
+}
+
+function getStatsFarmText() {
+  return currentLang === "zh"
+    ? {
+        title: "景点农场竞赛",
+        hint: "根据访问次数决定前进距离，景点越热门，越靠近终点",
+        empty: "等待数据加载",
+        leader: "当前领先：",
+        finish: "终点",
+        visits: "次访问"
+      }
+    : {
+        title: "Site Farm Race",
+        hint: "Progress is based on visit counts. The hotter the site, the closer it gets to the finish.",
+        empty: "Waiting for data",
+        leader: "Current leader:",
+        finish: "Finish",
+        visits: "visits"
+      };
+}
+
+function ensureStatsFarmMounted() {
+  const dashboard = document.querySelector("#statsModule .stats-dashboard");
+  if (!dashboard) return;
+
+  cleanupBrokenStatsArtifacts();
+  setupStatsFarmCard();
+}
+
+function getStatsFarmLocale() {
+  if (currentLang === "zh") {
+    return {
+      title: "\u666f\u70b9\u519c\u573a\u7ade\u8d5b",
+      hint: "\u4e0a\u65b9\u53ea\u663e\u793a\u8bbf\u95ee\u524d 5 \u540d\u7684\u666f\u70b9\u8dd1\u9053\uff0c\u4e0b\u65b9\u6309\u8d26\u6237\u6ce8\u518c\u4ee5\u6765\u7684\u6bcf\u65e5\u8bbf\u95ee\u51a0\u519b\u751f\u6210\u519c\u4e8b\u5386\u3002",
+      empty: "\u7b49\u5f85\u6570\u636e\u52a0\u8f7d",
+      leader: "\u5f53\u524d\u9886\u5148\uff1a",
+      finish: "\u7ec8\u70b9",
+      visits: "\u6b21\u8bbf\u95ee",
+      almanacEyebrow: "ALMANAC \u00b7 \u666f\u70b9\u519c\u4e8b\u5386",
+      almanacTitle: "\u519c\u4e8b\u5386",
+      almanacHint: "\u5f00\u57a6\u5929\u6570\u6765\u81ea\u8d26\u6237\u6ce8\u518c\u65f6\u95f4\uff1b\u5355\u65e5\u6700\u9ad8\u7edf\u8ba1\u5f53\u5929\u8bbf\u95ee\u6700\u591a\u7684\u666f\u70b9\u3002",
+      bestDayLabel: "\u5355\u65e5\u6700\u9ad8",
+      currentStreakLabel: "\u5f53\u524d\u8fde\u7eed",
+      longestStreakLabel: "\u6700\u957f\u8fde\u7eed",
+      activeDaysLabel: "\u6253\u5361\u5929\u6570",
+      cultivationLabel: "\u5f00\u57a6\u5929\u6570",
+      dayUnit: "\u5929",
+      loginPrompt: "\u767b\u5f55\u540e\u53ef\u67e5\u770b\u4f60\u7684\u4e13\u5c5e\u519c\u4e8b\u5386",
+      noBestDay: "\u8fd8\u6ca1\u6709\u5f62\u6210\u5355\u65e5\u51a0\u519b",
+      noVisitDay: "\u5f53\u5929\u6682\u65e0\u8bbf\u95ee",
+      streakSuffix: "\u8fde\u7eed\u6253\u5361\u4e2d",
+      longestSuffix: "\u5386\u53f2\u6700\u957f\u8fde\u7eed\u6253\u5361",
+      activeSuffix: "\u8fd9\u4e9b\u5929\u4f60\u90fd\u6765\u8fc7",
+      cultivationSuffix: "\u4ece\u6ce8\u518c\u90a3\u5929\u5f00\u59cb\u8ba1\u7b97",
+      monthSuffix: "\u6708"
+    };
+  }
+  return currentLang === "zh"
+    ? {
+        title: "景点农场竞赛",
+        hint: "上方看前 5 名竞赛，下面按账户开垦以来的每日访问冠军生成农事历。",
+        empty: "等待数据加载",
+        leader: "当前领先：",
+        finish: "终点",
+        visits: "次访问",
+        almanacEyebrow: "ALMANAC · 景点农事历",
+        almanacTitle: "农事历",
+        almanacHint: "开垦以来，每天一格。颜色越饱满，说明当天最常访问的景点势头越旺。",
+        bestDayLabel: "单日最高",
+        currentStreakLabel: "当前连耕",
+        longestStreakLabel: "最长连耕",
+        activeDaysLabel: "打卡天数",
+        cultivationLabel: "开垦天数",
+        dayUnit: "天",
+        loginPrompt: "登录后可查看你的专属农事历",
+        noBestDay: "还没有形成单日冠军",
+        noVisitDay: "当天暂无访问",
+        streakSuffix: "连续打卡中",
+        longestSuffix: "历史最长连续打卡",
+        activeSuffix: "这些天你都来过",
+        cultivationSuffix: "从注册那天开始计算",
+        monthSuffix: "月"
+      }
+    : {
+        title: "Site Farm Race",
+        hint: "Top 5 race above. Below is an almanac built from your daily visit champion since account creation.",
+        empty: "Waiting for data",
+        leader: "Current leader:",
+        finish: "Finish",
+        visits: "visits",
+        almanacEyebrow: "ALMANAC · Site Ledger",
+        almanacTitle: "Almanac",
+        almanacHint: "One tile per day since signup. Richer color means a stronger daily champion.",
+        bestDayLabel: "Best Day",
+        currentStreakLabel: "Current Streak",
+        longestStreakLabel: "Longest Streak",
+        activeDaysLabel: "Active Days",
+        cultivationLabel: "Days Since Signup",
+        dayUnit: "days",
+        loginPrompt: "Log in to view your personal almanac",
+        noBestDay: "No best day yet",
+        noVisitDay: "No visits that day",
+        streakSuffix: "days in a row",
+        longestSuffix: "best streak so far",
+        activeSuffix: "days you showed up",
+        cultivationSuffix: "counted from signup",
+        monthSuffix: ""
+      };
+}
+
+function setupStatsFarmCard() {
+  cleanupBrokenStatsArtifacts();
+  const dashboard = document.querySelector("#statsModule .stats-dashboard");
+  if (!dashboard) return;
+
+  let card = dashboard.querySelector("#statsFarmCard");
+  if (!card) {
+    card = document.createElement("div");
+    card.id = "statsFarmCard";
+    card.className = "stats-card stats-farm-card";
+    dashboard.prepend(card);
+  }
+
+  if (card.dataset.ready === "true") {
+    return;
+  }
+
+  card.innerHTML = `
+    <div class="stats-farm-head">
+      <div>
+        <h3 id="statsFarmTitleStats"></h3>
+        <p id="statsFarmHintStats"></p>
+      </div>
+      <div class="stats-farm-badge" id="statsFarmBadgeStats"></div>
+    </div>
+    <div class="stats-farm-scene">
+      <div class="stats-farm-sky">
+        <span class="stats-cloud stats-cloud-left"></span>
+        <span class="stats-cloud stats-cloud-right"></span>
+        <span class="stats-sun"></span>
+        <span class="stats-windmill"><i></i><i></i><i></i><i></i></span>
+      </div>
+      <div class="stats-farm-track" id="statsFarmTrackStats"></div>
+    </div>
+  `;
+
+  card.dataset.ready = "true";
+  if (card.parentElement !== dashboard) dashboard.prepend(card);
+}
+
+function syncStatsFarmCopy() {
+  setupStatsFarmCard();
+  const copy = getStatsFarmLocale();
+  const title = document.getElementById("statsFarmTitleStats");
+  const hint = document.getElementById("statsFarmHintStats");
+  const badge = document.getElementById("statsFarmBadgeStats");
+  const eyebrow = document.getElementById("statsAlmanacEyebrow");
+  const almanacTitle = document.getElementById("statsAlmanacTitle");
+  const almanacHint = document.getElementById("statsAlmanacHint");
+  if (title) title.textContent = copy.title;
+  if (hint) hint.textContent = copy.hint;
+  if (eyebrow) eyebrow.textContent = copy.almanacEyebrow;
+  if (almanacTitle) almanacTitle.textContent = copy.almanacTitle;
+  if (almanacHint) almanacHint.textContent = copy.almanacHint;
+  if (badge && !badge.dataset.hasLeader) badge.textContent = copy.empty;
+  if (statsFarmAlmanacData) renderStatsAlmanac(statsFarmAlmanacData);
 }
 
 function fetchStatsPie(mode) {
@@ -6283,29 +6508,59 @@ function fetchStatsPie(mode) {
   });
   fetch(apiUrl(`/stats/visits?mode=${mode}`))
     .then(r => r.json())
-    .then(data => renderPieChart(data.visits || []))
-    .catch(() => renderPieChart([]));
+    .then(data => {
+      const visits = data.visits || [];
+      lastStatsVisits = visits;
+      renderPieChart(visits);
+      renderRanking(visits);
+      renderStatsFarm(visits);
+    })
+    .catch(() => {
+      lastStatsVisits = [];
+      renderPieChart([]);
+      renderRanking([]);
+      renderStatsFarm([]);
+    });
 }
 
 function fetchStatsRanking() {
-  fetch(apiUrl("/stats/ranking"))
+  fetchStatsPie(currentStatsMode);
+}
+
+function fetchStatsFarmAlmanac() {
+  const token = getAuthToken();
+  if (!token) {
+    statsFarmAlmanacData = null;
+    renderStatsAlmanac(null);
+    return;
+  }
+
+  fetch(apiUrl("/stats/farm-almanac"), {
+    headers: { Authorization: `Bearer ${token}` }
+  })
     .then(r => r.json())
-    .then(data => renderRanking(data.visits || []))
-    .catch(() => renderRanking([]));
+    .then(data => {
+      statsFarmAlmanacData = data;
+      renderStatsAlmanac(data);
+    })
+    .catch(() => {
+      statsFarmAlmanacData = { summary: null, days: [] };
+      renderStatsAlmanac(statsFarmAlmanacData);
+    });
 }
 
 function renderPieChart(visits) {
-  const canvas = document.getElementById("statsPieCanvas");
-  const legend = document.getElementById("statsPieLegend");
+  const canvas = document.getElementById("sidebarStatsPieCanvas");
+  const legend = document.getElementById("sidebarStatsPieLegend");
   if (!canvas || !legend) return;
   const ctx = canvas.getContext("2d");
   const w = canvas.width, h = canvas.height;
-  const cx = w / 2, cy = h / 2, r = Math.min(cx, cy) - 30;
+  const cx = w / 2, cy = h / 2, r = Math.min(cx, cy) - 20;
   ctx.clearRect(0, 0, w, h);
 
   if (!visits.length) {
     ctx.fillStyle = "#999";
-    ctx.font = "14px sans-serif";
+    ctx.font = "12px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(t("statsNoData"), cx, cy);
     legend.innerHTML = "";
@@ -6315,13 +6570,12 @@ function renderPieChart(visits) {
   const total = visits.reduce((s, v) => s + v.count, 0);
   let startAngle = -Math.PI / 2;
 
-  const usedSpots = spots.filter(s => visits.find(v => v._id === s.id));
   const allEntries = visits.map(v => {
     const spot = spots.find(s => s.id === v._id);
     return { name: spot ? spotT(spot, "name") : v._id, count: v.count };
   });
 
-  let legendHTML = `<div class="stats-pie-total"><strong>${total}</strong> ${t("statsVisits")}</div>`;
+  let legendHTML = `<div class="sidebar-stats-pie-total"><strong>${total}</strong> ${t("statsVisits")}</div>`;
   allEntries.forEach((entry, i) => {
     const sliceAngle = (entry.count / total) * 2 * Math.PI;
     const color = PIE_COLORS[i % PIE_COLORS.length];
@@ -6333,29 +6587,29 @@ function renderPieChart(visits) {
     ctx.fillStyle = color;
     ctx.fill();
     ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    if (sliceAngle > 0.15) {
+    if (sliceAngle > 0.18) {
       const midAngle = startAngle + sliceAngle / 2;
       const tx = cx + Math.cos(midAngle) * (r * 0.65);
       const ty = cy + Math.sin(midAngle) * (r * 0.65);
       ctx.fillStyle = "#fff";
-      ctx.font = "bold 13px sans-serif";
+      ctx.font = "bold 11px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(entry.count, tx, ty);
     }
 
     startAngle += sliceAngle;
-    legendHTML += `<div class="stats-pie-legend-item"><span class="stats-pie-dot" style="background:${color}"></span><span class="stats-pie-label">${entry.name}</span><span class="stats-pie-val">${entry.count}</span></div>`;
+    legendHTML += `<div class="sidebar-stats-pie-legend-item"><span class="sidebar-stats-pie-dot" style="background:${color}"></span><span class="sidebar-stats-pie-label">${entry.name}</span><span class="sidebar-stats-pie-val">${entry.count}</span></div>`;
   });
 
   legend.innerHTML = legendHTML;
 }
 
 function renderRanking(visits) {
-  const list = document.getElementById("statsRankList");
+  const list = document.getElementById("sidebarStatsRankList");
   if (!list) return;
 
   if (!visits.length) {
@@ -6369,15 +6623,165 @@ function renderRanking(visits) {
     const name = spot ? spotT(spot, "name") : v._id;
     const pct = Math.round((v.count / maxCount) * 100);
     const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}`;
-    return `<div class="stats-rank-item">
-      <span class="stats-rank-pos">${medal}</span>
-      <div class="stats-rank-info">
-        <div class="stats-rank-name">${name}</div>
-        <div class="stats-rank-bar-wrap"><div class="stats-rank-bar" style="width:${pct}%"></div></div>
+    return `<div class="sidebar-stats-rank-item">
+      <div class="sidebar-stats-rank-top">
+        <span class="sidebar-stats-rank-index">${medal}</span>
+        <strong>${escapeHtml(name)}</strong>
+        <em>${v.count} ${t("statsVisits")}</em>
       </div>
-      <span class="stats-rank-count">${v.count} ${t("statsVisits")}</span>
+      <div class="sidebar-stats-rank-bar"><span style="width:${pct}%"></span></div>
     </div>`;
   }).join("");
+}
+
+function renderStatsFarm(visits) {
+  const track = document.getElementById("statsFarmTrackStats");
+  const badge = document.getElementById("statsFarmBadgeStats");
+  if (!track || !badge) return;
+
+  syncStatsFarmCopy();
+  const copy = getStatsFarmLocale();
+
+  if (!visits.length) {
+    badge.textContent = copy.empty;
+    badge.dataset.hasLeader = "";
+    track.innerHTML = `<div class="stats-farm-empty">${t("statsNoData")}</div>`;
+    return;
+  }
+
+  const topVisits = Math.max(...visits.map((item) => Number(item.count || 0)), 1);
+  const laneGlyphs = ["🐎", "🦌", "🐤", "🐖", "🐇"];
+  const laneIcons = ["🐎", "🦌", "🐤", "🐖", "🐇", "🦊"];
+  const leaderSpot = spots.find((spot) => spot.id === visits[0]._id);
+  const leaderName = leaderSpot ? spotT(leaderSpot, "name") : visits[0]._id;
+  badge.textContent = `${copy.leader}${leaderName}`;
+  badge.dataset.hasLeader = "true";
+
+  track.innerHTML = visits.slice(0, 5).map((item, index) => {
+    const spot = spots.find((entry) => entry.id === item._id);
+    const name = spot ? spotT(spot, "name") : item._id;
+    const count = Number(item.count || 0);
+    const progress = Math.max(12, Math.round((count / topVisits) * 88));
+    const laneTone = index % 2 === 0 ? "is-soil" : "is-wheat";
+    const icon = laneGlyphs[index % laneGlyphs.length];
+    return `
+      <div class="stats-farm-lane ${laneTone}" style="--lane-delay:${index * 90}ms; --lane-progress:${progress}%;">
+        <div class="stats-farm-finish">${copy.finish}</div>
+        <div class="stats-farm-lane-line"></div>
+        <div class="stats-farm-runner" style="left: calc(${progress}% - 28px); --runner-delay:${index * 120}ms;">
+          <div class="stats-farm-nameplate">
+            <span class="stats-farm-rank">#${index + 1}</span>
+            <strong>${escapeHtml(name)}</strong>
+            <em>${count} ${copy.visits}</em>
+          </div>
+          <span class="stats-farm-animal" aria-hidden="true">${icon}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function formatStatsFarmDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(`${dateString}T00:00:00`);
+  return date.toLocaleDateString(currentLang === "zh" ? "zh-CN" : "en-US", {
+    month: currentLang === "zh" ? "numeric" : "short",
+    day: "numeric"
+  });
+}
+
+function buildStatsAlmanacMonths(days) {
+  const groups = [];
+  days.forEach((item) => {
+    const date = new Date(`${item.date}T00:00:00`);
+    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    let group = groups[groups.length - 1];
+    if (!group || group.key !== monthKey) {
+      group = { key: monthKey, month: date.getMonth() + 1, days: [] };
+      groups.push(group);
+    }
+    group.days.push(item);
+  });
+  return groups;
+}
+
+function renderStatsAlmanac(data) {
+  const summaryEl = document.getElementById("statsAlmanacSummary");
+  const gridEl = document.getElementById("statsAlmanacGrid");
+  if (!summaryEl || !gridEl) return;
+
+  const copy = getStatsFarmLocale();
+  const user = getCurrentUser();
+  if (!user) {
+    summaryEl.innerHTML = `<div class="stats-almanac-empty">${copy.loginPrompt}</div>`;
+    gridEl.innerHTML = "";
+    return;
+  }
+
+  const summary = data?.summary || {};
+  const days = Array.isArray(data?.days) ? data.days : [];
+  const bestDay = summary.bestDay || null;
+  const bestSpot = bestDay?.spotId ? spots.find((item) => item.id === bestDay.spotId) : null;
+  const bestSpotName = bestSpot ? spotT(bestSpot, "name") : copy.noBestDay;
+  const registeredAtText = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString(currentLang === "zh" ? "zh-CN" : "en-US")
+    : copy.cultivationSuffix;
+
+  summaryEl.innerHTML = `
+    <article class="stats-almanac-metric">
+      <span>${copy.cultivationLabel}</span>
+      <strong>${Number(summary.cultivationDays || 0)} <em>${copy.dayUnit}</em></strong>
+      <p>${registeredAtText}</p>
+    </article>
+    <article class="stats-almanac-metric">
+      <span>${copy.activeDaysLabel}</span>
+      <strong>${Number(summary.activeDays || 0)} <em>${copy.dayUnit}</em></strong>
+      <p>${copy.activeSuffix}</p>
+    </article>
+    <article class="stats-almanac-metric">
+      <span>${copy.bestDayLabel}</span>
+      <strong>${Number(bestDay?.count || 0)} <em>${copy.visits}</em></strong>
+      <p>${bestDay ? `${formatStatsFarmDate(bestDay.date)} · ${escapeHtml(bestSpotName)}` : copy.noBestDay}</p>
+    </article>
+    <article class="stats-almanac-metric">
+      <span>${copy.currentStreakLabel}</span>
+      <strong>${Number(summary.currentStreak || 0)} <em>${copy.dayUnit}</em></strong>
+      <p>${copy.streakSuffix}</p>
+    </article>
+    <article class="stats-almanac-metric">
+      <span>${copy.longestStreakLabel}</span>
+      <strong>${Number(summary.longestStreak || 0)} <em>${copy.dayUnit}</em></strong>
+      <p>${copy.longestSuffix}</p>
+    </article>
+  `;
+
+  if (!days.length) {
+    gridEl.innerHTML = `<div class="stats-almanac-empty">${copy.noBestDay}</div>`;
+    return;
+  }
+
+  const maxCount = Math.max(...days.map((item) => Number(item.count || 0)), 1);
+  const monthGroups = buildStatsAlmanacMonths(days);
+  gridEl.innerHTML = monthGroups.map((group) => `
+    <div class="stats-almanac-month">
+      <div class="stats-almanac-month-label">${group.month}${copy.monthSuffix}</div>
+      <div class="stats-almanac-month-row">
+        ${group.days.map((item) => {
+          const spot = item.spotId ? spots.find((entry) => entry.id === item.spotId) : null;
+          const spotName = spot ? spotT(spot, "name") : copy.noVisitDay;
+          const count = Number(item.count || 0);
+          const intensity = count ? Math.max(1, Math.ceil((count / maxCount) * 4)) : 0;
+          const isBest = bestDay && bestDay.date === item.date && bestDay.spotId === item.spotId;
+          return `
+            <div class="stats-almanac-cell ${count ? `is-level-${intensity}` : "is-empty"} ${isBest ? "is-best" : ""}" title="${escapeHtml(`${formatStatsFarmDate(item.date)} · ${spotName}${count ? ` · ${count} ${copy.visits}` : ""}`)}">
+              <span class="stats-almanac-sprout">${count ? "苗" : ""}</span>
+              <strong>${new Date(`${item.date}T00:00:00`).getDate()}</strong>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `).join("");
 }
 
 // Stats mode button listeners
@@ -6428,6 +6832,200 @@ if (typeof map !== "undefined") {
     }
     setTimeout(() => map.invalidateSize(), 350);
   });
+}
+
+// ===== 景点大农场 =====
+const FARM_EMOJIS = ["🧑‍🌾","🐔","🐷","🐮","🐑","🐰","🐴","🐶"];
+const CROP_CLASSES = ["farm-race-crop-1","farm-race-crop-2","farm-race-crop-3","farm-race-crop-4","farm-race-crop-5","farm-race-crop-6","farm-race-crop-7","farm-race-crop-8"];
+let farmRaceInterval = null;
+
+function loadFarmRace() {
+  fetch(apiUrl("/stats/ranking"))
+    .then(r => r.json())
+    .then(data => {
+      const visits = (data.visits || []).slice(0, 8);
+      if (!visits.length) {
+        const lanes = document.getElementById("farmRaceLanes");
+        if (lanes) lanes.innerHTML = `<div style="padding:40px;text-align:center;color:#fff;font-size:14px;">${t("statsNoData")}</div>`;
+        return;
+      }
+      renderFarmRace(visits);
+    })
+    .catch(() => {});
+}
+
+function renderFarmRace(visits) {
+  const scene = document.getElementById("farmRaceScene");
+  const lanesEl = document.getElementById("farmRaceLanes");
+  const marquee = document.getElementById("farmRaceMarquee");
+  const legend = document.getElementById("farmRaceLegend");
+  if (!scene || !lanesEl) return;
+
+  const maxVisits = Math.max(...visits.map(v => v.visits || v.count || 0), 1);
+
+  // Draw sky elements on canvas
+  const canvas = document.getElementById("farmRaceCanvas");
+  if (canvas) {
+    canvas.width = scene.offsetWidth;
+    canvas.height = scene.offsetHeight;
+    const ctx = canvas.getContext("2d");
+    const skyH = scene.offsetHeight * 0.32;
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, skyH);
+    skyGrad.addColorStop(0, "#5BA3D9");
+    skyGrad.addColorStop(0.6, "#87CEEB");
+    skyGrad.addColorStop(1, "#B5E4F7");
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, canvas.width, skyH);
+
+    // Sun
+    ctx.beginPath();
+    ctx.arc(canvas.width - 60, 30, 22, 0, Math.PI * 2);
+    ctx.fillStyle = "#FFD54F";
+    ctx.fill();
+    ctx.shadowColor = "rgba(255,183,0,0.5)";
+    ctx.shadowBlur = 20;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Clouds
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    drawCloud(ctx, canvas.width * 0.2, 18, 30);
+    drawCloud(ctx, canvas.width * 0.55, 28, 22);
+    drawCloud(ctx, canvas.width * 0.8, 14, 26);
+
+    // Ground
+    const groundY = skyH;
+    const groundGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+    groundGrad.addColorStop(0, "#5a8f3c");
+    groundGrad.addColorStop(0.12, "#4a7a2e");
+    groundGrad.addColorStop(0.15, "#6B4226");
+    groundGrad.addColorStop(1, "#5a3620");
+    ctx.fillStyle = groundGrad;
+    ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+
+    // Fence
+    const fenceY = groundY + (canvas.height - groundY) * 0.08;
+    ctx.strokeStyle = "#A0782C";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, fenceY);
+    ctx.lineTo(canvas.width, fenceY);
+    ctx.stroke();
+    ctx.strokeStyle = "#6B5210";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, fenceY + 6);
+    ctx.lineTo(canvas.width, fenceY + 6);
+    ctx.stroke();
+
+    // Fence posts
+    ctx.fillStyle = "#8B6914";
+    for (let x = 20; x < canvas.width; x += 40) {
+      ctx.fillRect(x - 2, fenceY - 6, 4, 14);
+    }
+
+    // Trees
+    drawTree(ctx, canvas.width * 0.04, groundY - 5, 24);
+    drawTree(ctx, canvas.width * 0.09, groundY - 2, 18);
+    drawTree(ctx, canvas.width * 0.92, groundY - 4, 22);
+    drawTree(ctx, canvas.width * 0.97, groundY - 1, 16);
+  }
+
+  // Render lanes
+  lanesEl.innerHTML = "";
+  visits.forEach((v, i) => {
+    const count = v.visits || v.count || 0;
+    const pct = Math.max((count / maxVisits) * 88, 8);
+    const emoji = FARM_EMOJIS[i % FARM_EMOJIS.length];
+    const cropClass = CROP_CLASSES[i % CROP_CLASSES.length];
+    const rankCls = i < 3 ? `rank-${i+1}` : "rank-other";
+    const spot = spots.find(s => s.id === v._id);
+    const name = spot ? spotT(spot, "name") : (v._id || v.name);
+
+    const lane = document.createElement("div");
+    lane.className = "farm-race-lane";
+    lane.innerHTML = `
+      <div class="farm-race-track">
+        <div class="farm-race-soil"></div>
+        <div class="farm-race-crop ${cropClass}" style="width:0%"></div>
+      </div>
+      <div class="farm-race-runner" style="left:0%">
+        <div class="farm-race-character">${emoji}</div>
+        <div class="farm-race-label">
+          <span class="rank-badge ${rankCls}">${i+1}</span>
+          <span class="spot-name">${escapeHtml(name)}</span>
+          <span class="visit-count">${count.toLocaleString()}${t("statsVisits")}</span>
+        </div>
+      </div>
+      <div class="farm-race-flag">${i === 0 ? "🚩" : ""}</div>
+      <div class="farm-race-finish"></div>
+    `;
+    lanesEl.appendChild(lane);
+
+    setTimeout(() => {
+      const crop = lane.querySelector(".farm-race-crop");
+      const runner = lane.querySelector(".farm-race-runner");
+      if (crop) crop.style.width = pct + "%";
+      if (runner) runner.style.left = Math.min(pct - 4, 84) + "%";
+    }, 100 + i * 80);
+  });
+
+  // Marquee
+  if (marquee && visits.length > 0) {
+    const leader = visits[0];
+    const leaderSpot = spots.find(s => s.id === leader._id);
+    const leaderName = leaderSpot ? spotT(leaderSpot, "name") : (leader._id || leader.name);
+    const leaderCount = (leader.visits || leader.count || 0).toLocaleString();
+    marquee.textContent = `🏆 ${t("farmRaceLeader")}：${leaderName} — ${leaderCount}${t("statsVisits")}  🌾  ${t("farmRaceGo")}`;
+  }
+
+  // Legend
+  if (legend) {
+    legend.innerHTML = visits.map((v, i) => {
+      const spot = spots.find(s => s.id === v._id);
+      const name = spot ? spotT(spot, "name") : (v._id || v.name);
+      const count = v.visits || v.count || 0;
+      return `
+        <div class="farm-race-legend-item">
+          <span class="emoji">${FARM_EMOJIS[i % FARM_EMOJIS.length]}</span>
+          <span class="name">${escapeHtml(name)}</span>
+          <span class="visits">(${count.toLocaleString()})</span>
+        </div>
+      `;
+    }).join("");
+  }
+}
+
+function drawCloud(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.6, 0, Math.PI * 2);
+  ctx.arc(x + size * 0.5, y - size * 0.2, size * 0.45, 0, Math.PI * 2);
+  ctx.arc(x + size, y, size * 0.5, 0, Math.PI * 2);
+  ctx.arc(x + size * 0.5, y + size * 0.15, size * 0.4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawTree(ctx, x, y, size) {
+  ctx.fillStyle = "#6B4226";
+  ctx.fillRect(x - size * 0.1, y - size * 0.5, size * 0.2, size * 0.6);
+  ctx.fillStyle = "#2E7D32";
+  ctx.beginPath();
+  ctx.arc(x, y - size * 0.8, size * 0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#388E3C";
+  ctx.beginPath();
+  ctx.arc(x - size * 0.25, y - size * 0.6, size * 0.35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + size * 0.3, y - size * 0.65, size * 0.3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function startFarmRaceAutoRefresh() {
+  if (farmRaceInterval) clearInterval(farmRaceInterval);
+  farmRaceInterval = setInterval(() => {
+    if (activeModule === "stats") loadStatsData();
+  }, 30000);
 }
 
 init();

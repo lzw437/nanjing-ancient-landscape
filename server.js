@@ -1688,6 +1688,98 @@ app.get("/api/stats/farm-almanac", requireAuth, async (req, res) => {
   }
 });
 
+app.get("/api/stats/monthly-report", requireAuth, async (req, res) => {
+  try {
+    if (!visitsCollection) {
+      return res.json({
+        month: "",
+        monthDays: 0,
+        topSpotId: null,
+        topSpotCount: 0,
+        monthLongestStreak: 0,
+        totalVisits: 0
+      });
+    }
+
+    const now = new Date();
+    let year, month;
+    if (req.query.month) {
+      const parts = String(req.query.month).split("-").map(Number);
+      year = parts[0];
+      month = parts[1];
+    } else {
+      year = now.getFullYear();
+      month = now.getMonth() + 1;
+    }
+    if (!year || !month || month < 1 || month > 12) {
+      return res.status(400).json({ message: "月份格式错误，应为 YYYY-MM。" });
+    }
+
+    const monthStart = new Date(Date.UTC(year, month - 1, 1));
+    const monthEnd = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
+
+    const results = await visitsCollection.aggregate([
+      { $match: { userId: req.user.id, timestamp: { $gte: monthStart, $lte: monthEnd } } },
+      {
+        $group: {
+          _id: {
+            day: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp", timezone: "Asia/Shanghai" } },
+            spotId: "$spotId"
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.day": 1, count: -1 } }
+    ]).toArray();
+
+    const dayChampionMap = new Map();
+    const spotCounts = new Map();
+    for (const item of results) {
+      const dayKey = item?._id?.day;
+      const spotId = item?._id?.spotId;
+      if (!dayKey || !spotId) continue;
+      if (!dayChampionMap.has(dayKey)) {
+        dayChampionMap.set(dayKey, { date: dayKey, spotId, count: Number(item.count || 0) });
+      }
+      spotCounts.set(spotId, (spotCounts.get(spotId) || 0) + Number(item.count || 0));
+    }
+
+    let topSpotId = null;
+    let topSpotCount = 0;
+    for (const [spotId, count] of spotCounts.entries()) {
+      if (count > topSpotCount) {
+        topSpotCount = count;
+        topSpotId = spotId;
+      }
+    }
+
+    const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    let longest = 0;
+    let streak = 0;
+    for (let d = 1; d <= daysInMonth; d += 1) {
+      const dayKey = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      if (dayChampionMap.has(dayKey)) {
+        streak += 1;
+        if (streak > longest) longest = streak;
+      } else {
+        streak = 0;
+      }
+    }
+
+    res.json({
+      month: `${year}-${String(month).padStart(2, "0")}`,
+      monthDays: dayChampionMap.size,
+      topSpotId,
+      topSpotCount,
+      monthLongestStreak: longest,
+      totalVisits: results.reduce((sum, item) => sum + Number(item.count || 0), 0)
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "获取月报失败" });
+  }
+});
+
 app.post("/api/location-records", async (req, res) => {
   try {
     if (!locationRecordsCollection) {

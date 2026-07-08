@@ -268,6 +268,23 @@ const i18n = {
     farmRaceVisits: "次访问",
     farmRaceLeader: "领跑",
     farmRaceGo: "冲啊！",
+    // 农事历月报
+    monthlyReportEyebrow: "MONTHLY · 农事历月报",
+    monthlyReportTitle: "农事历月报",
+    monthlyReportHint: "每月自动生成一句总结，记录你这个月的开垦与打卡故事。",
+    monthlyReportMonthLabel: "{year} 年 {month} 月",
+    monthlyReportDays: "开垦天数",
+    monthlyReportTopSpot: "最常访问",
+    monthlyReportStreak: "最长连续打卡",
+    monthlyReportVisits: "本月访问",
+    monthlyReportEmpty: "本月还没有开垦记录，去地图逛逛吧～",
+    monthlyReportLogin: "登录后可查看你的专属月报",
+    monthlyReportShare: "分享卡片",
+    monthlyReportCopy: "复制文案",
+    monthlyReportSaveImg: "保存图片",
+    monthlyReportCopied: "文案已复制",
+    monthlyReportShared: "月报已分享",
+    monthlyReportViewPast: "查看往期",
     // 装饰图鉴
     decoGuideTitle: "农场装饰图鉴",
     decoGuideHint: "访问不同类别的景点，解锁对应专属装饰摆件。",
@@ -548,6 +565,23 @@ const i18n = {
     farmRaceVisits: "visits",
     farmRaceLeader: "Leading",
     farmRaceGo: "Go!",
+    // Monthly Report
+    monthlyReportEyebrow: "MONTHLY · Farm Almanac",
+    monthlyReportTitle: "Monthly Farm Report",
+    monthlyReportHint: "Auto-generated each month, a one-line summary of your cultivation and check-ins.",
+    monthlyReportMonthLabel: "{month}/{year}",
+    monthlyReportDays: "Cultivated",
+    monthlyReportTopSpot: "Top Spot",
+    monthlyReportStreak: "Longest Streak",
+    monthlyReportVisits: "Month Visits",
+    monthlyReportEmpty: "No cultivation yet this month — go explore the map!",
+    monthlyReportLogin: "Log in to view your personal report",
+    monthlyReportShare: "Share Card",
+    monthlyReportCopy: "Copy Text",
+    monthlyReportSaveImg: "Save Image",
+    monthlyReportCopied: "Text copied",
+    monthlyReportShared: "Report shared",
+    monthlyReportViewPast: "Past months",
     // Decoration album
     decoGuideTitle: "Farm Decoration Album",
     decoGuideHint: "Visit different categories of sites to unlock their themed decorations.",
@@ -6445,6 +6479,7 @@ function loadStatsData() {
   fetchStatsPie(currentStatsMode);
   fetchStatsFarmAlmanac();
   fetchStatsAchievements();
+  fetchStatsMonthlyReport();
   renderDecoGuide();
 }
 
@@ -6745,6 +6780,319 @@ function fetchStatsAchievements() {
       statsAchievementsData = { summary: { unlocked: 0, total: 0 }, badges: [] };
       renderStatsAchievementsView(statsAchievementsData);
     });
+}
+
+let statsMonthlyReportData = null;
+let statsMonthlySelectedMonth = null;
+
+function getMonthlyReportMonths() {
+  const now = new Date();
+  let startYear = now.getFullYear();
+  let startMonth = now.getMonth() + 1;
+  if (statsFarmAlmanacData && statsFarmAlmanacData.summary && statsFarmAlmanacData.summary.createdAt) {
+    const created = new Date(statsFarmAlmanacData.summary.createdAt);
+    startYear = created.getFullYear();
+    startMonth = created.getMonth() + 1;
+  }
+  const months = [];
+  let y = startYear;
+  let m = startMonth;
+  while (y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth() + 1)) {
+    months.push(`${y}-${String(m).padStart(2, "0")}`);
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+  }
+  if (!months.length) {
+    months.push(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`);
+  }
+  return months.reverse();
+}
+
+function formatMonthlyLabel(monthKey) {
+  if (!monthKey) return "";
+  const [y, mo] = monthKey.split("-");
+  return t("monthlyReportMonthLabel").replace("{year}", y).replace("{month}", Number(mo));
+}
+
+function buildMonthlySentence(data, topSpotName) {
+  if (currentLang === "zh") {
+    return `你本月开垦 ${data.monthDays} 天，最常访问${topSpotName}，最长连续 ${data.monthLongestStreak} 天打卡。`;
+  }
+  return `This month you cultivated ${data.monthDays} days, visited ${topSpotName} most, with a ${data.monthLongestStreak}-day longest streak.`;
+}
+
+function fetchStatsMonthlyReport() {
+  const section = document.getElementById("statsMonthlyReport");
+  if (!section) return;
+  const token = getAuthToken();
+
+  const select = document.getElementById("statsMonthlyMonthSelect");
+  if (select && (!statsMonthlySelectedMonth || !select.dataset.filled)) {
+    const months = getMonthlyReportMonths();
+    statsMonthlySelectedMonth = months[0];
+  }
+
+  if (!token) {
+    statsMonthlyReportData = null;
+    renderStatsMonthlyReport(null);
+    return;
+  }
+
+  if (!statsMonthlySelectedMonth) {
+    const now = new Date();
+    statsMonthlySelectedMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  fetch(apiUrl(`/stats/monthly-report?month=${statsMonthlySelectedMonth}`), {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then((r) => r.json())
+    .then((data) => {
+      statsMonthlyReportData = data;
+      renderStatsMonthlyReport(data);
+    })
+    .catch(() => {
+      statsMonthlyReportData = null;
+      renderStatsMonthlyReport(null);
+    });
+}
+
+function renderStatsMonthlyReport(data) {
+  const section = document.getElementById("statsMonthlyReport");
+  if (!section) return;
+
+  const eyebrow = document.getElementById("statsMonthlyEyebrow");
+  const title = document.getElementById("statsMonthlyTitle");
+  const hint = document.getElementById("statsMonthlyHint");
+  const select = document.getElementById("statsMonthlyMonthSelect");
+  const cardEl = document.getElementById("statsMonthlyCard");
+  const actionsEl = document.getElementById("statsMonthlyActions");
+
+  if (currentLang === "zh") {
+    if (eyebrow) eyebrow.textContent = t("monthlyReportEyebrow");
+    if (title) title.textContent = t("monthlyReportTitle");
+    if (hint) hint.textContent = t("monthlyReportHint");
+  } else {
+    if (eyebrow) eyebrow.textContent = t("monthlyReportEyebrow");
+    if (title) title.textContent = t("monthlyReportTitle");
+    if (hint) hint.textContent = t("monthlyReportHint");
+  }
+
+  const months = getMonthlyReportMonths();
+  if (select) {
+    if (!select.dataset.filled) {
+      select.innerHTML = months.map((m) => `<option value="${m}">${formatMonthlyLabel(m)}</option>`).join("");
+      select.addEventListener("change", () => {
+        statsMonthlySelectedMonth = select.value;
+        fetchStatsMonthlyReport();
+      });
+      select.dataset.filled = "true";
+    } else {
+      Array.from(select.options).forEach((opt) => {
+        opt.textContent = formatMonthlyLabel(opt.value);
+      });
+    }
+    select.value = statsMonthlySelectedMonth || months[0];
+  }
+
+  if (!cardEl || !actionsEl) return;
+
+  const user = getCurrentUser();
+  if (!user) {
+    cardEl.innerHTML = `<div class="stats-monthly-empty">${t("monthlyReportLogin")}</div>`;
+    actionsEl.innerHTML = "";
+    return;
+  }
+  if (!data || !data.month || data.monthDays === 0) {
+    cardEl.innerHTML = `<div class="stats-monthly-empty">${t("monthlyReportEmpty")}</div>`;
+    actionsEl.innerHTML = "";
+    return;
+  }
+
+  const spot = spots.find((s) => s.id === data.topSpotId);
+  const topSpotName = spot ? spotT(spot, "name") : (data.topSpotId || "—");
+  const sentence = buildMonthlySentence(data, topSpotName);
+
+  cardEl.innerHTML = `
+    <div class="stats-monthly-card-inner">
+      <div class="stats-monthly-card-month">${formatMonthlyLabel(data.month)}</div>
+      <p class="stats-monthly-sentence">${escapeHtml(sentence)}</p>
+      <div class="stats-monthly-stats">
+        <div class="stats-monthly-stat"><span class="stats-monthly-stat-val">${data.monthDays}</span><span class="stats-monthly-stat-label">${t("monthlyReportDays")}</span></div>
+        <div class="stats-monthly-stat"><span class="stats-monthly-stat-val stats-monthly-stat-spot">${escapeHtml(topSpotName)}</span><span class="stats-monthly-stat-label">${t("monthlyReportTopSpot")}</span></div>
+        <div class="stats-monthly-stat"><span class="stats-monthly-stat-val">${data.monthLongestStreak}</span><span class="stats-monthly-stat-label">${t("monthlyReportStreak")}</span></div>
+        <div class="stats-monthly-stat"><span class="stats-monthly-stat-val">${data.totalVisits}</span><span class="stats-monthly-stat-label">${t("monthlyReportVisits")}</span></div>
+      </div>
+    </div>`;
+
+  actionsEl.innerHTML = `
+    <button type="button" id="statsMonthlyShare" class="stats-monthly-btn primary">📤 ${t("monthlyReportShare")}</button>
+    <button type="button" id="statsMonthlyCopy" class="stats-monthly-btn">📋 ${t("monthlyReportCopy")}</button>
+    <button type="button" id="statsMonthlySave" class="stats-monthly-btn">🖼️ ${t("monthlyReportSaveImg")}</button>`;
+
+  document.getElementById("statsMonthlyShare").addEventListener("click", () => shareMonthlyReportCard(sentence, topSpotName, data));
+  document.getElementById("statsMonthlyCopy").addEventListener("click", () => {
+    copyTextSafe(sentence).then(() => showToast(t("monthlyReportCopied")));
+  });
+  document.getElementById("statsMonthlySave").addEventListener("click", () => saveMonthlyReportImage(sentence, topSpotName, data));
+}
+
+function copyTextSafe(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+
+function fallbackCopy(text) {
+  return new Promise((resolve) => {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    } catch (e) { /* ignore */ }
+    resolve();
+  });
+}
+
+function showToast(message) {
+  let toastEl = document.getElementById("monthlyReportToast");
+  if (!toastEl) {
+    toastEl = document.createElement("div");
+    toastEl.id = "monthlyReportToast";
+    toastEl.className = "monthly-report-toast";
+    document.body.appendChild(toastEl);
+  }
+  toastEl.textContent = message;
+  toastEl.classList.add("show");
+  clearTimeout(toastEl.dataset.timer);
+  toastEl.dataset.timer = setTimeout(() => toastEl.classList.remove("show"), 2000);
+}
+
+function buildMonthlyReportCanvas(sentence, topSpotName, data) {
+  const scale = 2;
+  const width = 420;
+  const height = 320;
+  const canvas = document.createElement("canvas");
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(scale, scale);
+
+  const grad = ctx.createLinearGradient(0, 0, width, height);
+  grad.addColorStop(0, "#e79a2b");
+  grad.addColorStop(0.55, "#c8761a");
+  grad.addColorStop(1, "#a85712");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  roundRect(ctx, 20, 20, width - 40, height - 40, 18);
+  ctx.fill();
+
+  ctx.fillStyle = "#a85712";
+  ctx.font = "bold 16px sans-serif";
+  ctx.textBaseline = "top";
+  ctx.fillText("🌾 " + t("monthlyReportTitle"), 40, 42);
+
+  ctx.fillStyle = "#b08a55";
+  ctx.font = "13px sans-serif";
+  ctx.fillText(formatMonthlyLabel(data.month), 40, 66);
+
+  ctx.fillStyle = "#3d2606";
+  ctx.font = "bold 18px sans-serif";
+  wrapText(ctx, sentence, 40, 100, width - 80, 26);
+
+  const stats = [
+    [data.monthDays, t("monthlyReportDays")],
+    [topSpotName, t("monthlyReportTopSpot")],
+    [data.monthLongestStreak, t("monthlyReportStreak")],
+    [data.totalVisits, t("monthlyReportVisits")]
+  ];
+  let sx = 40;
+  const sy = height - 80;
+  stats.forEach(([val, label]) => {
+    ctx.fillStyle = "#a85712";
+    ctx.font = "bold 18px sans-serif";
+    const valText = String(val);
+    ctx.fillText(valText, sx, sy);
+    const valW = ctx.measureText(valText).width;
+    ctx.fillStyle = "#b08a55";
+    ctx.font = "12px sans-serif";
+    ctx.fillText(label, sx, sy + 24);
+    sx += Math.max(valW, ctx.measureText(label).width) + 22;
+  });
+
+  return canvas;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const chars = String(text).split("");
+  let line = "";
+  let yy = y;
+  for (const ch of chars) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line, x, yy);
+      line = ch;
+      yy += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  if (line) ctx.fillText(line, x, yy);
+}
+
+async function shareMonthlyReportCard(sentence, topSpotName, data) {
+  try {
+    const canvas = buildMonthlyReportCanvas(sentence, topSpotName, data);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("canvas failed");
+    const file = new File([blob], `monthly-report-${data.month}.png`, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: t("monthlyReportTitle"), text: sentence });
+      showToast(t("monthlyReportShared"));
+      return;
+    }
+    if (navigator.share) {
+      await navigator.share({ title: t("monthlyReportTitle"), text: sentence });
+      showToast(t("monthlyReportShared"));
+      return;
+    }
+    saveMonthlyReportImage(sentence, topSpotName, data);
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+    saveMonthlyReportImage(sentence, topSpotName, data);
+  }
+}
+
+function saveMonthlyReportImage(sentence, topSpotName, data) {
+  const canvas = buildMonthlyReportCanvas(sentence, topSpotName, data);
+  const url = canvas.toDataURL("image/png");
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `monthly-report-${data.month}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function renderPieChart(visits) {

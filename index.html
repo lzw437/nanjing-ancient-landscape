@@ -392,6 +392,19 @@
               <div class="stats-farm-track" id="statsFarmTrackStats"></div>
             </div>
           </div>
+          <section class="stats-deco-guide" id="statsDecoGuide" aria-label="农场装饰图鉴">
+            <div class="stats-deco-head">
+              <div>
+                <p class="stats-deco-eyebrow">ALBUM · 装饰图鉴</p>
+                <h3 data-i18n="decoGuideTitle">农场装饰图鉴</h3>
+                <p data-i18n="decoGuideHint">访问不同类别的景点，解锁对应专属装饰摆件。</p>
+              </div>
+              <div class="stats-deco-count" id="statsDecoCount"></div>
+            </div>
+            <div class="stats-deco-grid" id="statsDecoGrid"></div>
+            <p class="stats-deco-board-hint" data-i18n="decoBoardHint">点击已解锁的摆件，即可摆放到上方农场场景中；在场景里按住可自由拖动，点 × 移除。点“清空布置”可还原。</p>
+            <button type="button" id="statsDecoClear" class="stats-deco-clear" data-i18n="decoClear">清空布置</button>
+          </section>
           <section class="stats-pets" id="statsPetNursery" aria-label="景点宠物养成"></section>
           <section class="stats-achievements" id="statsAchievements">
             <div class="stats-achievements-head">
@@ -559,6 +572,14 @@
         <button type="button" class="nav-recenter-btn" id="navRecenterBtn" title="回到当前位置">📍</button>
         <button type="button" class="nav-start-btn" id="navStartBtn" disabled>开始导航</button>
       </div>
+    </div>
+  </div>
+
+  <div class="mystery-modal" id="mysteryModal" style="display:none;">
+    <div class="mystery-modal-backdrop" id="mysteryModalBackdrop"></div>
+    <div class="mystery-modal-card">
+      <button type="button" class="mystery-modal-close" id="mysteryModalClose">×</button>
+      <div class="mystery-modal-body" id="mysteryModalBody"></div>
     </div>
   </div>
 

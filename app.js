@@ -268,6 +268,22 @@ const i18n = {
     farmRaceVisits: "次访问",
     farmRaceLeader: "领跑",
     farmRaceGo: "冲啊！",
+    // 装饰图鉴
+    decoGuideTitle: "农场装饰图鉴",
+    decoGuideHint: "访问不同类别的景点，解锁对应专属装饰摆件。",
+    decoUnlocked: "已解锁 {n}/{t}",
+    decoLocked: "未解锁",
+    decoBoardTitle: "我的农场布置",
+    decoBoardHint: "点击已解锁的摆件添加到农场草坪，按住可自由拖动摆放，点 × 移除。",
+    decoClear: "清空布置",
+    // 神秘景点盲盒
+    mysteryTitle: "今日神秘景点",
+    mysterySubtitle: "每天一个盲盒，拆开前只看线索～",
+    mysteryOpen: "拆开盲盒",
+    mysteryRevealTitle: "今日揭晓",
+    mysteryAddRoute: "加入路线",
+    mysteryViewMap: "在地图查看",
+    mysteryOpened: "今日已拆开",
     // 天气
     weatherTab: "天气",
     weatherTitle: "天气查询",
@@ -532,6 +548,22 @@ const i18n = {
     farmRaceVisits: "visits",
     farmRaceLeader: "Leading",
     farmRaceGo: "Go!",
+    // Decoration album
+    decoGuideTitle: "Farm Decoration Album",
+    decoGuideHint: "Visit different categories of sites to unlock their themed decorations.",
+    decoUnlocked: "Unlocked {n}/{t}",
+    decoLocked: "Locked",
+    decoBoardTitle: "My Farm Layout",
+    decoBoardHint: "Tap an unlocked item to add it to the farm lawn. Drag to arrange freely, tap × to remove.",
+    decoClear: "Clear",
+    // Mystery spot blind box
+    mysteryTitle: "Today's Mystery Spot",
+    mysterySubtitle: "A blind box every day — only the clue shows until you open it.",
+    mysteryOpen: "Open the Box",
+    mysteryRevealTitle: "Today's Reveal",
+    mysteryAddRoute: "Add to Route",
+    mysteryViewMap: "View on Map",
+    mysteryOpened: "Opened today",
     // Weather
     weatherTab: "Weather",
     weatherTitle: "Weather",
@@ -2318,6 +2350,26 @@ const LayerSwitcher = L.Control.extend({
 });
 new LayerSwitcher().addTo(map);
 
+const MysteryBoxControl = L.Control.extend({
+  options: { position: "topleft" },
+  onAdd: function () {
+    const container = L.DomUtil.create("div", "mystery-map-control");
+    container.innerHTML = `<button type="button" class="mystery-map-trigger" id="mysteryMapTrigger"><span class="mystery-map-icon">🎁</span><span class="mystery-map-text">景点盲盒</span></button>`;
+    L.DomEvent.disableClickPropagation(container);
+    const trigger = container.querySelector("#mysteryMapTrigger");
+    if (trigger) trigger.addEventListener("click", openMysteryModal);
+    return container;
+  }
+});
+new MysteryBoxControl().addTo(map);
+
+const mysteryModalEl = document.getElementById("mysteryModal");
+const mysteryModalClose = document.getElementById("mysteryModalClose");
+const mysteryModalBackdrop = document.getElementById("mysteryModalBackdrop");
+if (mysteryModalClose) mysteryModalClose.addEventListener("click", closeMysteryModal);
+if (mysteryModalBackdrop) mysteryModalBackdrop.addEventListener("click", closeMysteryModal);
+if (mysteryModalEl) mysteryModalEl.addEventListener("click", (e) => { if (e.target === mysteryModalEl) closeMysteryModal(); });
+
 const markerLayer = L.layerGroup().addTo(map);
 const markerById = new Map();
 
@@ -3093,6 +3145,7 @@ function logout() {
   adminDataLoadingPromise = null;
   closeAuthModal();
   updateAuthView(null);
+  refreshAccountScopedUI();
   switchModule("map");
 }
 
@@ -3106,6 +3159,7 @@ function saveAuth(data) {
   adminDataLoadingPromise = null;
   updateAuthView(data.user);
   loadFavorites();
+  refreshAccountScopedUI();
 }
 
 function saveAdminAuth(data) {
@@ -3120,6 +3174,7 @@ function saveAdminAuth(data) {
   loadUserProfile();
   if (adminModuleBtn) adminModuleBtn.style.display = "";
   preloadAdminData();
+  refreshAccountScopedUI();
 }
 
 async function submitAuth(path, body) {
@@ -3195,7 +3250,11 @@ function recordVisit(spotId) {
       .then((response) => response.ok)
       .catch(() => false);
     addVisitedSpot(spotId);
-    if (wasNewVisit) completeDailyTask("visit");
+    if (wasNewVisit) {
+      completeDailyTask("visit");
+      const s = (typeof spots !== "undefined") ? spots.find(sp => sp.id === spotId) : null;
+      if (s && s.type) unlockDecoType(s.type);
+    }
     if (token) profileLoaded = false;
     latestVisitRequest.finally(() => {
       if (activeModule === "profile") loadAndRenderRecentHistory();
@@ -6386,6 +6445,7 @@ function loadStatsData() {
   fetchStatsPie(currentStatsMode);
   fetchStatsFarmAlmanac();
   fetchStatsAchievements();
+  renderDecoGuide();
 }
 
 function getStatsFarmText() {
@@ -6531,6 +6591,7 @@ function setupStatsFarmCard() {
         <span class="stats-windmill"><i></i><i></i><i></i><i></i></span>
       </div>
       <div class="stats-farm-track" id="statsFarmTrackStats"></div>
+      <div class="stats-farm-deco-layer" id="statsFarmDecoLayer"></div>
       <div class="stats-farm-decorations" id="statsFarmDecorations"></div>
     </div>
   `;
@@ -7329,6 +7390,19 @@ const PET_FAMILIES = {
 };
 const PET_DEFAULT_FAMILY = { nameZh: "小跟班", nameEn: "Sidekick", stages: ["🐣", "🐾", "🏆"] };
 
+// 农场装饰图鉴：访问不同类别景点解锁的专属摆件（场景背景装饰，非小动物）
+const DECO_BY_TYPE = {
+  "文化古建": { emoji: "🏛️", nameZh: "牌坊",   nameEn: "Memorial Archway" },
+  "园林":     { emoji: "🪷", nameZh: "池塘",   nameEn: "Pond" },
+  "近代史迹": { emoji: "🚩", nameZh: "旗帜",   nameEn: "Flag" },
+  "寺庙":     { emoji: "🕯️", nameZh: "香炉",   nameEn: "Incense Burner" },
+  "陵寝遗址": { emoji: "🗿", nameZh: "石像",   nameEn: "Stone Statue" },
+  "宫城遗址": { emoji: "🏯", nameZh: "华表",   nameEn: "Ornamental Column" },
+  "城墙遗址": { emoji: "🗼", nameZh: "烽火台", nameEn: "Beacon Tower" },
+  "遗址":     { emoji: "🏺", nameZh: "文物",   nameEn: "Artifact" },
+  "文化街区": { emoji: "🏮", nameZh: "灯笼",   nameEn: "Lantern" }
+};
+
 const PET_STAGE_LABELS = {
   zh: ["幼崽", "成长期", "冠军坐骑"],
   en: ["Baby", "Growing", "Champion Mount"]
@@ -7573,24 +7647,242 @@ function dailyUserId() {
 function dailyStorageKey() {
   return `landscapeDailyTasks:${dailyTodayStr()}:${dailyUserId()}`;
 }
+function userScopedKey(base) {
+  return `${base}:${dailyUserId()}`;
+}
 function getVisitedSpots() {
-  try { return JSON.parse(localStorage.getItem("landscapeVisitedSpots") || "[]"); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(userScopedKey("landscapeVisitedSpots")) || "[]"); } catch { return []; }
 }
 function addVisitedSpot(id) {
   try {
     const v = getVisitedSpots();
-    if (!v.includes(id)) { v.push(id); localStorage.setItem("landscapeVisitedSpots", JSON.stringify(v)); }
+    if (!v.includes(id)) { v.push(id); localStorage.setItem(userScopedKey("landscapeVisitedSpots"), JSON.stringify(v)); }
   } catch {}
 }
 function getFarmDecorations() {
-  try { return JSON.parse(localStorage.getItem("landscapeFarmDecorations") || "[]"); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(userScopedKey("landscapeFarmDecorations")) || "[]"); } catch { return []; }
+}
+function getUnlockedDecoTypes() {
+  try { return JSON.parse(localStorage.getItem(userScopedKey("landscapeTypeDecorations")) || "[]"); } catch { return []; }
+}
+function unlockDecoType(type) {
+  if (!type || !DECO_BY_TYPE[type]) return false;
+  const unlocked = getUnlockedDecoTypes();
+  if (unlocked.includes(type)) return false;
+  unlocked.push(type);
+  try { localStorage.setItem(userScopedKey("landscapeTypeDecorations"), JSON.stringify(unlocked)); } catch {}
+  return true;
+}
+function syncDecoFromVisits() {
+  const visited = getVisitedSpots();
+  const allSpots = (typeof spots !== "undefined") ? spots : [];
+  visited.forEach(id => {
+    const s = allSpots.find(sp => sp.id === id);
+    if (s && s.type) unlockDecoType(s.type);
+  });
+}
+function getDecoPlacements() {
+  try { return JSON.parse(localStorage.getItem(userScopedKey("landscapeDecoPlacements")) || "[]"); } catch { return []; }
+}
+function saveDecoPlacements(arr) {
+  try { localStorage.setItem(userScopedKey("landscapeDecoPlacements"), JSON.stringify(arr)); } catch {}
+}
+function addDecoPlacement(type) {
+  if (!DECO_BY_TYPE[type]) return;
+  const arr = getDecoPlacements();
+  const layer = document.getElementById("statsFarmDecoLayer");
+  const w = layer ? layer.clientWidth : 600;
+  const h = layer ? layer.clientHeight : 360;
+  const x = Math.max(0, Math.round((w - 70) * Math.random()));
+  const y = Math.max(0, Math.round((h - 70) * Math.random()));
+  arr.push({ type, x, y, scale: 0.95 + Math.random() * 0.45 });
+  saveDecoPlacements(arr);
+  renderDecoPlacements();
+}
+function removeDecoPlacement(idx) {
+  const arr = getDecoPlacements();
+  if (idx < 0 || idx >= arr.length) return;
+  arr.splice(idx, 1);
+  saveDecoPlacements(arr);
+  renderDecoPlacements();
+}
+function renderDecoPlacements() {
+  const layer = document.getElementById("statsFarmDecoLayer");
+  if (!layer) return;
+  const arr = getDecoPlacements();
+  layer.innerHTML = arr.map((p, i) => {
+    const d = DECO_BY_TYPE[p.type];
+    if (!d) return "";
+    const scale = p.scale || 1;
+    return `<div class="placed-deco" data-idx="${i}" style="left:${p.x}px;top:${p.y}px;font-size:${52 * scale}px;" title="${currentLang === "en" ? d.nameEn : d.nameZh}">${d.emoji}<span class="placed-remove" data-idx="${i}">×</span></div>`;
+  }).join("");
+  layer.querySelectorAll(".placed-deco").forEach(el => {
+    const idx = Number(el.dataset.idx);
+    const removeBtn = el.querySelector(".placed-remove");
+    removeBtn.addEventListener("pointerdown", (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      removeDecoPlacement(idx);
+    });
+    attachDecoDrag(el, idx);
+  });
+}
+function attachDecoDrag(el, idx) {
+  let dragging = false, moved = false, startX = 0, startY = 0, origX = 0, origY = 0;
+  el.addEventListener("pointerdown", (e) => {
+    if (e.target.classList.contains("placed-remove")) return;
+    const arr = getDecoPlacements();
+    if (!arr[idx]) return;
+    dragging = true; moved = false;
+    startX = e.clientX; startY = e.clientY;
+    origX = arr[idx].x; origY = arr[idx].y;
+    el.setPointerCapture(e.pointerId);
+    el.classList.add("dragging");
+  });
+  el.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+    const layer = document.getElementById("statsFarmDecoLayer");
+    const rect = layer.getBoundingClientRect();
+    let nx = origX + dx, ny = origY + dy;
+    nx = Math.max(0, Math.min(nx, rect.width - el.offsetWidth));
+    ny = Math.max(0, Math.min(ny, rect.height - el.offsetHeight));
+    el.style.left = nx + "px";
+    el.style.top = ny + "px";
+  });
+  const end = () => {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove("dragging");
+    if (moved) {
+      const arr = getDecoPlacements();
+      if (arr[idx]) {
+        arr[idx].x = parseFloat(el.style.left) || 0;
+        arr[idx].y = parseFloat(el.style.top) || 0;
+        saveDecoPlacements(arr);
+      }
+    }
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+}
+// ===== 今日神秘景点（盲盒）=====
+const MYSTERY_TYPE_HINTS = {
+  "陵寝遗址": { zh: "帝王陵寝", en: "imperial mausoleum" },
+  "文化街区": { zh: "历史街区", en: "historic district" },
+  "城墙遗址": { zh: "古城墙",   en: "ancient city wall" },
+  "寺庙":     { zh: "古刹",     en: "ancient temple" },
+  "园林":     { zh: "古典园林", en: "classical garden" },
+  "文化古建": { zh: "古建筑",   en: "historic building" },
+  "近代史迹": { zh: "近代史迹", en: "modern historical site" },
+  "遗址":     { zh: "考古遗址", en: "archaeological site" },
+  "宫城遗址": { zh: "宫城遗迹", en: "palace ruins" }
+};
+function mysteryUserId() {
+  const u = getCurrentUser();
+  if (u && u.id) return String(u.id);
+  return getAuthToken() ? "user" : "guest";
+}
+function mysteryStorageKey() {
+  return `landscapeMystery:${mysteryUserId()}`;
+}
+function mysteryHashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+function mysteryTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+function getMysterySpotIdForDate(dateStr, uid) {
+  if (!spots.length) return null;
+  const idx = mysteryHashStr(`${dateStr}:${uid}`) % spots.length;
+  return spots[idx].id;
+}
+function getMysteryState() {
+  try { return JSON.parse(localStorage.getItem(mysteryStorageKey()) || "null"); } catch { return null; }
+}
+function saveMysteryState(s) {
+  try { localStorage.setItem(mysteryStorageKey(), JSON.stringify(s)); } catch {}
+}
+function buildMysteryClue(spot) {
+  const hint = MYSTERY_TYPE_HINTS[spot.type] || { zh: "古迹", en: "historic site" };
+  const dyn = spot.dynasty || "";
+  const route = spot.route || "";
+  if (currentLang === "en") {
+    let c = `${dyn ? dyn + " " : ""}${hint.en}`;
+    if (route) c += `, around the ${route} area`;
+    return c + ".";
+  }
+  let c = `${dyn ? dyn + "的" : ""}${hint.zh}`;
+  if (route) c += `，藏在「${route}」一带`;
+  return c + "。";
+}
+function renderMystery() {
+  const body = document.getElementById("mysteryModalBody");
+  if (!body) return;
+  const today = mysteryTodayStr();
+  let state = getMysteryState();
+  if (!state || state.date !== today) {
+    const uid = mysteryUserId();
+    state = { date: today, uid, spotId: getMysterySpotIdForDate(today, uid), revealed: false };
+    saveMysteryState(state);
+  }
+  const spot = spots.find(s => s.id === state.spotId);
+  if (!spot) { body.innerHTML = `<p class="empty-message">${t("statsNoData")}</p>`; return; }
+
+  if (!state.revealed) {
+    body.innerHTML = `
+      <div class="mystery-box">
+        <div class="mystery-gift">🎁</div>
+        <div class="mystery-clue-label">${t("mysterySubtitle")}</div>
+        <div class="mystery-clue">${buildMysteryClue(spot)}</div>
+        <button type="button" class="mystery-open-btn" id="mysteryOpenBtn">${t("mysteryOpen")}</button>
+      </div>`;
+    const btn = document.getElementById("mysteryOpenBtn");
+    if (btn) btn.onclick = () => { state.revealed = true; saveMysteryState(state); renderMystery(); };
+    return;
+  }
+
+  const inRoute = routeSelectedIds.has(spot.id);
+  const intro = spotT(spot, "intro") || "";
+  const short = intro.length > 64 ? intro.slice(0, 64) + "…" : intro;
+  body.innerHTML = `
+    <div class="mystery-reveal">
+      <img class="mystery-img" src="${spot.image}" alt="${spotT(spot, 'name')}" onerror="imageFallback(this)">
+      <div class="mystery-info">
+        <div class="mystery-reveal-title">${t("mysteryRevealTitle")}</div>
+        <h4 class="mystery-name">${escapeHtml(spotT(spot, 'name'))}</h4>
+        <div class="tag-row"><span class="tag">${spotT(spot, 'type')}</span><span class="tag">${spotT(spot, 'dynasty')}</span></div>
+        <p class="mystery-intro">${escapeHtml(short)}</p>
+        <div class="mystery-actions">
+          <button type="button" class="mystery-route-btn" data-mystery-route="${spot.id}">${inRoute ? t("removeFromRoute") : t("mysteryAddRoute")}</button>
+          <button type="button" class="mystery-map-btn" data-mystery-map="${spot.id}">${t("mysteryViewMap")}</button>
+        </div>
+      </div>
+    </div>`;
+  const rb = body.querySelector("[data-mystery-route]");
+  if (rb) rb.onclick = () => { toggleRouteSpot(spot.id); renderMystery(); };
+  const mb = body.querySelector("[data-mystery-map]");
+  if (mb) mb.onclick = () => { closeMysteryModal(); selectSpot(spot.id, { module: "map" }); };
+}
+function openMysteryModal() {
+  renderMystery();
+  const modal = document.getElementById("mysteryModal");
+  if (modal) modal.style.display = "flex";
+}
+function closeMysteryModal() {
+  const modal = document.getElementById("mysteryModal");
+  if (modal) modal.style.display = "none";
 }
 function addFarmDecoration() {
   try {
     const deco = getFarmDecorations();
     const next = DAILY_DECO_POOL[deco.length % DAILY_DECO_POOL.length];
     deco.push(next);
-    localStorage.setItem("landscapeFarmDecorations", JSON.stringify(deco));
+    localStorage.setItem(userScopedKey("landscapeFarmDecorations"), JSON.stringify(deco));
     return next;
   } catch { return null; }
 }
@@ -7691,6 +7983,44 @@ function renderFarmDecorations() {
     return;
   }
   wrap.innerHTML = deco.map(d => `<span class="farm-deco">${d}</span>`).join("");
+}
+function refreshAccountScopedUI() {
+  updateDailyTasksButton();
+  const pop = document.getElementById("dailyTasksPopover");
+  if (pop && pop.dataset.open === "true") renderDailyTasksPopover();
+  if (document.getElementById("statsDecoGrid")) renderDecoGuide();
+  if (document.getElementById("statsFarmDecorations")) renderFarmDecorations();
+  const modal = document.getElementById("mysteryModal");
+  if (modal && modal.style.display === "flex" && document.getElementById("mysteryModalBody")) renderMystery();
+}
+function renderDecoGuide() {
+  const grid = document.getElementById("statsDecoGrid");
+  if (!grid) return;
+  syncDecoFromVisits();
+  const unlocked = getUnlockedDecoTypes();
+  const total = Object.keys(DECO_BY_TYPE).length;
+  const countEl = document.getElementById("statsDecoCount");
+  if (countEl) countEl.textContent = t("decoUnlocked").replace("{n}", unlocked.length).replace("{t}", total);
+  grid.innerHTML = Object.keys(DECO_BY_TYPE).map(type => {
+    const d = DECO_BY_TYPE[type];
+    const isUnlocked = unlocked.includes(type);
+    const name = isUnlocked ? (currentLang === "en" ? d.nameEn : d.nameZh) : t("decoLocked");
+    const typeName = currentLang === "en" ? (typeTranslations[type]?.en || type) : type;
+    return `
+      <div class="deco-card ${isUnlocked ? "unlocked" : "locked"}" data-deco-type="${type}" title="${typeName}">
+        <span class="deco-emoji">${isUnlocked ? d.emoji : "🔒"}</span>
+        <div class="deco-info">
+          <div class="deco-name">${name}</div>
+          <div class="deco-type">${typeName}</div>
+        </div>
+      </div>`;
+  }).join("");
+  grid.querySelectorAll(".deco-card.unlocked").forEach(card => {
+    card.addEventListener("click", () => addDecoPlacement(card.dataset.decoType));
+  });
+  const clearBtn = document.getElementById("statsDecoClear");
+  if (clearBtn) clearBtn.onclick = () => { saveDecoPlacements([]); renderDecoPlacements(); };
+  renderDecoPlacements();
 }
 function openDailyTasksPopover() {
   const pop = document.getElementById("dailyTasksPopover");
